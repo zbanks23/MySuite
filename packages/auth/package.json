@@ -1,0 +1,12 @@
+{
+  "name": "@mycsuite/auth",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.83.0",
+    "expo-secure-store": "~13.0.2"
+  },
+  "peerDependencies": {
+    "react": "19.1.0"
+  }
+}
