@@ -2,36 +2,85 @@
 
 import React, {useEffect, useRef, useState} from "react";
 import {
-	View,
-	Text,
-	StyleSheet,
-	FlatList,
-	TouchableOpacity,
-	Modal,
-	TextInput,
-	Alert,
+ 	View,
+ 	Text,
+ 	StyleSheet,
+ 	FlatList,
+ 	TouchableOpacity,
+ 	Modal,
+ 	TextInput,
+ 	Alert,
+ 	ActivityIndicator,
 } from "react-native";
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUITheme as useTheme } from '@mycsuite/ui';
+import { formatSeconds } from '../../utils/formatting';
+import { useWorkoutManager, Exercise } from '../../hooks/useWorkoutManager';
 
-type Exercise = {
-	id: string;
-	name: string;
-	sets: number;
-	reps: number;
-	completedSets?: number;
-};
+// --- Logic Functions (Outside Component) ---
 
-function formatSeconds(s: number) {
-	const mm = Math.floor(s / 60)
-		.toString()
-		.padStart(2, "0");
-	const ss = Math.floor(s % 60)
-		.toString()
-		.padStart(2, "0");
-	return `${mm}:${ss}`;
+function createExercise(name: string, setsStr: string, repsStr: string): Exercise {
+    const sets = Math.max(1, Number(setsStr) || 1);
+    const reps = Math.max(1, Number(repsStr) || 1);
+    const id = Date.now().toString();
+    return {
+        id,
+        name: name || `Exercise ${id}`,
+        sets,
+        reps,
+        completedSets: 0
+    };
 }
+
+function createSequenceItem(item: any) {
+    const id = Date.now().toString();
+    if (item === 'rest') {
+        return { id, type: 'rest', name: 'Rest' };
+    }
+    // assume workout
+    return { id, type: 'workout', workout: item, name: item.name };
+}
+
+function reorderSequence(sequence: any[], index: number, dir: -1 | 1) {
+    const copy = sequence.slice();
+    const newIndex = index + dir;
+    if (newIndex < 0 || newIndex >= copy.length) return sequence;
+    const [item] = copy.splice(index, 1);
+    copy.splice(newIndex, 0, item);
+    return copy;
+}
+
+function calculateNextWorkoutState(exercises: Exercise[], currentIndex: number) {
+    const copy = exercises.map((x) => ({...x}));
+    const cur = copy[currentIndex];
+    
+    if (!cur) return { updatedExercises: exercises, nextIndex: currentIndex, shouldRest: false };
+
+    cur.completedSets = (cur.completedSets || 0) + 1;
+    
+    let nextIndex = currentIndex;
+    // if completed all sets, advance to next exercise
+    if (cur.completedSets >= cur.sets) {
+        nextIndex = Math.min(copy.length - 1, currentIndex + 1);
+    }
+
+    return {
+        updatedExercises: copy,
+        nextIndex,
+        shouldRest: true // Always rest after a set? Logic implies yes.
+    };
+}
+
+function generateSummary(workoutSeconds: number, exercises: Exercise[]) {
+    return JSON.stringify({
+        totalTime: workoutSeconds,
+        exercises,
+        startedAt: new Date().toISOString(),
+    }, null, 2);
+}
+
+// --- Component ---
 
 export default function Workout() {
 
@@ -47,6 +96,27 @@ export default function Workout() {
 	const [newSets, setNewSets] = useState("3");
 	const [newReps, setNewReps] = useState("10");
 
+	// Saved workouts (templates) and routines (schedules)
+	const [isSaveWorkoutModalOpen, setSaveModalOpen] = useState(false);
+	const [workoutName, setRoutineName] = useState("");
+	const [isLoadModalOpen, setLoadModalOpen] = useState(false);
+
+	// Create routine (schedule) modal
+	const [isCreateRoutineOpen, setCreateRoutineOpen] = useState(false);
+	const [routineDraftName, setRoutineDraftName] = useState("");
+	const [routineSequence, setRoutineSequence] = useState<any[]>([]);
+	const [isWorkoutsListOpen, setWorkoutsListOpen] = useState(false);
+    
+    const { 
+        savedWorkouts, 
+        routines, 
+        isSaving, 
+        saveWorkout: saveWorkoutManager, 
+        deleteSavedWorkout, 
+        saveRoutineDraft: saveRoutineDraftManager, 
+        deleteRoutine 
+    } = useWorkoutManager();
+
 	const [isRunning, setRunning] = useState(false);
 	const [workoutSeconds, setWorkoutSeconds] = useState(0);
 	const workoutTimerRef = useRef<number | null>(null as any);
@@ -55,7 +125,7 @@ export default function Workout() {
 	const [restSeconds, setRestSeconds] = useState(0);
 	const restTimerRef = useRef<number | null>(null as any);
 
-	// Persist to localStorage when available (web). Best-effort only.
+	// Effect: Persist current exercises state to localStorage for data persistence across reloads (web only).
 	useEffect(() => {
 		try {
 			if (typeof window !== "undefined" && window.localStorage) {
@@ -66,6 +136,7 @@ export default function Workout() {
 		}
 	}, [exercises]);
 
+    // Effect: Manage the workout timer interval. Increments workoutSeconds every second while isRunning is true.
 	useEffect(() => {
 		if (isRunning) {
 			workoutTimerRef.current = setInterval(() => {
@@ -81,6 +152,7 @@ export default function Workout() {
 		};
 	}, [isRunning]);
 
+    // Effect: Manage the rest timer countdown. Decrements restSeconds every second until it reaches 0.
 	useEffect(() => {
 		if (restSeconds > 0) {
 			restTimerRef.current = setInterval(() => {
@@ -101,15 +173,62 @@ export default function Workout() {
 	}, [restSeconds]);
 
 	function addExercise() {
-		const sets = Math.max(1, Number(newSets) || 1);
-		const reps = Math.max(1, Number(newReps) || 1);
-		const id = Date.now().toString();
-		const ex: Exercise = {id, name: newName || `Exercise ${id}`, sets, reps, completedSets: 0};
+        const ex = createExercise(newName, newSets, newReps);
 		setExercises((e) => [...e, ex]);
 		setNewName("");
 		setNewSets("3");
 		setNewReps("10");
 		setAddModalOpen(false);
+	}
+
+	async function saveWorkout() {
+        saveWorkoutManager(workoutName, exercises, () => {
+            setRoutineName("");
+            setSaveModalOpen(false);
+        });
+	}
+
+	function loadWorkout(id: string) {
+		const w = savedWorkouts.find((x) => x.id === id);
+		if (!w) return;
+		setExercises(w.exercises || []);
+		setWorkoutsListOpen(false);
+		Alert.alert('Loaded', `Workout '${w.name}' loaded.`);
+	}
+
+	function loadRoutine(id: string) {
+	const r = routines.find((x) => x.id === id);
+	if (!r) return;
+	// load first day's workout into current exercises for quick preview
+	if (r.sequence && r.sequence.length > 0) {
+		const first = r.sequence[0];
+		if (first.type === 'workout' && first.workout) {
+			setExercises(first.workout.exercises || []);
+		}
+	}
+	setLoadModalOpen(false);
+	Alert.alert("Loaded", `Routine '${r.name}' loaded (first day shown).`);
+	}
+
+	async function saveRoutineDraft() {
+		saveRoutineDraftManager(routineDraftName, routineSequence, () => {
+			setRoutineDraftName("");
+			setRoutineSequence([]);
+			setCreateRoutineOpen(false);
+		});
+	}
+
+	function addDayToSequence(item: any) {
+		const newItem = createSequenceItem(item);
+		setRoutineSequence((s) => [...s, newItem]);
+	}
+
+	function moveSequenceItem(index: number, dir: -1 | 1) {
+		setRoutineSequence((s) => reorderSequence(s, index, dir));
+	}
+
+	function removeSequenceItem(id: string) {
+		setRoutineSequence((s) => s.filter((x) => x.id !== id));
 	}
 
 	function startWorkout() {
@@ -133,20 +252,12 @@ export default function Workout() {
 	}
 
 	function completeSet() {
-		setExercises((exs) => {
-			const copy = exs.map((x) => ({...x}));
-			const cur = copy[currentIndex];
-			if (!cur) return exs;
-			cur.completedSets = (cur.completedSets || 0) + 1;
-			// start rest by default 60s
-			setRestSeconds(60);
-			// if completed all sets, advance to next exercise
-			if (cur.completedSets >= cur.sets) {
-				const next = Math.min(copy.length - 1, currentIndex + 1);
-				setCurrentIndex(next);
-			}
-			return copy;
-		});
+        const { updatedExercises, nextIndex, shouldRest } = calculateNextWorkoutState(exercises, currentIndex);
+        setExercises(updatedExercises);
+        setCurrentIndex(nextIndex);
+        if (shouldRest) {
+            setRestSeconds(60);
+        }
 	}
 
 	function nextExercise() {
@@ -158,12 +269,7 @@ export default function Workout() {
 	}
 
 	function exportSummary() {
-		const summary = {
-			totalTime: workoutSeconds,
-			exercises,
-			startedAt: new Date().toISOString(),
-		};
-		const json = JSON.stringify(summary, null, 2);
+        const json = generateSummary(workoutSeconds, exercises);
 		// Try to copy to clipboard or open share — best-effort
 		try {
 			if (typeof navigator !== "undefined" && (navigator as any).clipboard) {
@@ -207,6 +313,18 @@ export default function Workout() {
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.controlButton} onPress={exportSummary} accessibilityLabel="Export summary">
 					<Text style={styles.controlText}>Export</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.controlButton} onPress={() => setSaveModalOpen(true)} accessibilityLabel="Save workout">
+					<Text style={styles.controlText}>Save</Text>
+				</TouchableOpacity>
+					<TouchableOpacity style={styles.controlButton} onPress={() => setWorkoutsListOpen(true)} accessibilityLabel="Workouts">
+						<Text style={styles.controlText}>Workouts</Text>
+					</TouchableOpacity>
+				<TouchableOpacity style={styles.controlButton} onPress={() => setCreateRoutineOpen(true)} accessibilityLabel="Create routine">
+					<Text style={styles.controlText}>Create Routine</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.controlButton} onPress={() => setLoadModalOpen(true)} accessibilityLabel="Load routine">
+					<Text style={styles.controlText}>Load</Text>
 				</TouchableOpacity>
 			</View>
 
@@ -274,7 +392,169 @@ export default function Workout() {
 					</View>
 				</View>
 			</Modal>
+
+			{/* Saved Workouts modal */}
+			<Modal visible={isWorkoutsListOpen} animationType="slide" transparent={true}>
+				<View style={styles.modalBackdrop}>
+					<View style={[styles.modalCard, {maxHeight: '80%'}]}>
+						<Text style={styles.modalTitle}>Saved Workouts</Text>
+						{savedWorkouts.length === 0 ? (
+							<Text style={{color: theme.icon}}>No saved workouts</Text>
+						) : (
+							<FlatList
+								data={savedWorkouts}
+								keyExtractor={(i) => i.id}
+								renderItem={({item}) => (
+									<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}>
+										<View>
+											<Text style={{color: theme.text, fontWeight: '600'}}>{item.name}</Text>
+											<Text style={{color: theme.icon, fontSize: 12}}>{new Date(item.createdAt).toLocaleString()}</Text>
+										</View>
+										<View style={{flexDirection: 'row'}}>
+											<TouchableOpacity onPress={() => loadWorkout(item.id)} style={[styles.controlButton, {marginRight: 8}]}> 
+												<Text style={styles.controlText}>Load</Text>
+											</TouchableOpacity>
+											<TouchableOpacity onPress={() => deleteSavedWorkout(item.id)} style={styles.controlButton}>
+												<Text style={styles.controlText}>Delete</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								)}
+							/>
+						)}
+						<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12}}>
+							<TouchableOpacity onPress={() => setWorkoutsListOpen(false)} style={styles.controlButton}>
+								<Text style={styles.controlText}>Close</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
+
+			{/* Create routine (schedule) modal */}
+			<Modal visible={isCreateRoutineOpen} animationType="slide" transparent={true}>
+				<View style={styles.modalBackdrop}>
+					<View style={[styles.modalCard, {maxHeight: '85%'}]}>
+						<Text style={styles.modalTitle}>Create Routine</Text>
+						<TextInput placeholder="Routine name" value={routineDraftName} onChangeText={setRoutineDraftName} style={styles.input} />
+						<Text style={{color: theme.icon, marginBottom: 8}}>Add days from saved workouts or add Rest days.</Text>
+						<View style={{flexDirection: 'row', gap: 8, marginBottom: 8}}>
+							<FlatList
+								data={savedWorkouts}
+								horizontal
+								keyExtractor={(i) => i.id}
+								renderItem={({item}) => (
+									<TouchableOpacity onPress={() => addDayToSequence(item)} style={[styles.controlButton, {marginRight: 8}]}> 
+										<Text style={styles.controlText}>{item.name}</Text>
+									</TouchableOpacity>
+								)}
+							/>
+							<TouchableOpacity onPress={() => addDayToSequence('rest')} style={styles.controlButton}>
+								<Text style={styles.controlText}>Rest</Text>
+							</TouchableOpacity>
+						</View>
+
+						{routineSequence.length === 0 ? (
+							<Text style={{color: theme.icon}}>No days added</Text>
+						) : (
+							<FlatList
+								data={routineSequence}
+								keyExtractor={(i) => i.id}
+								renderItem={({item, index}) => (
+									<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6}}>
+										<View>
+											<Text style={{color: theme.text, fontWeight: '600'}}>{index + 1}. {item.name}</Text>
+											<Text style={{color: theme.icon, fontSize: 12}}>{item.type === 'rest' ? 'Rest day' : `Workout: ${item.name}`}</Text>
+										</View>
+										<View style={{flexDirection: 'row'}}>
+											<TouchableOpacity onPress={() => moveSequenceItem(index, -1)} style={[styles.controlButton, {marginRight: 6}]}> 
+												<Text style={styles.controlText}>↑</Text>
+											</TouchableOpacity>
+											<TouchableOpacity onPress={() => moveSequenceItem(index, 1)} style={[styles.controlButton, {marginRight: 6}]}> 
+												<Text style={styles.controlText}>↓</Text>
+											</TouchableOpacity>
+											<TouchableOpacity onPress={() => removeSequenceItem(item.id)} style={styles.controlButton}> 
+												<Text style={styles.controlText}>Remove</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								)}
+							/>
+						)}
+
+						<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12}}>
+							<TouchableOpacity onPress={() => { setCreateRoutineOpen(false); setRoutineSequence([]); setRoutineDraftName(''); }} style={[styles.controlButton, {marginRight: 8}]}> 
+								<Text>Cancel</Text>
+							</TouchableOpacity>
+							<TouchableOpacity disabled={isSaving} onPress={saveRoutineDraft} style={[styles.controlButtonPrimary, isSaving ? styles.controlButtonDisabled : null]}>
+								{isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.controlTextPrimary}>Save Routine</Text>}
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
+
+			{/* Save workout modal */}
+			<Modal visible={isSaveWorkoutModalOpen} animationType="slide" transparent={true}>
+				<View style={styles.modalBackdrop}>
+					<View style={styles.modalCard}>
+						<Text style={styles.modalTitle}>Save Workout</Text>
+						<TextInput placeholder="Workout name" value={workoutName} onChangeText={setRoutineName} style={styles.input} />
+						<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+							<TouchableOpacity onPress={() => setSaveModalOpen(false)} style={[styles.controlButton, {marginRight: 8}]}> 
+								<Text>Cancel</Text>
+							</TouchableOpacity>
+							<TouchableOpacity disabled={isSaving} onPress={saveWorkout} style={[styles.controlButtonPrimary, isSaving ? styles.controlButtonDisabled : null]}>
+								{isSaving ? (
+									<ActivityIndicator size="small" color="#fff" />
+								) : (
+									<Text style={styles.controlTextPrimary}>Save</Text>
+								)}
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
+
+			{/* Load routine modal */}
+			<Modal visible={isLoadModalOpen} animationType="slide" transparent={true}>
+				<View style={styles.modalBackdrop}>
+					<View style={[styles.modalCard, {maxHeight: '80%'}]}>
+						<Text style={styles.modalTitle}>Saved Routines</Text>
+						{routines.length === 0 ? (
+							<Text style={{color: theme.icon}}>No saved routines</Text>
+						) : (
+							<FlatList
+								data={routines}
+								keyExtractor={(i) => i.id}
+								renderItem={({item}) => (
+									<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}>
+										<View>
+											<Text style={{color: theme.text, fontWeight: '600'}}>{item.name}</Text>
+											<Text style={{color: theme.icon, fontSize: 12}}>{new Date(item.createdAt).toLocaleString()}</Text>
+										</View>
+										<View style={{flexDirection: 'row'}}>
+											<TouchableOpacity onPress={() => loadRoutine(item.id)} style={[styles.controlButton, {marginRight: 8}]}>
+												<Text style={styles.controlText}>Load</Text>
+											</TouchableOpacity>
+											<TouchableOpacity onPress={() => deleteRoutine(item.id)} style={styles.controlButton}>
+												<Text style={styles.controlText}>Delete</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								)}
+							/>
+						)}
+						<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12}}>
+							<TouchableOpacity onPress={() => setLoadModalOpen(false)} style={styles.controlButton}>
+								<Text style={styles.controlText}>Close</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
 		</SafeAreaView>
+
 	);
 }
 
@@ -286,6 +566,7 @@ const makeStyles = (theme: any) =>
 		timer: {fontSize: 14, color: theme.icon},
 		controlsRow: {flexDirection: "row", gap: 8, marginVertical: 12},
 		controlButton: {padding: 10, borderRadius: 8, borderWidth: 1, borderColor: theme.surface, marginRight: 8, backgroundColor: theme.background},
+		controlButtonDisabled: {opacity: 0.6},
 		controlButtonPrimary: {padding: 10, borderRadius: 8, backgroundColor: theme.primary},
 		controlText: {color: theme.text},
 		controlTextPrimary: {color: '#fff', fontWeight: "600"},

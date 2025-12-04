@@ -23,6 +23,11 @@ const safeSecureStore = () => {
 
 const ExpoSecureStoreAdapter = {
   getItem: async (key: string) => {
+    // Web support: use localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return window.localStorage.getItem(key);
+    }
+    
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.getItemAsync) return Promise.resolve(null);
     try {
@@ -46,6 +51,12 @@ const ExpoSecureStoreAdapter = {
     }
   },
   setItem: async (key: string, value: string) => {
+    // Web support: use localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem(key, value);
+      return;
+    }
+
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.setItemAsync) return Promise.resolve();
     try {
@@ -59,6 +70,12 @@ const ExpoSecureStoreAdapter = {
     }
   },
   removeItem: async (key: string) => {
+    // Web support: use localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem(key);
+      return;
+    }
+
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.deleteItemAsync) return Promise.resolve();
     try {
