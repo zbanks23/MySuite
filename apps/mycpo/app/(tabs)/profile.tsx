@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useAuth, supabase } from '@mycsuite/auth';
 import { SharedButton, useUITheme } from '@mycsuite/ui';
-import { ThemedView } from '../../components/themed-view';
+import { ThemedView } from '../../components/ui/ThemedView';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 

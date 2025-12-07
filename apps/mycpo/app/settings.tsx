@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput 
 import { useRouter } from 'expo-router';
 import { useAuth, supabase } from '@mycsuite/auth';
 import { useUITheme } from '@mycsuite/ui';
-import { ThemedView } from '../components/themed-view';
+import { ThemedView } from '../components/ui/ThemedView';
 import { IconSymbol } from '../components/ui/icon-symbol';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
