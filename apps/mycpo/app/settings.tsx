@@ -80,11 +80,11 @@ export default function SettingsScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <IconSymbol name="chevron.backward" size={24} color={theme.text} /> 
-           <Text style={{color: theme.text, fontSize: 16, marginLeft: 4}}>Back</Text>
+          <IconSymbol name="chevron.backward" size={24} color={theme.text} />
+          <Text style={{color: theme.text, fontSize: 16, marginLeft: 4}}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Settings</Text>
-        <View style={{width: 60}} /> {/* Spacer for centering */}
+        <View style={{width: 60}} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
