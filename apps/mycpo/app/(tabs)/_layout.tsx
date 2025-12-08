@@ -2,11 +2,12 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '../../components/ui/HapticTab';
-import { FastActionButton } from '../../components/ui/FastActionButton';
+import { FastNavigationButton } from '../../components/ui/FastNavigationButton';
 import { useNavigationSettings } from '../providers/NavigationSettingsProvider';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/use-color-scheme';
+import { FastActionButton } from '../../components/ui/FastActionButton';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -44,6 +45,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+      {isFabEnabled && <FastNavigationButton />}
       {isFabEnabled && <FastActionButton />}
     </>
   );

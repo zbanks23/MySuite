@@ -23,6 +23,14 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'bolt.fill': 'flash-on',
+  'plus': 'add',
+  'pencil': 'edit',
+  'list.bullet.clipboard': 'list',
+  'scale.3d': 'scale',
+  'play.fill': 'play-arrow',
+  'arrow.left': 'arrow-left',
+  'arrow.right': 'arrow-right',
+  'ellipsis': 'menu',
 } as IconMapping;
 
 /**
