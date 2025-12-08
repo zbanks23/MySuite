@@ -75,7 +75,7 @@ export function FastNavigationButton({ navigation: propNavigation }: { navigatio
        <RadialMenu 
          items={menuItems} 
          icon={activeIcon} 
-         menuRadius={100}
+         menuRadius={120}
          style={{ backgroundColor: theme.primary }} 
          buttonSize={BUTTON_SIZE}
          onMenuStateChange={handleMenuStateChange}

@@ -34,7 +34,7 @@ const CONTEXT_ACTIONS: Record<string, ActionItemType[]> = {
   ],
 };
 
-export function FastActionButton() {
+export function FastUtilityButton() {
   const theme = useUITheme();
   const router = useRouter();
   const pathname = usePathname();
@@ -92,9 +92,9 @@ export function FastActionButton() {
        <RadialMenu 
          items={menuItems} 
          icon="ellipsis" // Always ellipsis as requested
-         menuRadius={90}
-         startAngle={-5}
-         endAngle={-85}
+         menuRadius={120}
+         startAngle={0}
+         endAngle={-90}
          style={{ backgroundColor: theme.surface }}
          buttonSize={BUTTON_SIZE}
          onMenuStateChange={handleMenuStateChange}

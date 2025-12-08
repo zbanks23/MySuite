@@ -9,7 +9,7 @@ import { useNavigationSettings } from '../providers/NavigationSettingsProvider';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/use-color-scheme';
-import { FastActionButton } from '../../components/ui/FastActionButton';
+import { FastUtilityButton } from '../../components/ui/FastUilityButton';
 import { FastBackButton } from '../../components/ui/FastBackButton';
 
 import { FloatingButtonProvider } from '../../components/ui/FloatingButtonContext';
@@ -32,7 +32,7 @@ export default function TabLayout() {
                    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
                        {/* Pass the Tab Navigation prop directly to ensure correct context */}
                        <FastNavigationButton navigation={props.navigation} />
-                       <FastActionButton />
+                       <FastUtilityButton />
                        {/* Pass navigation to Back Button too for correct history handling */}
                        <FastBackButton navigation={props.navigation} />
                    </View>

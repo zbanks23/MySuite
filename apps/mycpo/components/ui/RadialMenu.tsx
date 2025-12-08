@@ -112,7 +112,7 @@ export function RadialMenu({
 
         const dist = Math.sqrt(x*x + y*y);
         
-        if (dist > 30 && diff < 35) {
+        if (dist > 40 && diff < 15) {
             bestIndex = i;
         }
       }
@@ -241,7 +241,7 @@ function RadialMenuItemComponent({
     return (
         <Animated.View style={[styles.menuItem, containerStyle]}>
             <Animated.View style={[styles.menuItemCircle, { backgroundColor: theme.primary }, circleStyle]}>
-                <IconSymbol name={item.icon as any} size={20} color="#fff" />
+                <IconSymbol name={item.icon as any} size={28} color="#fff" />
             </Animated.View>
              <Animated.Text style={[styles.label, { color: theme.text }, animatedLabelStyle]}>
                 {item.label}
@@ -258,15 +258,15 @@ const styles = StyleSheet.create({
   },
   menuItem: {
       position: 'absolute',
-      width: 40,
-      height: 40,
+      width: 52,
+      height: 52,
       alignItems: 'center',
       justifyContent: 'center',
   },
   menuItemCircle: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
+      width: 52,
+      height: 52,
+      borderRadius: 26,
       alignItems: 'center',
       justifyContent: 'center',
       shadowColor: "#000",
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   label: {
       position: 'absolute',
-      top: -25,
+      top: -26,
       fontSize: 12,
       fontWeight: '600',
       width: 80,
