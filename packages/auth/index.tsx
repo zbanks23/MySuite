@@ -1,5 +1,6 @@
 // packages/auth/index.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import Constants from 'expo-constants';
 import { SupabaseClient, createClient, Session, User } from '@supabase/supabase-js';
 // Avoid importing `expo-secure-store` at module evaluation time because
 // the native module may not be available in the running environment
@@ -94,7 +95,28 @@ const ExpoSecureStoreAdapter = {
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+const getSupabaseUrl = () => {
+  if (!supabaseUrl) return '';
+
+  // If the configured URL points to localhost (127.0.0.1 or localhost),
+  // and we are running in an Expo environment where hostUri is available (Dev Client/Go),
+  // try to use the hostUri IP address instead.
+  if (supabaseUrl.includes('127.0.0.1') || supabaseUrl.includes('localhost')) {
+    const hostUri = Constants.expoConfig?.hostUri;
+    if (hostUri) {
+      const ipAddress = hostUri.split(':')[0];
+      if (ipAddress) {
+        return supabaseUrl
+          .replace('127.0.0.1', ipAddress)
+          .replace('localhost', ipAddress);
+      }
+    }
+  }
+
+  return supabaseUrl;
+};
+
+export const supabase = createClient(getSupabaseUrl(), supabaseAnonKey, {
   auth: {
     storage: ExpoSecureStoreAdapter,
     autoRefreshToken: true,
