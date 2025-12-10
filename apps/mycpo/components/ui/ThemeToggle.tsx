@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useThemePreference } from '@/app/providers/AppThemeProvider';
+import { useThemePreference } from '../../providers/AppThemeProvider';
 import { SharedButton } from '@mycsuite/ui';
 
 export const ThemeToggle = () => {

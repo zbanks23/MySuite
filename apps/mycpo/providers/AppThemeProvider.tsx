@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme as rnUseColorScheme } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { Colors } from '../../constants/theme';
+import { Colors } from '../constants/theme';
 import { UIThemeProvider } from '@mycsuite/ui';
 
 const THEME_PREF_KEY = 'theme-preference';
