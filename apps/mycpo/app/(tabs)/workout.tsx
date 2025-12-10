@@ -38,7 +38,6 @@ export default function Workout() {
         exercises,
         setExercises,
         isRunning,
-        workoutSeconds,
         restSeconds,
         currentIndex,
         startWorkout,
@@ -157,7 +156,7 @@ export default function Workout() {
 		<SafeAreaView style={styles.container}>
 			<View style={styles.header}>
 				<Text style={styles.title}>Workout</Text>
-				<Text style={styles.timer}>Total: {formatSeconds(workoutSeconds)}</Text>
+
 			</View>
 
 			<View style={styles.controlsRow}>
