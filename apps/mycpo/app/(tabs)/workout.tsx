@@ -193,7 +193,7 @@ export default function Workout() {
                     {activeRoutineObj && (
                         <View style={{marginBottom: 24}}>
                              <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>Current Routine - {activeRoutineObj.name}</Text>
+                                <Text style={styles.sectionTitle}>Active Routine - {activeRoutineObj.name}</Text>
                                 <TouchableOpacity onPress={clearActiveRoutine}>
                                     <Text style={{color: theme.icon, fontSize: 12}}>Exit</Text>
                                 </TouchableOpacity>
