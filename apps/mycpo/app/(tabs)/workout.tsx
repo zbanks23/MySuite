@@ -45,14 +45,11 @@ export default function Workout() {
         completeSet,
         nextExercise,
         prevExercise,
-        addExercise: contextAddExercise,
+
         hasActiveSession
     } = useActiveWorkout();
 
-	const [isAddModalOpen, setAddModalOpen] = useState(false);
-	const [newName, setNewName] = useState("");
-	const [newSets, setNewSets] = useState("3");
-	const [newReps, setNewReps] = useState("10");
+
 
 	const [isLoadModalOpen, setLoadModalOpen] = useState(false);
 
@@ -72,13 +69,7 @@ export default function Workout() {
         deleteRoutine 
     } = useWorkoutManager();
 
-	function addExercise() {
-        contextAddExercise(newName, newSets, newReps);
-		setNewName("");
-		setNewSets("3");
-		setNewReps("10");
-		setAddModalOpen(false);
-	}
+
 
 
 
@@ -151,9 +142,7 @@ export default function Workout() {
 			</View>
 
 			<View style={styles.controlsRow}>
-				<TouchableOpacity style={styles.controlButton} onPress={() => setAddModalOpen(true)} accessibilityLabel="Add exercise">
-					<Text style={styles.controlText}>+ Add</Text>
-				</TouchableOpacity>
+
 
 				{!isRunning ? (
 					<TouchableOpacity style={styles.controlButtonPrimary} onPress={handleStartWorkout} accessibilityLabel="Start workout">
@@ -223,25 +212,7 @@ export default function Workout() {
 				/>
 			</View>
 
-			<Modal visible={isAddModalOpen} animationType="slide" transparent={true}>
-					<View style={styles.modalBackdrop}>
-					<View style={styles.modalCard}>
-						<Text style={styles.modalTitle}>Add Exercise</Text>
-						<TextInput placeholder="Name" value={newName} onChangeText={setNewName} style={styles.input} />
-						<TextInput placeholder="Sets" value={newSets} onChangeText={setNewSets} style={styles.input} keyboardType="number-pad" />
-						<TextInput placeholder="Reps" value={newReps} onChangeText={setNewReps} style={styles.input} keyboardType="number-pad" />
 
-						<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-							<TouchableOpacity onPress={() => setAddModalOpen(false)} style={[styles.controlButton, {marginRight: 8}]}> 
-								<Text>Cancel</Text>
-							</TouchableOpacity>
-							<TouchableOpacity onPress={addExercise} style={styles.controlButtonPrimary}>
-								<Text style={styles.controlTextPrimary}>Add</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</View>
-			</Modal>
 
 			{/* Saved Workouts modal */}
 			<Modal visible={isWorkoutsListOpen} animationType="slide" transparent={true}>
