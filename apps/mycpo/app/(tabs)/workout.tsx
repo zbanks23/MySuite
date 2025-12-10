@@ -54,9 +54,6 @@ export default function Workout() {
 	const [newSets, setNewSets] = useState("3");
 	const [newReps, setNewReps] = useState("10");
 
-	// Saved workouts (templates) and routines (schedules)
-	const [isSaveWorkoutModalOpen, setSaveModalOpen] = useState(false);
-	const [workoutName, setRoutineName] = useState("");
 	const [isLoadModalOpen, setLoadModalOpen] = useState(false);
 
 	// Create routine (schedule) modal
@@ -69,7 +66,7 @@ export default function Workout() {
         savedWorkouts, 
         routines, 
         isSaving, 
-        saveWorkout: saveWorkoutManager, 
+ 
         deleteSavedWorkout, 
         saveRoutineDraft: saveRoutineDraftManager, 
         deleteRoutine 
@@ -83,12 +80,7 @@ export default function Workout() {
 		setAddModalOpen(false);
 	}
 
-	async function saveWorkout() {
-        saveWorkoutManager(workoutName, exercises, () => {
-            setRoutineName("");
-            setSaveModalOpen(false);
-        });
-	}
+
 
 	function loadWorkout(id: string) {
         if (hasActiveSession) {
@@ -173,9 +165,7 @@ export default function Workout() {
 					</TouchableOpacity>
 				)}
 
-				<TouchableOpacity style={styles.controlButton} onPress={() => setSaveModalOpen(true)} accessibilityLabel="Save workout">
-					<Text style={styles.controlText}>Save</Text>
-				</TouchableOpacity>
+
 
 				<TouchableOpacity style={styles.controlButton} onPress={() => setCreateRoutineOpen(true)} accessibilityLabel="Create routine">
 					<Text style={styles.controlText}>Create Routine</Text>
@@ -354,27 +344,7 @@ export default function Workout() {
 				</View>
 			</Modal>
 
-			{/* Save workout modal */}
-			<Modal visible={isSaveWorkoutModalOpen} animationType="slide" transparent={true}>
-				<View style={styles.modalBackdrop}>
-					<View style={styles.modalCard}>
-						<Text style={styles.modalTitle}>Save Workout</Text>
-						<TextInput placeholder="Workout name" value={workoutName} onChangeText={setRoutineName} style={styles.input} />
-						<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-							<TouchableOpacity onPress={() => setSaveModalOpen(false)} style={[styles.controlButton, {marginRight: 8}]}> 
-								<Text>Cancel</Text>
-							</TouchableOpacity>
-							<TouchableOpacity disabled={isSaving} onPress={saveWorkout} style={[styles.controlButtonPrimary, isSaving ? styles.controlButtonDisabled : null]}>
-								{isSaving ? (
-									<ActivityIndicator size="small" color="#fff" />
-								) : (
-									<Text style={styles.controlTextPrimary}>Save</Text>
-								)}
-							</TouchableOpacity>
-						</View>
-					</View>
-				</View>
-			</Modal>
+
 
 			{/* Load routine modal */}
 			<Modal visible={isLoadModalOpen} animationType="slide" transparent={true}>
