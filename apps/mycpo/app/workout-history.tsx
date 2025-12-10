@@ -5,7 +5,7 @@ import { useUITheme as useTheme } from '@mycsuite/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 // import { formatSeconds } from '../utils/formatting'; // Removed as duration is not yet in the log
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
-import { WorkoutDetailsModal } from '../components/WorkoutDetailsModal';
+import { WorkoutDetailsModal } from '../components/workouts/WorkoutDetailsModal';
 
 export default function WorkoutHistoryScreen() {
   const router = useRouter();

@@ -3,7 +3,7 @@ import React from 'react';
 import { BottomTabBar } from '@react-navigation/bottom-tabs';
 
 import { HapticTab } from '../../components/ui/HapticTab';
-import { useNavigationSettings } from '../providers/NavigationSettingsProvider';
+import { useNavigationSettings } from '../../providers/NavigationSettingsProvider';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/use-color-scheme';

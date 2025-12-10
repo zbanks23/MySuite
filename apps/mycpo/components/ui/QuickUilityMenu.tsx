@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native
 import { useUITheme } from '@mycsuite/ui';
 import { useRouter, usePathname } from 'expo-router';
 import { RadialMenu, RadialMenuItem } from './RadialMenu';
-import { useFloatingButton } from './FloatingButtonContext';
+import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 // ... (imports remain)

@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native
 import { useUITheme } from '@mycsuite/ui';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from './icon-symbol';
-import { useFloatingButton } from './FloatingButtonContext';
+import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import * as Haptics from 'expo-haptics';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 

@@ -5,18 +5,18 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '@mycsuite/auth';
-import { AppThemeProvider } from './providers/AppThemeProvider';
-import { NavigationSettingsProvider } from './providers/NavigationSettingsProvider';
+import { AppThemeProvider } from '../providers/AppThemeProvider';
+import { NavigationSettingsProvider } from '../providers/NavigationSettingsProvider';
 import { useColorScheme } from '../hooks/use-color-scheme';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { ActiveWorkoutProvider } from '../providers/ActiveWorkoutProvider'; // Fixed import path
 import { WorkoutStickyHeader } from '../components/ui/WorkoutStickyHeader';
-import { ActiveWorkoutOverlay } from '../components/ActiveWorkoutOverlay'; 
+import { ActiveWorkoutOverlay } from '../components/workouts/ActiveWorkoutOverlay'; 
 import { QuickNavigationButton } from '../components/ui/QuickNavigationMenu';
 import { QuickUtilityButton } from '../components/ui/QuickUilityMenu';
 import { QuickBackButton } from '../components/ui/QuickBackButton';
-import { FloatingButtonProvider } from '../components/ui/FloatingButtonContext';
+import { FloatingButtonProvider } from '../providers/FloatingButtonContext';
 import { GlobalOverlay } from '../components/ui/GlobalOverlay';
 
 SplashScreen.preventAutoHideAsync();
@@ -48,7 +48,6 @@ function RootLayoutNav() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       <Stack.Screen name="auth" options={{ headerShown: false }} />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
       <Stack.Screen name="exercises" options={{ presentation: 'modal', title: 'Exercises', headerShown: false }} />

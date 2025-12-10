@@ -53,7 +53,7 @@ jest.mock('../components/ui/ThemeToggle', () => ({
   ThemeToggle: 'View',
 }));
 
-jest.mock('../app/providers/NavigationSettingsProvider', () => ({
+jest.mock('../providers/NavigationSettingsProvider', () => ({
   useNavigationSettings: () => ({
     isFabEnabled: false,
     toggleFab: jest.fn(),

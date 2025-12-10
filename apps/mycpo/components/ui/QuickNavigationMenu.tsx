@@ -5,7 +5,7 @@ import { useUITheme } from '@mycsuite/ui';
 import { usePathname, useRouter } from 'expo-router';
 
 import { RadialMenu, RadialMenuItem } from './RadialMenu';
-import { useFloatingButton } from './FloatingButtonContext';
+import { useFloatingButton } from '../../providers/FloatingButtonContext';
 
 // Configuration
 const BUTTON_SIZE = 60;

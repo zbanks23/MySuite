@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUITheme as useTheme } from '@mycsuite/ui';
-import { useActiveWorkout } from '../providers/ActiveWorkoutProvider';
+import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { ExerciseCard } from './ui/ExerciseCard';
+import { ExerciseCard } from '../ui/ExerciseCard';
 
 export function ActiveWorkoutOverlay() {
     const theme = useTheme();

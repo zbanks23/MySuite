@@ -1,6 +1,6 @@
-import { useColorScheme as rnUseColorScheme } from 'react-native';
-import { useContext } from 'react';
-import { ThemePreferenceContext } from '@/app/providers/AppThemeProvider';
+import { useColorScheme as rnUseColorScheme } from "react-native";
+import { useContext } from "react";
+import { ThemePreferenceContext } from "../providers/AppThemeProvider";
 
 export const useColorScheme = () => {
 	const ctx = useContext(ThemePreferenceContext);
