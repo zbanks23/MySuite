@@ -26,6 +26,7 @@ import {
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RoutineCard } from '../../components/workouts/RoutineCard';
+import { ActiveRoutineCard } from '../../components/workouts/ActiveRoutineCard';
 
 // --- Component ---
 
@@ -191,125 +192,15 @@ export default function Workout() {
 					
                     {/* Active Routine Section */}
                     {activeRoutineObj && (
-                        <View style={{marginBottom: 24}}>
-                             <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>Active Routine - {activeRoutineObj.name}</Text>
-                                <TouchableOpacity onPress={clearActiveRoutine}>
-                                    <Text style={{color: theme.icon, fontSize: 12}}>Exit</Text>
-                                </TouchableOpacity>
-                            </View>
-                            
-                            <View style={styles.activeRoutineCard}>
-                                {timelineDays.length === 0 ? (
-                                    <View style={{padding: 20, alignItems: 'center'}}>
-                                        <Text style={{fontSize: 18, fontWeight: '600', color: theme.primary, marginBottom: 8}}>Routine Completed!</Text>
-                                        <Text style={{color: theme.icon, textAlign: 'center'}}>You have finished all days in this routine.</Text>
-                                        <TouchableOpacity onPress={clearActiveRoutine} style={[styles.controlButton, {marginTop: 16}]}>
-                                            <Text style={styles.controlText}>Close Routine</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : (
-                                    <View style={{paddingVertical: 8}}>
-                                        {timelineDays.map((item: any, index: number) => {
-                                            const isToday = index === 0;
-                                            const isLast = index === timelineDays.length - 1;
-                                            const globalDayNum = dayIndex + index + 1;
-                                            const isCompletedToday = isToday && isDayCompleted;
-                                            
-                                            // Colors
-                                            const dotColor = isCompletedToday 
-                                                ? '#4CAF50' // Success Green 
-                                                : (isToday ? theme.primary : theme.surface);
-                                            
-                                            return (
-                                                <View key={index} style={{flexDirection: 'row'}}>
-                                                    {/* Timeline Column */}
-                                                    <View style={{width: 30, alignItems: 'center'}}>
-                                                        <View style={{
-                                                            width: 14, 
-                                                            height: 14, 
-                                                            borderRadius: 7, 
-                                                            backgroundColor: dotColor,
-                                                            borderWidth: isToday && !isCompletedToday ? 0 : 2,
-                                                            borderColor: isToday ? dotColor : (theme.options?.borderColor || 'rgba(150,150,150,0.3)'),
-                                                            zIndex: 2,
-                                                            marginTop: 4
-                                                        }} />
-                                                        {/* Line - Alway show to create bar effect */}
-                                                        <View style={{
-                                                            width: 2, 
-                                                            flex: 1, 
-                                                            backgroundColor: theme.surface, 
-                                                            marginVertical: -2,
-                                                            zIndex: 1
-                                                        }} />
-                                                        {/* End Indicator if this is the last day of routine */}
-                                                        {(index === timelineDays.length - 1 && globalDayNum === activeRoutineObj.sequence.length) && (
-                                                             <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: theme.surface, marginTop: -4, zIndex: 2}} />
-                                                        )}
-                                                    </View>
-                                                    
-                                                    {/* Content Column */}
-                                                    <View style={{flex: 1, paddingBottom: isLast ? 0 : 24, paddingLeft: 8}}>
-                                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                                            <Text style={{
-                                                                fontWeight: isToday ? '700' : '500', 
-                                                                fontSize: isToday ? 18 : 16,
-                                                                color: isCompletedToday ? theme.icon : (isToday ? theme.text : theme.icon),
-                                                                textDecorationLine: isCompletedToday ? 'line-through' : 'none',
-                                                                flex: 1,
-                                                                marginRight: 8
-                                                            }}>
-                                                                {item.type === 'rest' ? 'Rest Day' : (item.name || "Unknown Workout")}
-                                                            </Text>
-                                                            {isToday && !isCompletedToday && (
-                                                                <View style={{backgroundColor: theme.surface, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4}}>
-                                                                    <Text style={{fontSize: 10, color: theme.icon, fontWeight: '700'}}>TODAY</Text>
-                                                                </View>
-                                                            )}
-                                                            {isCompletedToday && (
-                                                                <View style={{backgroundColor: 'rgba(76, 175, 80, 0.1)', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4}}>
-                                                                    <Text style={{fontSize: 10, color: '#4CAF50', fontWeight: '700'}}>DONE</Text>
-                                                                </View>
-                                                            )}
-                                                        </View>
-                                                        
-                                                        {/* Actions for Today */}
-                                                        {isToday && !isCompletedToday && (
-                                                            <View style={{flexDirection: 'row', gap: 12, marginTop: 8}}>
-                                                                <TouchableOpacity 
-                                                                    style={[styles.controlButtonPrimary, {flex: 1, alignItems: 'center', justifyContent: 'center'}]}
-                                                                    onPress={() => {
-                                                                        if (item?.type === 'workout' && item.workout) {
-                                                                            startWorkout(item.workout.exercises || []);
-                                                                        } else {
-                                                                             Alert.alert("Rest Day", "Enjoy your rest!", [
-                                                                                 { text: "Mark Complete", onPress: () => markRoutineDayComplete() }
-                                                                             ]);
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <Text style={styles.controlTextPrimary}>
-                                                                        {item?.type === 'rest' ? 'Mark Complete' : 'Start Workout'}
-                                                                    </Text>
-                                                                </TouchableOpacity>
-                                                                
-                                                                <TouchableOpacity 
-                                                                    style={[styles.controlButton, {paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center'}]}
-                                                                    onPress={() => markRoutineDayComplete()}
-                                                                >
-                                                                    <Text style={styles.controlText}>Skip</Text>
-                                                                </TouchableOpacity>
-                                                            </View>
-                                                        )}
-                                                    </View>
-                                                </View>
-                                            );
-                                        })}
-                                    </View>
-                                )}
-                            </View>
-                        </View>
+                        <ActiveRoutineCard
+                            activeRoutineObj={activeRoutineObj}
+                            timelineDays={timelineDays}
+                            dayIndex={dayIndex}
+                            isDayCompleted={isDayCompleted}
+                            onClearRoutine={clearActiveRoutine}
+                            onStartWorkout={(exercises) => startWorkout(exercises)}
+                            onMarkComplete={markRoutineDayComplete}
+                        />
                     )}
 
                     {/* Routines Section */}
