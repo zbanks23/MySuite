@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useUITheme } from '@mycsuite/ui';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 
@@ -27,20 +27,19 @@ export function ActiveRoutineCard({
   onMarkComplete,
 }: ActiveRoutineCardProps) {
   const theme = useUITheme();
-  const styles = makeStyles(theme);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // In collapsed state, we only show the first day (Today)
   const daysToShow = isCollapsed ? timelineDays.slice(0, 1) : timelineDays;
 
   return (
-    <View style={{ marginBottom: 24 }}>
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, {flex: 1, marginRight: 8}]} numberOfLines={1}>Active Routine - {activeRoutineObj.name}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+    <View className="mb-6">
+      <View className="flex-row justify-between items-center mb-3">
+        <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark flex-1 mr-2" numberOfLines={1}>Active Routine - {activeRoutineObj.name}</Text>
+        <View className="flex-row items-center gap-4">
              <TouchableOpacity 
                 onPress={() => setIsCollapsed(!isCollapsed)} 
-                style={{padding: 8, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 20}}
+                className="p-2 bg-black/5 dark:bg-white/10 rounded-full"
             >
                 <IconSymbol 
                     name={isCollapsed ? "chevron.down" : "chevron.up"} 
@@ -49,26 +48,26 @@ export function ActiveRoutineCard({
                 />
             </TouchableOpacity>
             <TouchableOpacity onPress={onClearRoutine}>
-                <Text style={{ color: theme.icon, fontSize: 12 }}>Exit</Text>
+                <Text className="text-xs text-gray-500">Exit</Text>
             </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.activeRoutineCard}>
+      <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10">
         {timelineDays.length === 0 ? (
-          <View style={{ padding: 20, alignItems: 'center' }}>
-            <Text style={{ fontSize: 18, fontWeight: '600', color: theme.primary, marginBottom: 8 }}>
+          <View className="p-5 items-center">
+            <Text className="text-lg font-semibold text-primary dark:text-primary_dark mb-2">
               Routine Completed!
             </Text>
-            <Text style={{ color: theme.icon, textAlign: 'center' }}>
+            <Text className="text-gray-500 text-center">
               You have finished all days in this routine.
             </Text>
-            <TouchableOpacity onPress={onClearRoutine} style={[styles.controlButton, { marginTop: 16 }]}>
-              <Text style={styles.controlText}>Close Routine</Text>
+            <TouchableOpacity onPress={onClearRoutine} className="p-2.5 rounded-lg border border-transparent dark:border-white/10 bg-background dark:bg-background_dark mt-4">
+              <Text className="text-apptext dark:text-apptext_dark">Close Routine</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{ paddingVertical: 8 }}>
+          <View className="py-2">
             {daysToShow.map((item: any, index: number) => {
               // Note: timelineDays[0] is always "Today" relative to the current view
               const isToday = index === 0; 
@@ -86,9 +85,9 @@ export function ActiveRoutineCard({
                 : theme.surface;
 
               return (
-                <View key={index} style={{ flexDirection: 'row' }}>
+                <View key={index} className="flex-row">
                   {/* Timeline Column */}
-                  <View style={{ width: 30, alignItems: 'center' }}>
+                  <View className="w-[30px] items-center">
                     <View
                       style={{
                         width: 14,
@@ -99,21 +98,14 @@ export function ActiveRoutineCard({
                         borderColor: isToday
                           ? dotColor
                           : theme.options?.borderColor || 'rgba(150,150,150,0.3)',
-                        zIndex: 2,
-                        marginTop: 4,
                       }}
+                      className="z-[2] mt-1"
                     />
                    
                    {/* Vertical Line */}
                     {!isLastInView && (
                          <View
-                         style={{
-                             width: 2,
-                             flex: 1,
-                             backgroundColor: theme.surface,
-                             marginVertical: -2,
-                             zIndex: 1,
-                         }}
+                         className="w-[2px] flex-1 bg-surface dark:bg-surface_dark -my-0.5 z-[1]"
                          />
                     )}
                     
@@ -121,69 +113,37 @@ export function ActiveRoutineCard({
                     {isLastInView && !isCollapsed &&
                       globalDayNum === activeRoutineObj.sequence.length && (
                         <View
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: 4,
-                            backgroundColor: theme.surface,
-                            marginTop: -4,
-                            zIndex: 2,
-                          }}
+                          style={{ backgroundColor: theme.surface }}
+                          className="w-2 h-2 rounded-full -mt-1 z-[2]"
                         />
                       )}
                   </View>
 
                   {/* Content Column */}
-                  <View style={{ flex: 1, paddingBottom: isLastInView ? 0 : 24, paddingLeft: 8 }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
+                  <View className={`flex-1 pl-2 ${isLastInView ? '' : 'pb-6'}`}>
+                    <View className="flex-row justify-between items-center">
                       <Text
                         style={{
-                          fontWeight: isToday ? '700' : '500',
-                          fontSize: isToday ? 18 : 16,
-                          color: isCompletedToday
-                            ? theme.icon
-                            : isToday
-                            ? theme.text
-                            : theme.icon,
-                          textDecorationLine: isCompletedToday ? 'line-through' : 'none',
-                          flex: 1,
-                          marginRight: 8,
+                            fontWeight: isToday ? '700' : '500',
+                            fontSize: isToday ? 18 : 16,
+                            textDecorationLine: isCompletedToday ? 'line-through' : 'none',
                         }}
+                        className={`flex-1 mr-2 ${isCompletedToday ? 'text-gray-500' : isToday ? 'text-apptext dark:text-apptext_dark' : 'text-gray-500'}`}
                       >
                         {item.type === 'rest'
                           ? 'Rest Day'
                           : item.name || 'Unknown Workout'}
                       </Text>
                       {isToday && !isCompletedToday && (
-                        <View
-                          style={{
-                            backgroundColor: theme.surface,
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            borderRadius: 4,
-                          }}
-                        >
-                          <Text style={{ fontSize: 10, color: theme.icon, fontWeight: '700' }}>
+                        <View className="bg-surface dark:bg-surface_dark px-2 py-0.5 rounded">
+                          <Text className="text-[10px] text-gray-500 font-bold">
                             TODAY
                           </Text>
                         </View>
                       )}
                       {isCompletedToday && (
-                        <View
-                          style={{
-                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            borderRadius: 4,
-                          }}
-                        >
-                          <Text style={{ fontSize: 10, color: '#4CAF50', fontWeight: '700' }}>
+                        <View className="bg-[#4CAF50]/10 px-2 py-0.5 rounded">
+                          <Text className="text-[10px] text-[#4CAF50] font-bold">
                             DONE
                           </Text>
                         </View>
@@ -192,12 +152,9 @@ export function ActiveRoutineCard({
 
                     {/* Actions for Today */}
                     {isToday && !isCompletedToday && (
-                      <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+                      <View className="flex-row gap-3 mt-2">
                         <TouchableOpacity
-                          style={[
-                            styles.controlButtonPrimary,
-                            { flex: 1, alignItems: 'center', justifyContent: 'center' },
-                          ]}
+                          className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark flex-1 items-center justify-center"
                           onPress={() => {
                             if (item?.type === 'workout' && item.workout) {
                               onStartWorkout(item.workout.exercises || []);
@@ -208,19 +165,16 @@ export function ActiveRoutineCard({
                             }
                           }}
                         >
-                          <Text style={styles.controlTextPrimary}>
+                          <Text className="text-white font-semibold">
                             {item?.type === 'rest' ? 'Mark Complete' : 'Start Workout'}
                           </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          style={[
-                            styles.controlButton,
-                            { paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center' },
-                          ]}
+                          className="p-2.5 rounded-lg border border-transparent dark:border-white/10 bg-background dark:bg-background_dark px-4 items-center justify-center"
                           onPress={() => onMarkComplete()}
                         >
-                          <Text style={styles.controlText}>Skip</Text>
+                          <Text className="text-apptext dark:text-apptext_dark">Skip</Text>
                         </TouchableOpacity>
                       </View>
                     )}
@@ -234,45 +188,3 @@ export function ActiveRoutineCard({
     </View>
   );
 }
-
-const makeStyles = (theme: any) =>
-  StyleSheet.create({
-    sectionHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 12,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 8,
-      color: theme.text,
-    },
-    activeRoutineCard: {
-      backgroundColor: theme.surface,
-      borderRadius: 12,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: theme.options?.borderColor || 'rgba(150,150,150,0.1)',
-    },
-    controlButton: {
-      padding: 10,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.surface,
-      backgroundColor: theme.background,
-    },
-    controlButtonPrimary: {
-      padding: 10,
-      borderRadius: 8,
-      backgroundColor: theme.primary,
-    },
-    controlText: {
-      color: theme.text,
-    },
-    controlTextPrimary: {
-      color: '#fff',
-      fontWeight: '600',
-    },
-  });

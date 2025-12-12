@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
+import { View, ViewStyle, StyleProp } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -165,7 +165,7 @@ export function RadialMenu({
   });
 
   return (
-    <View style={[styles.container, style, { backgroundColor: 'transparent', overflow: 'visible' }]} pointerEvents="box-none">
+    <View className="items-center justify-center overflow-visible" style={[style, { backgroundColor: 'transparent' }]} pointerEvents="box-none">
        {items.map((item, index) => (
            <RadialMenuItemComponent 
              key={item.id}
@@ -181,7 +181,7 @@ export function RadialMenu({
 
       <GestureDetector gesture={composedGesture}>
         <Animated.View style={buttonStyle}>
-           <View style={[StyleSheet.absoluteFill, { backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.surface, borderRadius: buttonSize/2 }]} />
+           <View className="absolute inset-0" style={[{ backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.surface, borderRadius: buttonSize/2 }]} />
           <IconSymbol name={icon as any} size={buttonSize * 0.5} color={theme.text} />
         </Animated.View>
       </GestureDetector>
@@ -239,48 +239,13 @@ function RadialMenuItemComponent({
     });
 
     return (
-        <Animated.View style={[styles.menuItem, containerStyle]}>
-            <Animated.View style={[styles.menuItemCircle, { backgroundColor: theme.primary }, circleStyle]}>
+        <Animated.View style={containerStyle} className="absolute w-[52px] h-[52px] items-center justify-center">
+            <Animated.View style={[{ backgroundColor: theme.primary }, circleStyle]} className="w-[52px] h-[52px] rounded-full items-center justify-center shadow-sm">
                 <IconSymbol name={item.icon as any} size={28} color="#fff" />
             </Animated.View>
-             <Animated.Text style={[styles.label, { color: theme.text }, animatedLabelStyle]}>
+             <Animated.Text style={[{ color: theme.text }, animatedLabelStyle]} className="absolute -top-7 text-xs font-semibold w-20 text-center">
                 {item.label}
              </Animated.Text>
         </Animated.View>
     );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'visible',
-  },
-  menuItem: {
-      position: 'absolute',
-      width: 52,
-      height: 52,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-  menuItemCircle: {
-      width: 52,
-      height: 52,
-      borderRadius: 26,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      elevation: 4,
-  },
-  label: {
-      position: 'absolute',
-      top: -26,
-      fontSize: 12,
-      fontWeight: '600',
-      width: 80,
-      textAlign: 'center',
-  }
-});

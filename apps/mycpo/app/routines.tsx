@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View, Alert } from 'react-native';
+import { FlatList, TouchableOpacity, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '../components/ui/ThemedText';
 import { ThemedView } from '../components/ui/ThemedView';
@@ -13,8 +13,6 @@ export default function RoutinesScreen() {
   
   const { routines, deleteRoutine, startActiveRoutine } = useWorkoutManager();
   const { hasActiveSession, setExercises } = useActiveWorkout();
-
-  const styles = makeStyles(theme);
 
   const handleSetRoutine = (id: string, name: string, sequence: any[]) => {
       if (hasActiveSession) {
@@ -32,7 +30,6 @@ export default function RoutinesScreen() {
           }
       }
       
-      // Alert.alert('Routine Started', `Routine '${name}' allows you to track your progress.`);
       router.back();
   };
 
@@ -52,17 +49,17 @@ export default function RoutinesScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+    <ThemedView className="flex-1">
+      <ThemedView className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10">
+        <TouchableOpacity onPress={() => router.back()} className="p-2">
            <ThemedText type="link">Close</ThemedText>
         </TouchableOpacity>
         <ThemedText type="subtitle">My Routines</ThemedText>
-        <View style={{width: 50}} /> 
+        <View className="w-[50px]" /> 
       </ThemedView>
       
       {routines.length === 0 ? (
-          <View style={styles.emptyState}>
+          <View className="flex-1 items-center justify-center p-8">
               <ThemedText style={{color: theme.icon}}>No saved routines found.</ThemedText>
           </View>
       ) : (
@@ -70,76 +67,33 @@ export default function RoutinesScreen() {
             data={routines}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View style={styles.item}>
-                <View style={{flex: 1}}>
+              <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10">
+                <View className="flex-1">
                     <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
                     <ThemedText style={{color: theme.icon ?? '#888', fontSize: 12}}>
                         {new Date(item.createdAt).toLocaleDateString()} • {item.sequence?.length || 0} Days
                     </ThemedText> 
                 </View>
-                <View style={styles.actions}>
+                <View className="flex-row gap-2">
                     <TouchableOpacity 
                         onPress={() => handleSetRoutine(item.id, item.name, item.sequence)} 
-                        style={[styles.button, {backgroundColor: theme.primary}]}
+                        className="py-1.5 px-3 rounded-md bg-primary dark:bg-primary_dark"
                     >
-                        <ThemedText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>Set Active</ThemedText>
+                        <ThemedText className="text-white text-sm font-semibold">Set Active</ThemedText>
                     </TouchableOpacity>
                     <TouchableOpacity 
                         onPress={() => handleDelete(item.id, item.name)} 
-                        style={[styles.button, {borderColor: theme.surface, borderWidth: 1}]}
+                        className="py-1.5 px-3 rounded-md border border-surface dark:border-white/10"
                     >
-                        <ThemedText style={{fontSize: 14}}>Delete</ThemedText>
+                        <ThemedText className="text-sm">Delete</ThemedText>
                     </TouchableOpacity>
                 </View>
               </View>
             )}
-            style={styles.list}
+            className="flex-1"
             contentContainerStyle={{ paddingBottom: 120 }}
           />
       )}
     </ThemedView>
   );
 }
-
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  closeButton: {
-      padding: 8,
-  },
-  list: {
-      flex: 1,
-  },
-  emptyState: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 32,
-  },
-  item: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.surface,
-  },
-  actions: {
-      flexDirection: 'row',
-      gap: 8,
-  },
-  button: {
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      borderRadius: 6,
-  }
-});

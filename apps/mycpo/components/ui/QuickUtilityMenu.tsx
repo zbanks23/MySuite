@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useUITheme } from '@mycsuite/ui';
 import { useRouter, usePathname } from 'expo-router';
@@ -133,7 +132,11 @@ export function QuickUtilityButton() {
   if (!currentActions || currentActions.length === 0) return null;
 
   return (
-    <Animated.View style={[styles.container, containerAnimatedStyle]} pointerEvents="box-none">
+    <Animated.View 
+        className="absolute bottom-10 right-10 items-center justify-center z-[1100] w-[60px] h-[60px] overflow-visible"
+        style={[containerAnimatedStyle]} 
+        pointerEvents="box-none"
+    >
        <RadialMenu 
          items={menuItems} 
          icon="ellipsis" // Always ellipsis as requested
@@ -147,17 +150,3 @@ export function QuickUtilityButton() {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 40, 
-    right: 40, 
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1100, 
-    width: 60, // Constrain size to avoid blocking
-    height: 60,
-    overflow: 'visible',
-  }
-});

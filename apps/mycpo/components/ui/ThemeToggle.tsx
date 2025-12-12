@@ -7,7 +7,7 @@ export const ThemeToggle = () => {
   const { preference, setPreference } = useThemePreference();
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 12 }}>
+    <View className="flex-row items-center my-3">
       <SharedButton
         title="Light"
         onPress={() => setPreference('light')}

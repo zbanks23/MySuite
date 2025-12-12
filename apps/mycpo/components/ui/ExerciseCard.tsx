@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { IconSymbol } from './icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/useWorkoutManager';
@@ -30,33 +30,31 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
         // User might do same weight.
     };
 
-    const styles = makeStyles(theme);
-
     return (
-        <View style={[styles.card, isCurrent && styles.activeCard]}>
+        <View className={`bg-surface dark:bg-surface_dark rounded-2xl p-4 mb-3 w-full ${isCurrent ? 'border-2 border-primary dark:border-primary_dark' : ''}`}>
             {/* Header */}
-            <View style={styles.header}>
+            <View className="flex-row justify-between items-center mb-4">
                 <View>
-                    <Text style={styles.name}>{exercise.name}</Text>
-                    <Text style={styles.details}>Target: {exercise.sets} sets • {exercise.reps} reps</Text>
+                    <Text className="text-lg font-bold text-apptext dark:text-apptext_dark mb-1">{exercise.name}</Text>
+                    <Text className="text-sm text-gray-500">Target: {exercise.sets} sets • {exercise.reps} reps</Text>
                 </View>
                 {isFinished && <IconSymbol name="checkmark.circle.fill" size={24} color={theme.primary} />}
                 {isCurrent && !isFinished && (
-                    <View style={styles.badge}>
-                        <Text style={styles.badgeText}>CURRENT</Text>
+                    <View className="bg-primary dark:bg-primary_dark px-2 py-1 rounded-lg ml-2">
+                        <Text className="text-white text-[10px] font-bold">CURRENT</Text>
                     </View>
                 )}
             </View>
 
-            <View style={styles.content}>
+            <View className="pt-3">
                 {/* Headers */}
-                <View style={styles.tableHeader}>
-                    <Text style={[styles.colHead, styles.colSet]}>SET</Text>
-                    <Text style={[styles.colHead, styles.colPrev]}>PREVIOUS</Text>
-                    <Text style={[styles.colHead, styles.colInput]}>LBS</Text>
-                    <Text style={[styles.colHead, styles.colInput]}>REPS</Text>
-                    <View style={styles.colAction} />
-                    <View style={styles.colDelete} />
+                <View className="flex-row mb-2 px-1">
+                    <Text className="text-[10px] items-center justify-center font-bold uppercase text-center w-[30px] text-gray-500">SET</Text>
+                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 flex-1">PREVIOUS</Text>
+                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px]">LBS</Text>
+                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px]">REPS</Text>
+                    <View className="w-[40px] items-center" />
+                    <View className="w-[30px] items-center justify-center" />
                 </View>
 
                 {/* Render Rows */}
@@ -66,59 +64,62 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                     const isCurrentSet = !isCompleted && i === (exercise.logs?.length || 0);
                     
                     return (
-                        <View key={i} style={[styles.row, isCurrentSet && styles.activeRow]}>
+                        <View key={i} className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
                             {/* Set Number */}
-                            <View style={styles.colSet}>
-                                <View style={[styles.setCircle, isCompleted && styles.setCircleCompleted, isCurrentSet && styles.setCircleActive]}>
-                                    <Text style={[styles.setNum, isCompleted && styles.setNumCompleted]}>{i + 1}</Text>
+                            <View className="w-[30px]">
+                                <View className={`w-6 h-6 rounded-full items-center justify-center ${isCompleted ? 'bg-primary dark:bg-primary_dark' : 'bg-transparent'} ${isCurrentSet ? 'border border-primary dark:border-primary_dark' : ''}`}>
+                                    <Text className={`text-xs font-bold ${isCompleted ? 'text-white' : 'text-gray-500'}`}>{i + 1}</Text>
                                 </View>
                             </View>
 
                             {/* Previous (Placeholder for now, could be history) */}
-                            <Text style={[styles.colPrev, styles.prevText]}>-</Text>
+                            <Text className="flex-1 text-center text-xs text-gray-500">-</Text>
 
                             {/* Inputs / Values */}
                             {isCompleted ? (
                                 <>
-                                    <Text style={[styles.colInput, styles.valueText]}>{log.weight}</Text>
-                                    <Text style={[styles.colInput, styles.valueText]}>{log.reps}</Text>
-                                    <View style={styles.colAction}>
+                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark">{log.weight}</Text>
+                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark">{log.reps}</Text>
+                                    <View className="w-[40px] items-center">
                                          <IconSymbol name="checkmark" size={16} color={theme.primary} />
                                     </View>
                                 </>
                             ) : isCurrentSet ? (
                                 <>
                                     <TextInput 
-                                        style={styles.cellInput} 
+                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
                                         value={weight} 
                                         onChangeText={setWeight} 
                                         placeholder="-" 
                                         keyboardType="numeric" 
-                                        placeholderTextColor={theme.icon}
+                                        placeholderTextColor={theme.icon || '#9ca3af'}
                                     />
                                     <TextInput 
-                                        style={styles.cellInput} 
+                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
                                         value={reps} 
                                         onChangeText={setReps} 
                                         placeholder={exercise.reps.toString()}
                                         keyboardType="numeric" 
-                                        placeholderTextColor={theme.icon}
+                                        placeholderTextColor={theme.icon || '#9ca3af'}
                                     />
-                                    <TouchableOpacity style={styles.checkBtn} onPress={handleComplete}>
+                                    <TouchableOpacity 
+                                        className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1" 
+                                        onPress={handleComplete}
+                                    >
                                         <IconSymbol name="checkmark" size={20} color="#fff" />
                                     </TouchableOpacity>
                                 </>
                             ) : (
                                 <>
-                                    <Text style={[styles.colInput, styles.placeholderText]}>-</Text>
-                                    <Text style={[styles.colInput, styles.placeholderText]}>-</Text>
-                                    <View style={styles.colAction} />
+                                    <Text className="w-[60px] text-center text-sm text-gray-300">-</Text>
+                                    <Text className="w-[60px] text-center text-sm text-gray-300">-</Text>
+                                    <View className="w-[40px] items-center" />
                                 </>
                             )}
                             
                             {/* Delete Action */}
-                            <TouchableOpacity style={styles.colDelete} onPress={() => onDeleteSet(i)}>
-                                <IconSymbol name="trash" size={16} color={theme.icon} />
+                            <TouchableOpacity className="w-[30px] items-center justify-center" onPress={() => onDeleteSet(i)}>
+                                <IconSymbol name="trash" size={16} color={theme.icon || '#9ca3af'} />
                             </TouchableOpacity>
                         </View>
                     );
@@ -126,102 +127,21 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
 
                 {/* Rest Timer (Compact) */}
                 {isCurrent && restSeconds > 0 && (
-                     <View style={styles.restBar}>
+                     <View className="flex-row items-center justify-center gap-1.5 mt-2 p-2 bg-black/5 dark:bg-white/5 rounded-lg">
                         <IconSymbol name="timer" size={16} color={theme.primary} />
-                        <Text style={styles.restText}>{formatSeconds(restSeconds)}</Text>
+                        <Text className="text-sm font-bold text-apptext dark:text-apptext_dark tabular-nums">{formatSeconds(restSeconds)}</Text>
                     </View>
                 )}
 
                 {/* Add Set Button */}
-                <TouchableOpacity style={styles.addSetBtn} onPress={onAddSet}>
+                <TouchableOpacity 
+                    className="flex-row items-center justify-center py-3 mt-2 gap-2 border-t border-black/5 dark:border-white/10" 
+                    onPress={onAddSet}
+                >
                      <IconSymbol name="plus.circle.fill" size={20} color={theme.primary} />
-                     <Text style={styles.addSetText}>Add Set</Text>
+                     <Text className="text-sm font-semibold text-primary dark:text-primary_dark">Add Set</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
-
-const makeStyles = (theme: any) => StyleSheet.create({
-    card: {
-        backgroundColor: theme.surface,
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-        width: '100%',
-    },
-    activeCard: {
-        borderColor: theme.primary,
-        borderWidth: 2,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    name: { fontSize: 18, fontWeight: '700', color: theme.text, marginBottom: 4 },
-    details: { fontSize: 14, color: theme.icon },
-    badge: { backgroundColor: theme.primary, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, marginLeft: 8 },
-    badgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
-    
-    content: { paddingTop: 12 },
-    
-    tableHeader: { flexDirection: 'row', marginBottom: 8, paddingHorizontal: 4 },
-    colHead: { fontSize: 10, color: theme.icon, fontWeight: '700', textTransform: 'uppercase', textAlign: 'center' },
-    colSet: { width: 30 },
-    colPrev: { flex: 1, textAlign: 'center' },
-    colInput: { width: 60, textAlign: 'center' },
-    colAction: { width: 40, alignItems: 'center' },
-    colDelete: { width: 30, alignItems: 'center', justifyContent: 'center' },
-
-    row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, height: 44, backgroundColor: theme.surface, borderRadius: 8 },
-    activeRow: { backgroundColor: theme.surfaceComponent || '#f8f9fa' }, // Slight highlight for active row
-
-    setCircle: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
-    setCircleCompleted: { backgroundColor: theme.primary },
-    setCircleActive: { borderWidth: 1, borderColor: theme.primary },
-    setNum: { fontSize: 12, fontWeight: '700', color: theme.icon },
-    setNumCompleted: { color: '#fff' },
-
-    prevText: { fontSize: 12, color: theme.icon },
-    valueText: { fontSize: 14, fontWeight: '700', color: theme.text },
-    placeholderText: { fontSize: 14, color: theme.border },
-
-    cellInput: { 
-        width: 60, 
-        height: 36, 
-        backgroundColor: theme.background, 
-        borderRadius: 8, 
-        textAlign: 'center', 
-        fontSize: 16, 
-        fontWeight: '700',
-        color: theme.text,
-        marginHorizontal: 4
-    },
-    
-    checkBtn: { 
-        width: 36, 
-        height: 36, 
-        borderRadius: 8, 
-        backgroundColor: theme.primary, 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        marginLeft: 4
-    },
-    
-    restBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 8, padding: 8, backgroundColor: theme.surfaceComponent, borderRadius: 8 },
-    restText: { fontSize: 14, fontWeight: '700', color: theme.text, fontVariant: ['tabular-nums'] },
-
-    addSetBtn: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        paddingVertical: 12, 
-        marginTop: 8,
-        gap: 8,
-        borderTopWidth: 1,
-        borderTopColor: theme.border
-    },
-    addSetText: { fontSize: 14, fontWeight: '600', color: theme.primary },
-});

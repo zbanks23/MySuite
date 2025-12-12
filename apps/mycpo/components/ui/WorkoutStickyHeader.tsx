@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUITheme } from '@mycsuite/ui';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
@@ -23,12 +23,6 @@ export function WorkoutStickyHeader() {
         return null; // Don't show if no workout at all
     }
 
-    // Styles
-    const containerStyle = [
-        styles.container, 
-        { paddingTop: insets.top + 8, backgroundColor: theme.surface }
-    ];
-
     // Config based on screen state
     // User requested title to ALWAYS be the workout name
     const title = workoutName || "Current Workout";
@@ -43,71 +37,24 @@ export function WorkoutStickyHeader() {
             layout={Layout.springify()} // Animate layout changes if any (e.g. height)
             entering={FadeIn.duration(300)}
             exiting={FadeOut.duration(300)}
-            style={containerStyle}
+            style={{ paddingTop: insets.top + 8 }}
+            className="absolute top-0 left-0 right-0 z-50 pb-6 px-4 shadow-sm border-b border-black/5 bg-surface dark:bg-surface_dark"
         >
             <TouchableOpacity 
-                style={styles.content} 
+                className="flex-row items-center justify-between"
                 onPress={handlePress}
                 activeOpacity={0.8}
             >
-                 <View style={styles.leftInfo}>
-                     <View style={[styles.indicator, { backgroundColor: isRunning ? theme.primary : theme.icon }]} />
-                     <Text style={[styles.label, { color: theme.text }]}>{title}</Text>
+                 <View className="flex-row items-center gap-2">
+                     <View className={`w-2 h-2 rounded-full ${isRunning ? 'bg-primary dark:bg-primary_dark' : 'bg-gray-400'}`} />
+                     <Text className="text-sm font-semibold text-apptext dark:text-apptext_dark">{title}</Text>
                  </View>
                  
-                 <View style={styles.rightInfo}>
-                     <Text style={[styles.timer, { color: theme.text }]}>{formatSeconds(workoutSeconds)}</Text>
+                 <View className="flex-row items-center gap-2">
+                     <Text className="text-sm font-semibold tabular-nums text-apptext dark:text-apptext_dark">{formatSeconds(workoutSeconds)}</Text>
                      <IconSymbol name={rightIcon} size={16} color={theme.icon ?? '#000'} />
                  </View>
             </TouchableOpacity>
         </Animated.View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000, // Above everything
-        paddingBottom: 24,
-        paddingHorizontal: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 4,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(0,0,0,0.05)',
-    },
-    content: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    leftInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    indicator: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    rightInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    timer: {
-        fontSize: 14,
-        fontVariant: ['tabular-nums'],
-        fontWeight: '600',
-    }
-});

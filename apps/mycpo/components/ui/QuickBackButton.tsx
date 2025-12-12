@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useUITheme } from '@mycsuite/ui';
 import { useRouter } from 'expo-router';
@@ -8,8 +8,6 @@ import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import * as Haptics from 'expo-haptics';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
-
-const BUTTON_SIZE = 60;
 
 export function QuickBackButton() {
   const theme = useUITheme();
@@ -48,9 +46,13 @@ export function QuickBackButton() {
   });
 
   return (
-    <Animated.View style={[styles.container, containerAnimatedStyle]} pointerEvents="box-none">
+    <Animated.View 
+        className="absolute bottom-10 left-10 items-center justify-center z-[900]"
+        style={[containerAnimatedStyle]} 
+        pointerEvents="box-none"
+    >
        <TouchableOpacity 
-         style={[styles.button, { backgroundColor: theme.surface }]} 
+         className="w-[60px] h-[60px] rounded-full items-center justify-center shadow-lg bg-surface dark:bg-surface_dark"
          onPress={handlePress}
          activeOpacity={0.8}
        >
@@ -59,26 +61,3 @@ export function QuickBackButton() {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 40,
-    left: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 900,
-  },
-  button: {
-    width: BUTTON_SIZE,
-    height: BUTTON_SIZE,
-    borderRadius: BUTTON_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  }
-});

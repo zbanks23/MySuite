@@ -53,7 +53,7 @@ export default function AuthScreen() {
   return (
     <View className="flex-1 justify-center p-4">
       <TextInput
-        className="p-3 mb-4 border border-border rounded-lg bg-background text-apptext dark:bg-background-dark dark:text-apptext-dark dark:border-border-dark"
+        className="p-3 mb-4 border border-border rounded-lg bg-background text-apptext dark:bg-background_dark dark:text-apptext_dark dark:border-border_dark"
         placeholder="Email"
         placeholderTextColor="#9CA3AF"
         value={email}
@@ -61,7 +61,7 @@ export default function AuthScreen() {
         autoCapitalize="none"
       />
       <TextInput
-        className="p-3 mb-4 border border-border rounded-lg bg-background text-apptext dark:bg-background-dark dark:text-apptext-dark dark:border-border-dark"
+        className="p-3 mb-4 border border-border rounded-lg bg-background text-apptext dark:bg-background_dark dark:text-apptext_dark dark:border-border_dark"
         placeholder="Password"
         placeholderTextColor="#9CA3AF"
         value={password}
@@ -83,7 +83,7 @@ export default function AuthScreen() {
               ? 'text-green-600'
               : status.type === 'signing-in'
               ? 'text-blue-600'
-              : 'text-apptext dark:text-apptext-dark')
+              : 'text-apptext dark:text-apptext_dark')
           }
           accessibilityLiveRegion="polite"
         >

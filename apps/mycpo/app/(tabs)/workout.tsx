@@ -1,10 +1,9 @@
-"use client"
+
 
 import React, {useState} from "react";
 import {
  	View,
  	Text,
- 	StyleSheet,
  	FlatList,
  	TouchableOpacity,
  	Modal,
@@ -176,40 +175,40 @@ export default function Workout() {
 
 
 
-	const styles = makeStyles(theme);
+
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.header}>
-				<Text style={styles.title}>Workout</Text>
+		<SafeAreaView className="flex-1 p-4 bg-background dark:bg-background_dark">
+			<View className="flex-row justify-between items-center">
+				<Text className="text-2xl font-bold text-apptext dark:text-apptext_dark">Workout</Text>
 			</View>
 
 			{/* Controls Row */}
-			<View style={styles.controlsRow}>
-					<TouchableOpacity style={[styles.controlButton, {flex: 1, marginRight: 0}]} onPress={handleStartEmpty} accessibilityLabel="Start empty workout">
-						<Text style={styles.controlText}>Start Empty</Text>
+			<View className="flex-row gap-2 my-3">
+					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={handleStartEmpty} accessibilityLabel="Start empty workout">
+						<Text className="text-apptext dark:text-apptext_dark">Start Empty</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={[styles.controlButton, {flex: 1, marginRight: 0}]} onPress={() => router.push('/workout-history' as any)} accessibilityLabel="History">
-						<Text style={styles.controlText}>History</Text>
+					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={() => router.push('/workout-history' as any)} accessibilityLabel="History">
+						<Text className="text-apptext dark:text-apptext_dark">History</Text>
 					</TouchableOpacity>
 				</View>
 
 			{/* Dashboard: Routines & Saved Workouts */}
 			<ScrollView 
-				style={styles.dashboardContainer} 
+				className="flex-1 mt-3"
 				contentContainerStyle={{paddingBottom: 40, flexGrow: 1}}
 				showsVerticalScrollIndicator={false}
 			>
 					
                     {/* Saved Workouts Section (Quick Access) */}
-                    <View style={styles.sectionHeader}>
-                         <Text style={styles.sectionTitle}>Saved Workouts</Text>
+                    <View className="flex-row justify-between items-center mb-3">
+                         <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Saved Workouts</Text>
                          <TouchableOpacity onPress={() => setWorkoutsListOpen(true)}>
-                            <Text style={{color: theme.primary}}>See All</Text>
+                            <Text className="text-primary dark:text-primary_dark">See All</Text>
                         </TouchableOpacity>
                     </View>
                      {savedWorkouts.length === 0 ? (
-                        <Text style={{color: theme.icon}}>No saved workouts.</Text>
+                        <Text className="text-gray-500 dark:text-gray-400">No saved workouts.</Text>
                     ) : (
 						<FlatList
 							data={savedWorkouts}
@@ -217,18 +216,18 @@ export default function Workout() {
 							keyExtractor={(i) => i.id}
 							renderItem={({item}) => (
 								<TouchableOpacity 
-									style={styles.workoutCard} 
+									className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-3 flex-row items-center justify-between"
 									onPress={() => loadWorkout(item.id)}
 									onLongPress={() => deleteSavedWorkout(item.id)}
 								>
-									<Text style={[styles.workoutCardTitle, {flex: 1}]} numberOfLines={1}>{item.name}</Text>
-									<Text style={{color: theme.icon, fontSize: 12}}>{item.exercises?.length || 0} Exercises</Text>
+									<Text className="font-semibold text-apptext dark:text-apptext_dark text-base flex-1" numberOfLines={1}>{item.name}</Text>
+									<Text className="text-gray-500 dark:text-gray-400 text-xs">{item.exercises?.length || 0} Exercises</Text>
 								</TouchableOpacity>
 							)}
 						/>
                     )}
 
-                    <View style={{height: 24}} />
+                    <View className="h-6" />
 
                     {/* Active Routine Section */}
                     {activeRoutineObj ? (
@@ -242,20 +241,20 @@ export default function Workout() {
                             onMarkComplete={markRoutineDayComplete}
                         />
                     ) : (
-                        <View style={{ marginBottom: 24 }}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>Active Routine</Text>
+                        <View className="mb-6">
+                            <View className="flex-row justify-between items-center mb-3">
+                                <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Active Routine</Text>
                             </View>
-                            <View style={styles.activeRoutineCard}>
-                                <View style={{ padding: 20, alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 16, fontWeight: '600', color: theme.text, marginBottom: 8 }}>
+                            <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-border dark:border-border_dark">
+                                <View className="p-5 items-center">
+                                    <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">
                                         No active routine
                                     </Text>
-                                    <Text style={{ color: theme.icon, textAlign: 'center', marginBottom: 16 }}>
+                                    <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
                                         Select a routine below to start tracking your progress.
                                     </Text>
-                                    <TouchableOpacity onPress={() => router.push('/routines' as any)} style={styles.controlButtonPrimary}>
-                                        <Text style={styles.controlTextPrimary}>Choose Routine</Text>
+                                    <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark">
+                                        <Text className="text-white font-semibold">Choose Routine</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -263,18 +262,18 @@ export default function Workout() {
                     )}
 
                     {/* Routines Section */}
-                    <View style={[styles.sectionHeader, {marginTop: 24}]}>
-                        <Text style={styles.sectionTitle}>My Routines</Text>
+                    <View className="flex-row justify-between items-center mb-3 mt-6">
+                        <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
                         <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
-                            <Text style={{color: theme.primary}}>+ New</Text>
+                            <Text className="text-primary dark:text-primary_dark">+ New</Text>
                         </TouchableOpacity>
                     </View>
                     
                     {routines.length === 0 ? (
-                        <View style={styles.emptyState}>
-                            <Text style={{color: theme.icon, marginBottom: 8}}>No routines yet.</Text>
-                            <TouchableOpacity onPress={() => setCreateRoutineOpen(true)} style={styles.controlButton}>
-                                <Text style={styles.controlText}>Create a Routine</Text>
+                        <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
+                            <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
+                            <TouchableOpacity onPress={() => setCreateRoutineOpen(true)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+                                <Text className="text-apptext dark:text-apptext_dark">Create a Routine</Text>
                             </TouchableOpacity>
                         </View>
                     ) : (
@@ -298,36 +297,36 @@ export default function Workout() {
 
 			{/* Saved Workouts modal */}
 			<Modal visible={isWorkoutsListOpen} animationType="slide" transparent={true}>
-				<View style={styles.modalBackdrop}>
-					<View style={[styles.modalCard, {maxHeight: '80%'}]}>
-						<Text style={styles.modalTitle}>Saved Workouts</Text>
+				<View className="flex-1 justify-center items-center bg-black/40">
+					<View className="w-[90%] p-4 rounded-xl bg-background dark:bg-background_dark max-h-[80%]">
+						<Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">Saved Workouts</Text>
 						{savedWorkouts.length === 0 ? (
-							<Text style={{color: theme.icon}}>No saved workouts</Text>
+							<Text className="text-gray-500 dark:text-gray-400">No saved workouts</Text>
 						) : (
 							<FlatList
 								data={savedWorkouts}
 								keyExtractor={(i) => i.id}
 								renderItem={({item}) => (
-									<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8}}>
+									<View className="flex-row items-center justify-between py-2">
 										<View>
-											<Text style={{color: theme.text, fontWeight: '600'}}>{item.name}</Text>
-											<Text style={{color: theme.icon, fontSize: 12}}>{new Date(item.createdAt).toLocaleString()}</Text>
+											<Text className="text-apptext dark:text-apptext_dark font-semibold">{item.name}</Text>
+											<Text className="text-gray-500 dark:text-gray-400 text-xs">{new Date(item.createdAt).toLocaleString()}</Text>
 										</View>
-										<View style={{flexDirection: 'row'}}>
-											<TouchableOpacity onPress={() => loadWorkout(item.id)} style={[styles.controlButton, {marginRight: 8}]}> 
-												<Text style={styles.controlText}>Load</Text>
+										<View className="flex-row">
+											<TouchableOpacity onPress={() => loadWorkout(item.id)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-2 bg-background dark:bg-background_dark"> 
+												<Text className="text-apptext dark:text-apptext_dark">Load</Text>
 											</TouchableOpacity>
-											<TouchableOpacity onPress={() => deleteSavedWorkout(item.id)} style={styles.controlButton}>
-												<Text style={styles.controlText}>Delete</Text>
+											<TouchableOpacity onPress={() => deleteSavedWorkout(item.id)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+												<Text className="text-apptext dark:text-apptext_dark">Delete</Text>
 											</TouchableOpacity>
 										</View>
 									</View>
 								)}
 							/>
 						)}
-						<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12}}>
-							<TouchableOpacity onPress={() => setWorkoutsListOpen(false)} style={styles.controlButton}>
-								<Text style={styles.controlText}>Close</Text>
+						<View className="flex-row justify-end mt-3">
+							<TouchableOpacity onPress={() => setWorkoutsListOpen(false)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+								<Text className="text-apptext dark:text-apptext_dark">Close</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -336,48 +335,48 @@ export default function Workout() {
 
 			{/* Create/Edit routine (schedule) modal */}
 			<Modal visible={isCreateRoutineOpen} animationType="slide" transparent={true}>
-				<View style={styles.modalBackdrop}>
-					<View style={[styles.modalCard, {maxHeight: '85%'}]}>
-						<Text style={styles.modalTitle}>{editingRoutineId ? 'Edit Routine' : 'Create Routine'}</Text>
-						<TextInput placeholder="Routine name" value={routineDraftName} onChangeText={setRoutineDraftName} style={styles.input} />
-						<Text style={{color: theme.icon, marginBottom: 8}}>Add days from saved workouts or add Rest days.</Text>
-						<View style={{flexDirection: 'row', gap: 8, marginBottom: 8}}>
+				<View className="flex-1 justify-center items-center bg-black/40">
+					<View className="w-[90%] p-4 rounded-xl bg-background dark:bg-background_dark max-h-[85%]">
+						<Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">{editingRoutineId ? 'Edit Routine' : 'Create Routine'}</Text>
+						<TextInput placeholder="Routine name" value={routineDraftName} onChangeText={setRoutineDraftName} className="border border-surface dark:border-surface_dark rounded-lg p-2.5 mb-2 text-apptext dark:text-apptext_dark" placeholderTextColor="#9CA3AF" />
+						<Text className="text-gray-500 dark:text-gray-400 mb-2">Add days from saved workouts or add Rest days.</Text>
+						<View className="flex-row gap-2 mb-2">
 							<FlatList
 								data={savedWorkouts}
 								horizontal
 								keyExtractor={(i) => i.id}
 								renderItem={({item}) => (
-									<TouchableOpacity onPress={() => addDayToSequence(item)} style={[styles.controlButton, {marginRight: 8}]}> 
-										<Text style={styles.controlText}>{item.name}</Text>
+									<TouchableOpacity onPress={() => addDayToSequence(item)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-2 bg-background dark:bg-background_dark"> 
+										<Text className="text-apptext dark:text-apptext_dark">{item.name}</Text>
 									</TouchableOpacity>
 								)}
 							/>
-							<TouchableOpacity onPress={() => addDayToSequence('rest')} style={styles.controlButton}>
-								<Text style={styles.controlText}>Rest</Text>
+							<TouchableOpacity onPress={() => addDayToSequence('rest')} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+								<Text className="text-apptext dark:text-apptext_dark">Rest</Text>
 							</TouchableOpacity>
 						</View>
 
 						{routineSequence.length === 0 ? (
-							<Text style={{color: theme.icon}}>No days added</Text>
+							<Text className="text-gray-500 dark:text-gray-400">No days added</Text>
 						) : (
 							<FlatList
 								data={routineSequence}
 								keyExtractor={(i) => i.id}
 								renderItem={({item, index}) => (
-									<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6}}>
+									<View className="flex-row items-center justify-between py-1.5">
 										<View>
-											<Text style={{color: theme.text, fontWeight: '600'}}>{index + 1}. {item.name}</Text>
-											<Text style={{color: theme.icon, fontSize: 12}}>{item.type === 'rest' ? 'Rest day' : `Workout: ${item.name}`}</Text>
+											<Text className="text-apptext dark:text-apptext_dark font-semibold">{index + 1}. {item.name}</Text>
+											<Text className="text-gray-500 dark:text-gray-400 text-xs">{item.type === 'rest' ? 'Rest day' : `Workout: ${item.name}`}</Text>
 										</View>
-										<View style={{flexDirection: 'row'}}>
-											<TouchableOpacity onPress={() => moveSequenceItem(index, -1)} style={[styles.controlButton, {marginRight: 6}]}> 
-												<Text style={styles.controlText}>↑</Text>
+										<View className="flex-row">
+											<TouchableOpacity onPress={() => moveSequenceItem(index, -1)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-1.5 bg-background dark:bg-background_dark"> 
+												<Text className="text-apptext dark:text-apptext_dark">↑</Text>
 											</TouchableOpacity>
-											<TouchableOpacity onPress={() => moveSequenceItem(index, 1)} style={[styles.controlButton, {marginRight: 6}]}> 
-												<Text style={styles.controlText}>↓</Text>
+											<TouchableOpacity onPress={() => moveSequenceItem(index, 1)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-1.5 bg-background dark:bg-background_dark"> 
+												<Text className="text-apptext dark:text-apptext_dark">↓</Text>
 											</TouchableOpacity>
-											<TouchableOpacity onPress={() => removeSequenceItem(item.id)} style={styles.controlButton}> 
-												<Text style={styles.controlText}>Remove</Text>
+											<TouchableOpacity onPress={() => removeSequenceItem(item.id)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark"> 
+												<Text className="text-apptext dark:text-apptext_dark">Remove</Text>
 											</TouchableOpacity>
 										</View>
 									</View>
@@ -385,7 +384,7 @@ export default function Workout() {
 							/>
 						)}
 
-						<View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+						<View className="flex-row justify-between items-center mt-3">
                             {editingRoutineId ? (
                                 <TouchableOpacity 
                                     onPress={() => {
@@ -394,7 +393,8 @@ export default function Workout() {
                                              handleCloseRoutineModal();
                                         });
                                     }} 
-                                    style={[styles.controlButton, {borderColor: theme.options?.destructiveColor || '#ff4444'}]}
+                                    style={{borderColor: theme.options?.destructiveColor || '#ff4444'}}
+									className="p-2.5 rounded-lg border bg-background dark:bg-background_dark"
                                 >
                                     <Text style={{color: theme.options?.destructiveColor || '#ff4444'}}>Delete</Text>
                                 </TouchableOpacity>
@@ -402,12 +402,12 @@ export default function Workout() {
                                 <View />
                             )}
 
-                             <View style={{flexDirection: 'row'}}>
-                                <TouchableOpacity onPress={handleCloseRoutineModal} style={[styles.controlButton, {marginRight: 8}]}> 
-                                    <Text>Cancel</Text>
+                             <View className="flex-row">
+                                <TouchableOpacity onPress={handleCloseRoutineModal} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-2 bg-background dark:bg-background_dark"> 
+                                    <Text className="text-apptext dark:text-apptext_dark">Cancel</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity disabled={isSaving} onPress={saveRoutineDraft} style={[styles.controlButtonPrimary, isSaving ? styles.controlButtonDisabled : null]}>
-                                    {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.controlTextPrimary}>{editingRoutineId ? 'Save Changes' : 'Create Routine'}</Text>}
+                                <TouchableOpacity disabled={isSaving} onPress={saveRoutineDraft} className={`p-2.5 rounded-lg bg-primary dark:bg-primary_dark ${isSaving ? 'opacity-60' : ''}`}>
+                                    {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">{editingRoutineId ? 'Save Changes' : 'Create Routine'}</Text>}
                                 </TouchableOpacity>
                             </View>
 						</View>
@@ -423,65 +423,5 @@ export default function Workout() {
 	);
 }
 
-const makeStyles = (theme: any) =>
-	StyleSheet.create({
-		container: {flex: 1, padding: 16, backgroundColor: theme.background},
-		header: {flexDirection: "row", justifyContent: "space-between", alignItems: "center"},
-		title: {fontSize: 28, fontWeight: "700", color: theme.text},
-		timer: {fontSize: 14, color: theme.icon},
-		controlsRow: {flexDirection: "row", gap: 8, marginVertical: 12},
-		controlButton: {padding: 10, borderRadius: 8, borderWidth: 1, borderColor: theme.surface, marginRight: 8, backgroundColor: theme.background},
-		controlButtonDisabled: {opacity: 0.6},
-		controlButtonPrimary: {padding: 10, borderRadius: 8, backgroundColor: theme.primary},
-		controlText: {color: theme.text},
-		controlTextPrimary: {color: '#fff', fontWeight: "600"},
-		currentContainer: {marginVertical: 8},
-		sectionTitle: {fontSize: 18, fontWeight: "600", marginBottom: 8, color: theme.text},
-		currentCard: {padding: 12, borderRadius: 8, borderWidth: 1, borderColor: theme.surface, backgroundColor: theme.surface},
-		currentName: {fontSize: 20, fontWeight: "700", color: theme.text},
-		currentInfo: {color: theme.icon, marginTop: 4},
-		currentActions: {flexDirection: "row", justifyContent: "space-between", marginTop: 12},
-		actionBtn: {padding: 8, borderRadius: 8, borderWidth: 1, borderColor: theme.surface},
-		actionBtnPrimary: {padding: 8, borderRadius: 8, backgroundColor: theme.primary},
-		restText: {marginTop: 8, color: theme.icon},
-		listContainer: {flex: 1, marginTop: 12},
-		item: {padding: 12, borderBottomWidth: 1, borderBottomColor: theme.surface, flexDirection: "row", alignItems: "center"},
-		itemActive: {backgroundColor: theme.surface},
-		itemName: {fontSize: 16, fontWeight: "600", color: theme.text},
-		itemMeta: {color: theme.icon},
-		itemDone: {marginLeft: 12, color: theme.primary, fontWeight: "700"},
-		modalBackdrop: {flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)"},
-		modalCard: {width: "90%", padding: 16, borderRadius: 12, backgroundColor: theme.background},
-		modalTitle: {fontSize: 18, fontWeight: "700", marginBottom: 8, color: theme.text},
-		input: {borderWidth: 1, borderColor: theme.surface, borderRadius: 8, padding: 10, marginBottom: 8, color: theme.text},
-        dashboardContainer: {flex: 1, marginTop: 12},
-        sectionHeader: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12},
-        emptyState: {padding: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.surface, borderRadius: 12, borderStyle: 'dashed'},
-        workoutCard: {
-            backgroundColor: theme.surface,
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-        },
-        workoutCardTitle: {
-            fontWeight: '600',
-            color: theme.text,
-            fontSize: 16,
-        },
-        activeRoutineCard: {
-            backgroundColor: theme.surface,
-            borderRadius: 12,
-            padding: 16,
-            borderWidth: 1,
-            borderColor: theme.options?.borderColor || 'rgba(150,150,150,0.1)',
-        },
-        activeRoutineTitle: {
-            fontSize: 20, 
-            fontWeight: '700', 
-            color: theme.text,
-        },
-	});
+
 

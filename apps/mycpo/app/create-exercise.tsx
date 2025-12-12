@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedView } from '../components/ui/ThemedView';
 import { ThemedText } from '../components/ui/ThemedText';
@@ -39,28 +39,26 @@ export default function CreateExerciseScreen() {
     }
   };
 
-  const styles = makeStyles(theme);
-
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
+    <ThemedView className="flex-1">
+      <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+        <TouchableOpacity onPress={() => router.back()} className="p-2">
             <ThemedText type="link">Cancel</ThemedText>
         </TouchableOpacity>
         <ThemedText type="subtitle">New Exercise</ThemedText>
-        <TouchableOpacity onPress={handleCreate} disabled={isSubmitting} style={styles.headerButton}>
+        <TouchableOpacity onPress={handleCreate} disabled={isSubmitting} className="p-2">
             <ThemedText type="link" style={{ fontWeight: 'bold', opacity: isSubmitting ? 0.5 : 1 }}>Save</ThemedText>
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}
+        className="flex-1 p-6"
       >
-        <View style={styles.formGroup}>
-            <ThemedText type="defaultSemiBold" style={styles.label}>Name</ThemedText>
+        <View className="mb-6">
+            <ThemedText type="defaultSemiBold" className="mb-2">Name</ThemedText>
             <TextInput 
-                style={styles.input} 
+                className="bg-surface dark:bg-surface_dark text-apptext dark:text-apptext_dark p-4 rounded-xl text-base border border-transparent dark:border-white/10"
                 placeholder="e.g. Bench Press" 
                 placeholderTextColor={theme.icon}
                 value={name}
@@ -69,11 +67,11 @@ export default function CreateExerciseScreen() {
             />
         </View>
 
-        <View style={styles.formGroup}>
-            <ThemedText type="defaultSemiBold" style={styles.label}>Category</ThemedText>
+        <View className="mb-6">
+            <ThemedText type="defaultSemiBold" className="mb-2">Category</ThemedText>
             {/* Simple text input for now, could be a picker */}
             <TextInput 
-                style={styles.input} 
+                className="bg-surface dark:bg-surface_dark text-apptext dark:text-apptext_dark p-4 rounded-xl text-base border border-transparent dark:border-white/10"
                 placeholder="e.g. Chest, Legs, etc." 
                 placeholderTextColor={theme.icon}
                 value={category}
@@ -85,40 +83,3 @@ export default function CreateExerciseScreen() {
     </ThemedView>
   );
 }
-
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-    paddingTop: Platform.OS === 'android' ? 40 : 16,
-  },
-  headerButton: {
-      padding: 8,
-  },
-  content: {
-      flex: 1,
-      padding: 24,
-  },
-  formGroup: {
-      marginBottom: 24,
-  },
-  label: {
-      marginBottom: 8,
-  },
-  input: {
-      backgroundColor: theme.surface,
-      color: theme.text,
-      padding: 16,
-      borderRadius: 12,
-      fontSize: 16,
-      borderWidth: 1,
-      borderColor: theme.border || 'transparent',
-  }
-});

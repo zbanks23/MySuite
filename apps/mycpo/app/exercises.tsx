@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View, ActivityIndicator, TextInput } from 'react-native'; // ID: 2225d6a8-644c-49dc-874e-ef431dd7ddcf, 19dc8f02-b90c-4e07-9dad-1191f01d8f5a
+import { FlatList, TouchableOpacity, View, ActivityIndicator, TextInput } from 'react-native'; 
 import { useRouter } from 'expo-router';
 import { useActiveWorkout } from '../providers/ActiveWorkoutProvider';
 import { ThemedText } from '../components/ui/ThemedText';
@@ -31,26 +31,23 @@ export default function ExercisesScreen() {
     load();
   }, [user]);
 
-
-  const styles = makeStyles(theme);
-
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+    <ThemedView className="flex-1">
+      <ThemedView className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10">
+        <TouchableOpacity onPress={() => router.back()} className="p-2">
            <ThemedText type="link">Close</ThemedText>
         </TouchableOpacity>
         <ThemedText type="subtitle">Exercises</ThemedText>
-        <TouchableOpacity onPress={() => router.push('/create-exercise')} style={{padding: 8}}>
+        <TouchableOpacity onPress={() => router.push('/create-exercise')} className="p-2">
             <ThemedText type="link">Create</ThemedText>
         </TouchableOpacity> 
       </ThemedView>
       
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
+      <View className="px-4 py-3 border-b border-surface dark:border-white/10">
+        <View className="flex-row items-center bg-surface dark:bg-surface_dark rounded-lg px-2.5 h-10">
             <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
              <TextInput
-                style={[styles.searchInput, { color: theme.text || '#000' }]}
+                className="flex-1 ml-2 text-base h-full text-apptext dark:text-apptext_dark"
                 placeholder="Search exercises..."
                 placeholderTextColor={theme.icon || '#888'}
                 value={searchQuery}
@@ -66,7 +63,7 @@ export default function ExercisesScreen() {
       </View>
       
       {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color={theme.primary} />
         </View>
       ) : (
@@ -75,7 +72,7 @@ export default function ExercisesScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity 
-            style={styles.item}
+            className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10"
             onPress={() => {
                 addExercise(item.name, "3", "10"); // Default sets/reps for now
                 router.back();
@@ -88,10 +85,10 @@ export default function ExercisesScreen() {
             <IconSymbol name="plus.circle" size={20} color={theme.primary} />
           </TouchableOpacity>
         )}
-        style={styles.list}
+        className="flex-1"
         contentContainerStyle={{ paddingBottom: 120 }}
         ListEmptyComponent={
-            <View style={{padding: 20, alignItems: 'center'}}>
+            <View className="p-5 items-center">
                 <ThemedText style={{color: theme.icon}}>No exercises found.</ThemedText>
             </View>
         }
@@ -100,51 +97,3 @@ export default function ExercisesScreen() {
     </ThemedView>
   );
 }
-
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  closeButton: {
-      padding: 8,
-  },
-  list: {
-      flex: 1,
-  },
-  item: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.surface,
-  },
-  searchContainer: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.surface,
-  },
-  searchBar: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: theme.surface,
-      borderRadius: 10,
-      paddingHorizontal: 10,
-      height: 40,
-  },
-  searchInput: {
-      flex: 1,
-      marginLeft: 8,
-      fontSize: 16,
-      height: '100%',
-  }
-});

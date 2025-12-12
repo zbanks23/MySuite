@@ -15,7 +15,7 @@ import { WorkoutManagerProvider } from '../providers/WorkoutManagerProvider';
 import { WorkoutStickyHeader } from '../components/ui/WorkoutStickyHeader';
 import { ActiveWorkoutOverlay } from '../components/workouts/ActiveWorkoutOverlay'; 
 import { QuickNavigationButton } from '../components/ui/QuickNavigationMenu';
-import { QuickUtilityButton } from '../components/ui/QuickUilityMenu';
+import { QuickUtilityButton } from '../components/ui/QuickUtilityMenu';
 import { QuickBackButton } from '../components/ui/QuickBackButton';
 import { FloatingButtonProvider } from '../providers/FloatingButtonContext';
 import { GlobalOverlay } from '../components/ui/GlobalOverlay';
@@ -74,7 +74,7 @@ export default function RootLayout() {
   }
   
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView className="flex-1">
       <AuthProvider>
         <NavigationSettingsProvider>
           <AppThemeProvider>

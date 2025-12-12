@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ScrollView, TextInput, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth, supabase } from '@mycsuite/auth';
 import { useUITheme } from '@mycsuite/ui';
@@ -76,25 +76,23 @@ export default function SettingsScreen() {
     );
   };
 
-  const styles = makeStyles(theme);
-
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+    <ThemedView className="flex-1">
+      <View className="flex-row items-center justify-between px-4 pt-14 pb-4 border-b border-surface dark:border-surface_dark">
+        <TouchableOpacity onPress={() => router.back()} className="flex-row items-center w-[60px]">
           <IconSymbol name="chevron.backward" size={24} color={theme.text} />
-          <Text style={{color: theme.text, fontSize: 16, marginLeft: 4}}>Back</Text>
+          <Text className="text-base ml-1 text-apptext dark:text-apptext_dark">Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Settings</Text>
-        <View style={{width: 60}} />
+        <Text className="text-xl font-bold text-apptext dark:text-apptext_dark">Settings</Text>
+        <View className="w-[60px]" />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Appearance</Text>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <View className="mb-6">
+          <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Appearance</Text>
           <ThemeToggle />
-          <View style={styles.row}>
-             <Text style={styles.rowText}>Fast Action Button</Text>
+          <View className="flex-row justify-between items-center py-3 border-b border-surface dark:border-surface_dark">
+             <Text className="text-base text-apptext dark:text-apptext_dark">Fast Action Button</Text>
              <Switch
                 value={isFabEnabled}
                 onValueChange={toggleFab}
@@ -104,175 +102,68 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>{user?.email}</Text>
+        <View className="mb-6">
+          <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Account</Text>
+          <View className="py-3">
+            <Text className="text-base text-apptext dark:text-apptext_dark">Email</Text>
+            <Text className="text-base text-gray-500">{user?.email}</Text>
           </View>
           
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Username</Text>
+          <View className="py-3">
+            <Text className="text-base text-apptext dark:text-apptext_dark">Username</Text>
             <TextInput
-              style={[styles.input, { color: theme.text, borderColor: theme.surface }]}
+              className="p-3 border border-surface dark:border-white/10 rounded-lg mt-2 text-base text-apptext dark:text-apptext_dark"
               value={username}
               onChangeText={setUsername}
               placeholder="Username"
-              placeholderTextColor={theme.icon}
+              placeholderTextColor={theme.icon || "#9ca3af"}
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Full Name</Text>
+          <View className="py-3">
+            <Text className="text-base text-apptext dark:text-apptext_dark">Full Name</Text>
             <TextInput
-              style={[styles.input, { color: theme.text, borderColor: theme.surface }]}
+              className="p-3 border border-surface dark:border-white/10 rounded-lg mt-2 text-base text-apptext dark:text-apptext_dark"
               value={fullName}
               onChangeText={setFullName}
               placeholder="Full Name"
-              placeholderTextColor={theme.icon}
+              placeholderTextColor={theme.icon || "#9ca3af"}
             />
           </View>
 
           <TouchableOpacity 
-            style={[styles.button, styles.saveButton]} 
+            className="mt-4 p-4 items-center bg-surface dark:bg-surface_dark rounded-lg" 
             onPress={handleUpdateProfile}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>{loading ? 'Saving...' : 'Save Changes'}</Text>
+            <Text className="text-base font-semibold text-primary dark:text-primary_dark">{loading ? 'Saving...' : 'Save Changes'}</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Legal</Text>
-          <TouchableOpacity style={styles.rowItem} onPress={() => Alert.alert('Privacy Policy', 'Link to Privacy Policy')}>
-            <Text style={styles.rowText}>Privacy Policy</Text>
+        <View className="mb-6">
+          <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Legal</Text>
+          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-surface dark:border-surface_dark" onPress={() => Alert.alert('Privacy Policy', 'Link to Privacy Policy')}>
+            <Text className="text-base text-apptext dark:text-apptext_dark">Privacy Policy</Text>
             <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.rowItem} onPress={() => Alert.alert('Terms of Service', 'Link to Terms of Service')}>
-            <Text style={styles.rowText}>Terms of Service</Text>
+          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-surface dark:border-surface_dark" onPress={() => Alert.alert('Terms of Service', 'Link to Terms of Service')}>
+            <Text className="text-base text-apptext dark:text-apptext_dark">Terms of Service</Text>
             <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.section}>
-          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-            <Text style={styles.buttonText}>Sign Out</Text>
+        <View className="mb-6">
+          <TouchableOpacity className="p-4 items-center border-b border-surface dark:border-surface_dark" onPress={handleSignOut}>
+            <Text className="text-base font-semibold text-primary dark:text-primary_dark">Sign Out</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={[styles.button, styles.dangerButton]} onPress={handleDeleteAccount}>
-            <Text style={[styles.buttonText, styles.dangerText]}>Delete Account</Text>
+          <TouchableOpacity className="mt-2 text-center items-center p-4" onPress={handleDeleteAccount}>
+            <Text className="text-base font-semibold text-red-500">Delete Account</Text>
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.version}>Version 1.0.0</Text>
+        <Text className="text-center text-xs text-gray-500 mt-6">Version 1.0.0</Text>
       </ScrollView>
     </ThemedView>
   );
 }
-
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 60, // Safe area approximation
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: 60,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  content: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.icon,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  inputContainer: {
-    paddingVertical: 12,
-  },
-  input: {
-    padding: 12,
-    borderWidth: 1,
-    borderRadius: 8,
-    marginTop: 8,
-    fontSize: 16,
-  },
-  saveButton: {
-    marginTop: 16,
-    borderBottomWidth: 0,
-    backgroundColor: theme.surface,
-    borderRadius: 8,
-  },
-  rowItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  label: {
-    fontSize: 16,
-    color: theme.text,
-  },
-  value: {
-    fontSize: 16,
-    color: theme.icon,
-  },
-  rowText: {
-    fontSize: 16,
-    color: theme.text,
-  },
-  button: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: theme.surface,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: theme.primary,
-    fontWeight: '600',
-  },
-  dangerButton: {
-    marginTop: 8,
-    borderBottomWidth: 0,
-  },
-  dangerText: {
-    color: '#EF4444', // Red
-  },
-  version: {
-    textAlign: 'center',
-    color: theme.icon,
-    marginTop: 24,
-    fontSize: 12,
-  },
-});

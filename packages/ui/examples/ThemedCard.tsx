@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { useUITheme } from '../theme';
 
 type ThemedCardProps = {
@@ -7,41 +7,12 @@ type ThemedCardProps = {
 };
 
 export const ThemedCard = ({ title, subtitle }: ThemedCardProps) => {
-  const theme = useUITheme();
-  const styles = makeStyles(theme);
-
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+    <View className="p-3 rounded-[10px] my-2 border shadow-sm bg-surface dark:bg-surface_dark border-surface dark:border-white/10">
+      <Text className="text-base font-bold mb-1 text-apptext dark:text-apptext_dark">{title}</Text>
+      {subtitle ? <Text className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</Text> : null}
     </View>
   );
 };
-
-const makeStyles = (theme: any) =>
-  StyleSheet.create({
-    card: {
-      padding: 12,
-      borderRadius: 10,
-      backgroundColor: theme.surface,
-      borderWidth: 1,
-      borderColor: theme.surface,
-      shadowColor: '#000',
-      shadowOpacity: 0.04,
-      shadowRadius: 6,
-      elevation: 2,
-      marginVertical: 8,
-    },
-    title: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: theme.text,
-      marginBottom: 4,
-    },
-    subtitle: {
-      fontSize: 14,
-      color: theme.icon,
-    },
-  });
 
 export default ThemedCard;

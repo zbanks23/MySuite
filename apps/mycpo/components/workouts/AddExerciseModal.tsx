@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { useUITheme as useTheme } from '@mycsuite/ui';
 
 interface AddExerciseModalProps {
@@ -10,7 +10,6 @@ interface AddExerciseModalProps {
 
 export function AddExerciseModal({ visible, onClose, onAdd }: AddExerciseModalProps) {
     const theme = useTheme();
-    const styles = makeStyles(theme);
 
     const [name, setName] = useState("");
     const [sets, setSets] = useState("3");
@@ -27,39 +26,39 @@ export function AddExerciseModal({ visible, onClose, onAdd }: AddExerciseModalPr
 
     return (
         <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
-            <View style={styles.modalBackdrop}>
-                <View style={styles.modalCard}>
-                    <Text style={styles.modalTitle}>Add Exercise</Text>
+            <View className="flex-1 justify-center items-center bg-black/50">
+                <View className="w-[90%] p-5 rounded-2xl bg-background dark:bg-background_dark border border-surface dark:border-white/10">
+                    <Text className="text-xl font-bold mb-4 text-apptext dark:text-apptext_dark">Add Exercise</Text>
                     <TextInput 
                         placeholder="Name" 
-                        placeholderTextColor={theme.icon}
+                        placeholderTextColor={theme.icon || "#9ca3af"}
                         value={name} 
                         onChangeText={setName} 
-                        style={styles.input} 
+                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
                     />
                     <TextInput 
                         placeholder="Sets" 
-                        placeholderTextColor={theme.icon}
+                        placeholderTextColor={theme.icon || "#9ca3af"}
                         value={sets} 
                         onChangeText={setSets} 
-                        style={styles.input} 
+                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
                         keyboardType="number-pad" 
                     />
                     <TextInput 
                         placeholder="Reps" 
-                        placeholderTextColor={theme.icon}
+                        placeholderTextColor={theme.icon || "#9ca3af"}
                         value={reps} 
                         onChangeText={setReps} 
-                        style={styles.input} 
+                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
                         keyboardType="number-pad" 
                     />
 
-                    <View style={styles.buttonRow}>
-                        <TouchableOpacity onPress={onClose} style={[styles.controlButton, {marginRight: 8}]}> 
-                            <Text style={styles.controlText}>Cancel</Text>
+                    <View className="flex-row justify-end mt-2 gap-2">
+                        <TouchableOpacity onPress={onClose} className="px-4 py-2.5 rounded-lg border border-surface dark:border-white/10 bg-transparent"> 
+                            <Text className="text-apptext dark:text-apptext_dark font-semibold">Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={handleAdd} style={styles.controlButtonPrimary}>
-                            <Text style={styles.controlTextPrimary}>Add</Text>
+                        <TouchableOpacity onPress={handleAdd} className="px-4 py-2.5 rounded-lg bg-primary dark:bg-primary_dark">
+                            <Text className="text-white font-bold">Add</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -67,63 +66,3 @@ export function AddExerciseModal({ visible, onClose, onAdd }: AddExerciseModalPr
         </Modal>
     );
 }
-
-const makeStyles = (theme: any) =>
-    StyleSheet.create({
-        modalBackdrop: {
-            flex: 1, 
-            justifyContent: "center", 
-            alignItems: "center", 
-            backgroundColor: "rgba(0,0,0,0.5)"
-        },
-        modalCard: {
-            width: "90%", 
-            padding: 20, 
-            borderRadius: 16, 
-            backgroundColor: theme.background,
-            borderWidth: 1,
-            borderColor: theme.surface
-        },
-        modalTitle: {
-            fontSize: 20, 
-            fontWeight: "700", 
-            marginBottom: 16, 
-            color: theme.text
-        },
-        input: {
-            borderWidth: 1, 
-            borderColor: theme.surface, 
-            borderRadius: 8, 
-            padding: 12, 
-            marginBottom: 12, 
-            color: theme.text,
-            backgroundColor: theme.surface
-        },
-        buttonRow: {
-            flexDirection: "row", 
-            justifyContent: "flex-end",
-            marginTop: 8
-        },
-        controlButton: {
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            borderRadius: 8, 
-            borderWidth: 1, 
-            borderColor: theme.surface, 
-            backgroundColor: 'transparent'
-        },
-        controlButtonPrimary: {
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            borderRadius: 8, 
-            backgroundColor: theme.primary
-        },
-        controlText: {
-            color: theme.text,
-            fontWeight: '600'
-        },
-        controlTextPrimary: {
-            color: '#fff', 
-            fontWeight: "700"
-        },
-    });

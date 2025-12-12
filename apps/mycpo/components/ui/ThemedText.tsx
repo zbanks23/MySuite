@@ -1,4 +1,4 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { Text, type TextProps } from 'react-native';
 import { useUITheme } from '@mycsuite/ui';
 
 export type ThemedTextProps = TextProps & {
@@ -17,44 +17,31 @@ export function ThemedText({
   const theme = useUITheme();
   const color = lightColor ?? darkColor ?? theme.text;
 
+  // Map types to tailwind classes
+  let typeClasses = '';
+  switch (type) {
+    case 'default':
+      typeClasses = 'text-base leading-6';
+      break;
+    case 'defaultSemiBold':
+      typeClasses = 'text-base leading-6 font-semibold';
+      break;
+    case 'title':
+      typeClasses = 'text-3xl font-bold leading-8'; // 32px ~ text-3xl
+      break;
+    case 'subtitle':
+      typeClasses = 'text-xl font-bold';
+      break;
+    case 'link':
+      typeClasses = 'text-base leading-[30px] text-[#0a7ea4]';
+      break;
+  }
+
   return (
     <Text
-      style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
-        style,
-      ]}
+      style={[{ color }, style]} // Keep color as inline style if dynamic, or could use tailwind if fixed colors
+      className={typeClasses}
       {...rest}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: '#0a7ea4',
-  },
-});

@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useUITheme } from '@mycsuite/ui';
 import { usePathname, useRouter } from 'expo-router';
@@ -68,7 +67,11 @@ export function QuickNavigationButton() {
   };
 
   return (
-    <Animated.View style={[styles.container, containerAnimatedStyle]} pointerEvents="box-none">
+    <Animated.View 
+        className="absolute bottom-0 left-0 right-0 h-[150px] items-center justify-end pb-10 z-[1000] overflow-visible pointer-events-none"
+        style={[containerAnimatedStyle]}
+        pointerEvents="box-none"
+    >
        <RadialMenu 
          items={menuItems} 
          icon={activeIcon} 
@@ -80,22 +83,3 @@ export function QuickNavigationButton() {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0, // Note: This stretches the container, so translateX affects the whole bar implicitly? 
-    // Wait, RadialMenu is centered in this container (alignItems: center).
-    // If we translate THIS container, the whole bottom bar moves?
-    // Let's refine style to wrap just the button area if needed, but for now this moves the button.
-    height: 150, 
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 40,
-    zIndex: 1000,
-    pointerEvents: 'box-none',
-    overflow: 'visible',
-  },
-});
