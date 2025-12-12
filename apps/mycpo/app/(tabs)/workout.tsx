@@ -137,9 +137,7 @@ export default function Workout() {
 		setRoutineSequence((s) => s.filter((x) => x.id !== id));
 	}
 
-    function handleStartWorkout() {
-        startWorkout();
-    }
+
 
 
 	const styles = makeStyles(theme);
@@ -156,9 +154,7 @@ export default function Workout() {
 
 					{!isRunning ? (
 						<>
-							<TouchableOpacity style={styles.controlButtonPrimary} onPress={handleStartWorkout} accessibilityLabel="Start workout">
-								<Text style={styles.controlTextPrimary}>Start</Text>
-							</TouchableOpacity>
+
 							<TouchableOpacity style={styles.controlButton} onPress={() => startWorkout([])} accessibilityLabel="Start empty workout">
 								<Text style={styles.controlText}>Start Empty</Text>
 							</TouchableOpacity>
