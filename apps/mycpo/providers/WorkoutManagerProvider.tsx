@@ -408,7 +408,7 @@ interface WorkoutManagerContextType {
     clearActiveRoutine: () => void;
     isSaving: boolean;
     saveWorkout: (name: string, exercises: Exercise[], onSuccess: () => void) => Promise<void>;
-    deleteSavedWorkout: (id: string) => void;
+    deleteSavedWorkout: (id: string, onSuccess?: () => void) => void;
     updateSavedWorkout: (id: string, name: string, exercises: Exercise[], onSuccess: () => void) => Promise<void>;
     saveRoutineDraft: (name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
     updateRoutine: (id: string, name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
@@ -664,7 +664,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         }
     }
 
-    function deleteSavedWorkout(id: string) {
+    function deleteSavedWorkout(id: string, onSuccess?: () => void) {
         Alert.alert("Delete workout", "Are you sure?", [
             { text: "Cancel", style: "cancel" },
             {
@@ -680,6 +680,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                         }
                     }
                     setSavedWorkouts((s) => s.filter((x) => x.id !== id));
+                    onSuccess?.();
                 },
             },
         ]);

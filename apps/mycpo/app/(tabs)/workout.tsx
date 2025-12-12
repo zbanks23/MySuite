@@ -561,13 +561,30 @@ export default function Workout() {
                             />
                         )}
 
-                        <View className="flex-row justify-end items-center gap-2">
-                            <TouchableOpacity onPress={handleCloseWorkoutModal} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark"> 
-                                <Text className="text-apptext dark:text-apptext_dark">Cancel</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft} className={`p-2.5 rounded-lg bg-primary dark:bg-primary_dark ${isSaving ? 'opacity-60' : ''}`}>
-                                {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">Save Changes</Text>}
-                            </TouchableOpacity>
+                        <View className="flex-row justify-between items-center w-full">
+                             {editingWorkoutId ? (
+                                <TouchableOpacity 
+                                    onPress={() => {
+                                        deleteSavedWorkout(editingWorkoutId, () => {
+                                             handleCloseWorkoutModal();
+                                        });
+                                    }} 
+                                    style={{borderColor: theme.options?.destructiveColor || '#ff4444'}}
+									className="p-2.5 rounded-lg border bg-background dark:bg-background_dark"
+                                >
+                                    <Text style={{color: theme.options?.destructiveColor || '#ff4444'}}>Delete</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View />
+                            )}
+                            <View className="flex-row gap-2">
+                                <TouchableOpacity onPress={handleCloseWorkoutModal} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark"> 
+                                    <Text className="text-apptext dark:text-apptext_dark">Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft} className={`p-2.5 rounded-lg bg-primary dark:bg-primary_dark ${isSaving ? 'opacity-60' : ''}`}>
+                                    {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">Save Changes</Text>}
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
