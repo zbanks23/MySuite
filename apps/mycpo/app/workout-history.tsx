@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Text, View, FlatList, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +9,8 @@ import Animated, {
     runOnJS, 
     interpolate, 
     Extrapolation, 
-    SharedValue 
+    SharedValue,
+    useSharedValue
 } from 'react-native-reanimated';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { WorkoutDetailsModal } from '../components/workouts/WorkoutDetailsModal';
@@ -26,7 +27,7 @@ const RightAction = ({
     onDelete: () => void;
 }) => {
     const { width } = useWindowDimensions();
-    const hasTriggered = useRef(false);
+    const hasTriggered = useSharedValue(false);
     // Trigger when card is swiped past 40% of screen width (less strict than 50%)
     // dragX is negative when swiping left
     const TRIGGER_THRESHOLD = -width * 0.4;
@@ -40,9 +41,11 @@ const RightAction = ({
     useAnimatedReaction(
         () => dragX.value,
         (currentDrag) => {
-            if (currentDrag < TRIGGER_THRESHOLD && !hasTriggered.current) {
-                hasTriggered.current = true;
+            if (currentDrag < TRIGGER_THRESHOLD && !hasTriggered.value) {
+                hasTriggered.value = true;
                 runOnJS(onDelete)();
+            } else if (currentDrag > TRIGGER_THRESHOLD + 40 && hasTriggered.value) {
+                hasTriggered.value = false;
             }
         }
     );
