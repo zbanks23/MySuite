@@ -35,32 +35,7 @@ export type WorkoutLog = {
 
 // --- Helper / API Functions (Outside Hook) ---
 
-async function getOrCreateExercise(user: any, ex: any) {
-    if (!user) return null;
-    try {
-        const { data: existing } = await supabase
-            .from("exercises")
-            .select("exercise_id")
-            .ilike("exercise_name", ex.name)
-            .eq("user_id", user.id)
-            .maybeSingle();
-        if (existing && existing.exercise_id) return existing.exercise_id;
-        const { data: ins } = await supabase
-            .from("exercises")
-            .insert([{
-                exercise_name: ex.name,
-                exercise_type: "bodyweight_reps",
-                description: null,
-                user_id: user.id,
-            }])
-            .select()
-            .single();
-        return ins?.exercise_id ?? null;
-    } catch {
-        console.warn("getOrCreateExercise error");
-        return null;
-    }
-}
+
 
 async function fetchUserWorkouts(user: any) {
     if (!user) return { data: [], error: null };
@@ -207,57 +182,25 @@ async function persistWorkoutToSupabase(
         return { error: "Cannot create a workout named 'Rest'" };
     }
 
-    const { data: wdata, error: wErr } = await supabase
-        .from("workouts")
-        .insert([{
-            user_id: user.id,
-            workout_name: workoutName.trim(),
-            notes: JSON.stringify(exercises),
-            routine_id: routineId || null
-        }])
-        .select()
-        .single();
+    const { data: responseData, error: invokeError } = await supabase.functions
+        .invoke("create-workout", {
+            body: {
+                workout_name: workoutName.trim(),
+                exercises: exercises,
+                user_id: user.id,
+                routine_id: routineId,
+            },
+        });
 
-    if (wErr || !wdata) {
-        return { error: wErr || "Failed to create workout" };
+    const data = responseData?.data;
+    const error = invokeError ||
+        (responseData?.error ? new Error(responseData.error) : null);
+
+    if (error || !data) {
+        return { error: error || "Failed to create workout" };
     }
 
-    const workoutId = wdata.workout_id;
-    // For each exercise, find/create exercise, create workout_exercises and exercise_sets
-    for (let i = 0; i < exercises.length; i++) {
-        const ex = exercises[i];
-        const exerciseId = await getOrCreateExercise(user, ex);
-        if (!exerciseId) continue;
-
-        // insert workout_exercises with explicit position
-        const { data: weData, error: weErr } = await supabase
-            .from("workout_exercises").insert([{
-                workout_id: workoutId,
-                exercise_id: exerciseId,
-                position: i,
-            }]).select().single();
-
-        if (weErr || !weData) {
-            console.warn("Failed to insert workout_exercise", weErr);
-            continue;
-        }
-
-        const workoutExerciseId = weData.workout_exercise_id;
-        // insert exercise_sets for the number of sets
-        for (let s = 1; s <= (ex.sets || 1); s++) {
-            try {
-                await supabase.from("exercise_sets").insert([{
-                    workout_exercise_id: workoutExerciseId,
-                    set_number: s,
-                    details: { reps: ex.reps },
-                }]);
-            } catch (esErr) {
-                console.warn("Failed to insert exercise_set", esErr);
-            }
-        }
-    }
-
-    return { data: wdata };
+    return { data };
 }
 
 async function deleteWorkoutFromSupabase(user: any, id: string) {
@@ -339,60 +282,25 @@ async function persistUpdateSavedWorkoutToSupabase(
         return { error: "Cannot name workout 'Rest'" };
     }
 
-    // 1. Update the parent workout row
-    const { data: wdata, error: wErr } = await supabase
-        .from("workouts")
-        .update({
-            workout_name: workoutName.trim(),
-            notes: JSON.stringify(exercises),
-            // updated_at: new Date().toISOString() // Let DB handle
-        })
-        .eq("workout_id", workoutId)
-        .select()
-        .single();
-
-    if (wErr || !wdata) {
-        return { error: wErr || "Failed to update workout" };
-    }
-
-    // 2. Sync workout_exercises
-    // Delete existing
-    const { error: delErr } = await supabase
-        .from("workout_exercises")
-        .delete()
-        .eq("workout_id", workoutId);
-    
-    if (delErr) {
-        console.warn("Failed to clear old exercises", delErr);
-    }
-
-    // Insert new
-    for (let i = 0; i < exercises.length; i++) {
-        const ex = exercises[i];
-        const exerciseId = await getOrCreateExercise(user, ex);
-        if (!exerciseId) continue;
-
-        const { data: weData, error: weErr } = await supabase
-            .from("workout_exercises").insert([{
+    const { data: responseData, error: invokeError } = await supabase.functions
+        .invoke("update-workout", {
+            body: {
                 workout_id: workoutId,
-                exercise_id: exerciseId,
-                position: i,
-            }]).select().single();
+                workout_name: workoutName.trim(),
+                exercises: exercises,
+                user_id: user.id,
+            },
+        });
 
-        if (weErr || !weData) continue;
+    const data = responseData?.data;
+    const error = invokeError ||
+        (responseData?.error ? new Error(responseData.error) : null);
 
-        // Insert sets
-        const workoutExerciseId = weData.workout_exercise_id;
-        for (let s = 1; s <= (ex.sets || 1); s++) {
-             await supabase.from("exercise_sets").insert([{
-                workout_exercise_id: workoutExerciseId,
-                set_number: s,
-                details: { reps: ex.reps },
-            }]);
-        }
+    if (error || !data) {
+        return { error: error || "Failed to update workout" };
     }
 
-    return { data: wdata };
+    return { data };
 }
 
 // --- Context ---
