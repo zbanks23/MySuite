@@ -115,6 +115,7 @@ export default function Workout() {
         updateRoutine,
         deleteRoutine,
         updateSavedWorkout,
+        saveWorkout, // Added saveWorkout
     } = useWorkoutManager();
 
     // Toggle floating buttons visibility when modals are open
@@ -232,6 +233,13 @@ export default function Workout() {
         }
     };
 
+    function handleCreateSavedWorkout() {
+        setEditingWorkoutId(null);
+        setWorkoutDraftName("");
+        setWorkoutDraftExercises([]);
+        setEditWorkoutModalOpen(true);
+    }
+
     function handleEditSavedWorkout(workout: any) {
         setEditingWorkoutId(workout.id);
         setWorkoutDraftName(workout.name);
@@ -263,13 +271,15 @@ export default function Workout() {
     }
 
     async function handleSaveWorkoutDraft() {
-        if (!editingWorkoutId) return;
-        
         const onSuccess = () => {
              handleCloseWorkoutModal();
         };
 
-        updateSavedWorkout(editingWorkoutId, workoutDraftName, workoutDraftExercises, onSuccess);
+        if (editingWorkoutId) {
+            updateSavedWorkout(editingWorkoutId, workoutDraftName, workoutDraftExercises, onSuccess);
+        } else {
+            saveWorkout(workoutDraftName, workoutDraftExercises, onSuccess);
+        }
     }
 
     async function fetchAvailableExercises() {
@@ -392,9 +402,14 @@ export default function Workout() {
                     {/* Saved Workouts Section (Quick Access) */}
                     <View className="flex-row justify-between items-center mb-3">
                          <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Saved Workouts</Text>
-                         <TouchableOpacity onPress={() => setWorkoutsListOpen(true)}>
-                            <Text className="text-primary dark:text-primary_dark">See All</Text>
-                        </TouchableOpacity>
+                         <View className="flex-row items-center gap-4">
+                            <TouchableOpacity onPress={handleCreateSavedWorkout}>
+                                <Text className="text-primary dark:text-primary_dark">+ New</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setWorkoutsListOpen(true)}>
+                                <Text className="text-primary dark:text-primary_dark">See All</Text>
+                            </TouchableOpacity>
+                         </View>
                     </View>
                      {savedWorkouts.length === 0 ? (
                         <Text className="text-gray-500 dark:text-gray-400">No saved workouts.</Text>
@@ -689,7 +704,7 @@ export default function Workout() {
                         ) : (
                             // --- Edit Workout View ---
                             <>
-                                <Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">Edit Workout</Text>
+                                <Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">{editingWorkoutId ? 'Edit Workout' : 'Create Workout'}</Text>
                                 <TextInput 
                                     placeholder="Workout name" 
                                     value={workoutDraftName} 
@@ -821,7 +836,7 @@ export default function Workout() {
                                             <Text className="text-apptext dark:text-apptext_dark">Cancel</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft} className={`p-2.5 rounded-lg bg-primary dark:bg-primary_dark ${isSaving ? 'opacity-60' : ''}`}>
-                                            {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">Save Changes</Text>}
+                                            {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">{editingWorkoutId ? 'Save Changes' : 'Create Workout'}</Text>}
                                         </TouchableOpacity>
                                     </View>
                                 </View>
