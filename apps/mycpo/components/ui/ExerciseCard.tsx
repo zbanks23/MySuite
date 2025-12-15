@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { IconSymbol } from './icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
@@ -9,35 +9,23 @@ interface ExerciseCardProps {
     isCurrent: boolean;
     onCompleteSet: (input: { weight?: string, reps?: string, duration?: string }) => void;
     onUncompleteSet?: (index: number) => void;
+    onUpdateSetTarget?: (index: number, key: 'weight' | 'reps', value: string) => void;
     onAddSet: () => void;
     onDeleteSet: (index: number) => void;
     restSeconds: number;
     theme: any;
 }
 
-export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
-    // Current input state
-    const [weight, setWeight] = useState('');
-    const [reps, setReps] = useState('');
-    
+export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
 
-    const handleComplete = () => {
-        const currentSetIndex = exercise.logs?.length || 0;
-        const targetWeight = exercise.setTargets?.[currentSetIndex]?.weight?.toString();
-        // Use set-specific rep target, or fallback to the general exercise rep target
-        const targetReps = exercise.setTargets?.[currentSetIndex]?.reps?.toString() || exercise.reps.toString();
-
-        onCompleteSet({ 
-            weight: weight || targetWeight, 
-            reps: reps || targetReps 
-        });
-        
-        // Reset inputs for next set
-        setWeight('');
-        setReps('');
+    // Helper to get value for inputs
+    const getValue = (i: number, field: 'weight' | 'reps') => {
+        const target = exercise.setTargets?.[i]?.[field];
+        if (target === undefined || target === null) return '';
+        return target.toString();
     };
 
     return (
@@ -92,44 +80,29 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                          <IconSymbol name="checkmark" size={20} color="#fff" />
                                     </TouchableOpacity>
                                 </>
-                            ) : isCurrentSet ? (
-                                <>
-                                    <TextInput 
-                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
-                                        value={weight} 
-                                        onChangeText={setWeight} 
-                                        placeholder={exercise.setTargets?.[i]?.weight?.toString() || "-"} 
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.icon || '#9ca3af'}
-                                    />
-                                    <TextInput 
-                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
-                                        value={reps} 
-                                        onChangeText={setReps} 
-                                        placeholder={exercise.setTargets?.[i]?.reps?.toString() || exercise.reps.toString()}
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.icon || '#9ca3af'}
-                                    />
-                                    <TouchableOpacity 
-                                        className="w-9 h-9 rounded-lg border-2 border-primary dark:border-primary_dark items-center justify-center ml-1" 
-                                        onPress={handleComplete}
-                                    >
-                                        <IconSymbol name="checkmark" size={20} color={theme.primary} />
-                                    </TouchableOpacity>
-                                </>
                             ) : (
                                 <>
-                                    <Text className="w-[60px] text-center text-sm text-gray-500 mx-1">
-                                        {exercise.setTargets?.[i]?.weight ?? "-"}
-                                    </Text>
-                                    <Text className="w-[60px] text-center text-sm text-gray-500 mx-1">
-                                        {exercise.setTargets?.[i]?.reps ?? exercise.reps}
-                                    </Text>
+                                    <TextInput 
+                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
+                                        value={getValue(i, 'weight')}
+                                        onChangeText={(t) => onUpdateSetTarget?.(i, 'weight', t)}
+                                        placeholder={getValue(i, 'weight') || "-"} 
+                                        keyboardType="numeric" 
+                                        placeholderTextColor={theme.icon || '#9ca3af'}
+                                    />
+                                    <TextInput 
+                                        className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
+                                        value={getValue(i, 'reps')} 
+                                        onChangeText={(t) => onUpdateSetTarget?.(i, 'reps', t)}
+                                        placeholder={getValue(i, 'reps') || exercise.reps.toString()}
+                                        keyboardType="numeric" 
+                                        placeholderTextColor={theme.icon || '#9ca3af'}
+                                    />
                                     <TouchableOpacity 
-                                        className="w-9 h-9 rounded-lg border-2 border-primary dark:border-primary_dark items-center justify-center ml-1" 
+                                        className={`w-9 h-9 rounded-lg items-center justify-center ml-1 border-2 border-primary dark:border-primary_dark`}
                                         onPress={() => onCompleteSet({ 
-                                            weight: exercise.setTargets?.[i]?.weight?.toString(), 
-                                            reps: exercise.setTargets?.[i]?.reps?.toString() || exercise.reps.toString() 
+                                            weight: getValue(i, 'weight'), 
+                                            reps: getValue(i, 'reps') || exercise.reps.toString() 
                                         })}
                                     >
                                         <IconSymbol name="checkmark" size={20} color={theme.primary} />

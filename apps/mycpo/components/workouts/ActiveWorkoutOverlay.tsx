@@ -92,6 +92,22 @@ export function ActiveWorkoutOverlay() {
                                             });
                                         }
                                     }}
+                                    onUpdateSetTarget={(setIndex, key, value) => {
+                                        const numValue = value === '' ? 0 : parseFloat(value);
+                                        const currentTargets = exercise.setTargets ? [...exercise.setTargets] : [];
+                                        
+                                        // Ensure targets exist up to setIndex
+                                        while (currentTargets.length <= setIndex) {
+                                            currentTargets.push({ weight: 0, reps: exercise.reps });
+                                        }
+
+                                        currentTargets[setIndex] = {
+                                            ...currentTargets[setIndex],
+                                            [key]: isNaN(numValue) ? 0 : numValue
+                                        };
+
+                                        updateExercise(index, { setTargets: currentTargets });
+                                    }}
                                     onAddSet={() => updateExercise(index, { sets: exercise.sets + 1 })}
                                     onDeleteSet={(setIndex) => {
                                         const currentLogs = exercise.logs || [];
