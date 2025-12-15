@@ -48,6 +48,7 @@ function RootLayoutNav() {
       <Stack.Screen name="saved-workouts" options={{ presentation: 'modal', title: 'Saved Workouts', headerShown: false }} />
       <Stack.Screen name="routines" options={{ presentation: 'modal', title: 'My Routines', headerShown: false }} />
       <Stack.Screen name="create-workout" options={{ presentation: 'modal', title: 'Create Workout', headerShown: false }} />
+      <Stack.Screen name="create-routine" options={{ presentation: 'modal', title: 'Create Routine', headerShown: false }} />
     </Stack>
   );
 }

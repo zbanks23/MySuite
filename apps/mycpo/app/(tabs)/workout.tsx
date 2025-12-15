@@ -4,36 +4,30 @@ import {
  	Text,
  	FlatList,
  	TouchableOpacity,
- 	Modal,
- 	TextInput,
  	Alert,
- 	ActivityIndicator,
     ScrollView
 } from "react-native";
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useUITheme as useTheme } from '@mycsuite/ui';
+// import { useUITheme as useTheme } from '@mycsuite/ui'; // Unused now
 import { useWorkoutManager } from '../../hooks/useWorkoutManager';
 
-import { 
-    createSequenceItem, 
-    reorderSequence, 
-} from '../../utils/workout-logic';
+
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RoutineCard } from '../../components/workouts/RoutineCard';
 import { ActiveRoutineCard } from '../../components/workouts/ActiveRoutineCard';
 
-import { useFloatingButton } from '../../providers/FloatingButtonContext';
+// import { useFloatingButton } from '../../providers/FloatingButtonContext'; // Unused now
 
 
 
 export default function Workout() {
 
-	const theme = useTheme();
+	// const theme = useTheme(); // Unused
 	const router = useRouter();
-    const { setIsHidden } = useFloatingButton();
+    // const { setIsHidden } = useFloatingButton(); // Unused
     
 	// consume shared state
     const {
@@ -76,11 +70,7 @@ export default function Workout() {
 
 
 
-	const [isCreateRoutineOpen, setCreateRoutineOpen] = useState(false);
-    const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
     const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
-	const [routineDraftName, setRoutineDraftName] = useState("");
-	const [routineSequence, setRoutineSequence] = useState<any[]>([]);
 
 
     
@@ -89,23 +79,13 @@ export default function Workout() {
     const { 
         savedWorkouts, 
         routines, 
-        isSaving, 
-        
         activeRoutine,
         startActiveRoutine,
         markRoutineDayComplete,
         clearActiveRoutine,
- 
- 
-        saveRoutineDraft: saveRoutineDraftManager,
-        updateRoutine,
-        deleteRoutine,
     } = useWorkoutManager();
 
-    // Toggle floating buttons visibility when modals are open
-    React.useEffect(() => {
-        setIsHidden(isCreateRoutineOpen);
-    }, [isCreateRoutineOpen, setIsHidden]);
+
 
 
 
@@ -122,47 +102,13 @@ export default function Workout() {
         new Date(activeRoutine.lastCompletedDate).toDateString() === new Date().toDateString());
 
 
-	async function saveRoutineDraft() {
-        const onSuccess = () => {
-			setRoutineDraftName("");
-			setRoutineSequence([]);
-            setEditingRoutineId(null);
-			setCreateRoutineOpen(false);
-		};
-
-        if (editingRoutineId) {
-            updateRoutine(editingRoutineId, routineDraftName, routineSequence, onSuccess);
-        } else {
-            saveRoutineDraftManager(routineDraftName, routineSequence, onSuccess);
-        }
-	}
+    function handleCreateRoutine() {
+        router.push('/create-routine');
+    }
 
     function handleEditRoutine(routine: any) {
-        setEditingRoutineId(routine.id);
-        setRoutineDraftName(routine.name);
-        setRoutineSequence(routine.sequence ? [...routine.sequence] : []);
-        setCreateRoutineOpen(true);
+        router.push({ pathname: '/create-routine', params: { id: routine.id } });
     }
-
-    function handleCloseRoutineModal() {
-        setCreateRoutineOpen(false);
-        setRoutineSequence([]);
-        setRoutineDraftName('');
-        setEditingRoutineId(null);
-    }
-
-	function addDayToSequence(item: any) {
-		const newItem = createSequenceItem(item);
-		setRoutineSequence((s) => [...s, newItem]);
-	}
-
-	function moveSequenceItem(index: number, dir: -1 | 1) {
-		setRoutineSequence((s) => reorderSequence(s, index, dir));
-	}
-
-	function removeSequenceItem(id: string) {
-		setRoutineSequence((s) => s.filter((x) => x.id !== id));
-	}
 
 
 
@@ -345,7 +291,7 @@ export default function Workout() {
                     <View className="flex-row justify-between items-center mb-3 mt-6">
                         <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
                          <View className="flex-row items-center gap-4">
-                            <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
+                            <TouchableOpacity onPress={handleCreateRoutine}>
                                 <Text className="text-primary dark:text-primary_dark">+ New</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => router.push('/routines')}>
@@ -357,7 +303,7 @@ export default function Workout() {
                     {routines.length === 0 ? (
                         <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
                             <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
-                            <TouchableOpacity onPress={() => setCreateRoutineOpen(true)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+                            <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
                                 <Text className="text-apptext dark:text-apptext_dark">Create a Routine</Text>
                             </TouchableOpacity>
                         </View>
@@ -381,87 +327,7 @@ export default function Workout() {
 
 
 
-			{/* Create/Edit routine (schedule) modal */}
-			<Modal visible={isCreateRoutineOpen} animationType="slide" transparent={true}>
-				<View className="flex-1 justify-center items-center bg-black/40">
-					<View className="w-[90%] p-4 rounded-xl bg-background dark:bg-background_dark max-h-[85%]">
-						<Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">{editingRoutineId ? 'Edit Routine' : 'Create Routine'}</Text>
-						<TextInput placeholder="Routine name" value={routineDraftName} onChangeText={setRoutineDraftName} className="border border-surface dark:border-surface_dark rounded-lg p-2.5 mb-2 text-apptext dark:text-apptext_dark" placeholderTextColor="#9CA3AF" />
-						<Text className="text-gray-500 dark:text-gray-400 mb-2">Add days from saved workouts or add Rest days.</Text>
-						<View className="flex-row gap-2 mb-2">
-							<FlatList
-								data={savedWorkouts}
-								horizontal
-								keyExtractor={(i) => i.id}
-								renderItem={({item}) => (
-									<TouchableOpacity onPress={() => addDayToSequence(item)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-2 bg-background dark:bg-background_dark"> 
-										<Text className="text-apptext dark:text-apptext_dark">{item.name}</Text>
-									</TouchableOpacity>
-								)}
-							/>
-							<TouchableOpacity onPress={() => addDayToSequence('rest')} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
-								<Text className="text-apptext dark:text-apptext_dark">Rest</Text>
-							</TouchableOpacity>
-						</View>
 
-						{routineSequence.length === 0 ? (
-							<Text className="text-gray-500 dark:text-gray-400">No days added</Text>
-						) : (
-							<FlatList
-								data={routineSequence}
-								keyExtractor={(i) => i.id}
-								renderItem={({item, index}) => (
-									<View className="flex-row items-center justify-between py-1.5">
-										<View>
-											<Text className="text-apptext dark:text-apptext_dark font-semibold">{index + 1}. {item.name}</Text>
-											<Text className="text-gray-500 dark:text-gray-400 text-xs">{item.type === 'rest' ? 'Rest day' : `Workout: ${item.name}`}</Text>
-										</View>
-										<View className="flex-row">
-											<TouchableOpacity onPress={() => moveSequenceItem(index, -1)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-1.5 bg-background dark:bg-background_dark"> 
-												<Text className="text-apptext dark:text-apptext_dark">↑</Text>
-											</TouchableOpacity>
-											<TouchableOpacity onPress={() => moveSequenceItem(index, 1)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-1.5 bg-background dark:bg-background_dark"> 
-												<Text className="text-apptext dark:text-apptext_dark">↓</Text>
-											</TouchableOpacity>
-											<TouchableOpacity onPress={() => removeSequenceItem(item.id)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark"> 
-												<Text className="text-apptext dark:text-apptext_dark">Remove</Text>
-											</TouchableOpacity>
-										</View>
-									</View>
-								)}
-							/>
-						)}
-
-						<View className="flex-row justify-between items-center mt-3">
-                            {editingRoutineId ? (
-                                <TouchableOpacity 
-                                    onPress={() => {
-                                        // Close modal after delete
-                                        deleteRoutine(editingRoutineId, () => {
-                                             handleCloseRoutineModal();
-                                        });
-                                    }} 
-                                    style={{borderColor: theme.options?.destructiveColor || '#ff4444'}}
-									className="p-2.5 rounded-lg border bg-background dark:bg-background_dark"
-                                >
-                                    <Text style={{color: theme.options?.destructiveColor || '#ff4444'}}>Delete</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View />
-                            )}
-
-                             <View className="flex-row">
-                                <TouchableOpacity onPress={handleCloseRoutineModal} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark mr-2 bg-background dark:bg-background_dark"> 
-                                    <Text className="text-apptext dark:text-apptext_dark">Cancel</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity disabled={isSaving} onPress={saveRoutineDraft} className={`p-2.5 rounded-lg bg-primary dark:bg-primary_dark ${isSaving ? 'opacity-60' : ''}`}>
-                                    {isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-semibold">{editingRoutineId ? 'Save Changes' : 'Create Routine'}</Text>}
-                                </TouchableOpacity>
-                            </View>
-						</View>
-					</View>
-				</View>
-			</Modal>
 
 
 
