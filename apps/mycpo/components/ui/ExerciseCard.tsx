@@ -30,7 +30,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
     };
 
     return (
-        <View className={`bg-surface dark:bg-surface_dark rounded-2xl p-4 mb-3 w-full`}>
+        <View className={`rounded-2xl p-4 mb-3 w-full`}>
 
             <View className="flex-row justify-between items-center mb-4">
                 <View>
