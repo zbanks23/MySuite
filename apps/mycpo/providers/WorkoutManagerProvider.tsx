@@ -43,6 +43,7 @@ async function fetchUserWorkouts(user: any) {
         .from("workouts")
         .select("*")
         .eq("user_id", user.id)
+        .is("routine_id", null)
         .order("created_at", { ascending: false });
     return { data, error };
 }

@@ -7,12 +7,17 @@ import { WorkoutManagerProvider, useWorkoutManager } from '../providers/WorkoutM
 // Define the mock functions outside so we can access them
 const mockUseAuth = jest.fn();
 
+const mockIs = jest.fn(() => ({
+    order: jest.fn(() => Promise.resolve({ data: [], error: null }))
+}));
+
 // Mock dependencies
 jest.mock('@mycsuite/auth', () => ({
     supabase: {
         from: jest.fn(() => ({
             select: jest.fn(() => ({
                 eq: jest.fn(() => ({
+                    is: mockIs,
                     order: jest.fn(() => Promise.resolve({ data: [], error: null }))
                 })),
                 order: jest.fn(() => Promise.resolve({ data: [], error: null }))
@@ -121,5 +126,18 @@ describe('WorkoutManagerProvider', () => {
         await waitFor(() => {
              expect(getByTestId('saved-count').children[0]).toBe('1');
         });
+    });
+
+    it('filters out routine-specific workouts by querying routine_id IS NULL', async () => {
+        render(
+            <WorkoutManagerProvider>
+                <TestConsumer />
+            </WorkoutManagerProvider>
+        );
+
+        // Wait for fetch
+         await waitFor(() => {
+             expect(mockIs).toHaveBeenCalledWith('routine_id', null);
+         });
     });
 });
