@@ -98,7 +98,7 @@ const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpdateSetTa
     const swipeableRef = useRef<any>(null);
     const log = exercise.logs?.[index];
     const isCompleted = !!log;
-    const isCurrentSet = !isCompleted && index === (exercise.logs?.length || 0);
+    const isEvenSet = (index + 1) % 2 === 0;
 
     const getValue = (field: 'weight' | 'reps') => {
         const target = exercise.setTargets?.[index]?.[field];
@@ -130,7 +130,7 @@ const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpdateSetTa
             friction={2}
             containerStyle={{ overflow: 'visible' }}
         >
-             <View className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg px-1 ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
+             <View className={`flex-row items-center mb-2 h-11 px-1 ${isEvenSet ? 'bg-black/5 dark:bg-white/5 rounded-lg' : ''}`}>
                  {/* Set Number */}
                  <View className="w-[30px] items-center justify-center">
                      <Text className="text-xs font-bold text-black dark:text-white">{index + 1}</Text>
