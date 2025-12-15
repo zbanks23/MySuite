@@ -81,8 +81,7 @@ export default function Workout() {
     const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
 	const [routineDraftName, setRoutineDraftName] = useState("");
 	const [routineSequence, setRoutineSequence] = useState<any[]>([]);
-	const [isRoutinesListOpen, setRoutinesListOpen] = useState(false);
-    
+
 
     
 
@@ -105,8 +104,8 @@ export default function Workout() {
 
     // Toggle floating buttons visibility when modals are open
     React.useEffect(() => {
-        setIsHidden(isCreateRoutineOpen || isRoutinesListOpen);
-    }, [isCreateRoutineOpen, isRoutinesListOpen, setIsHidden]);
+        setIsHidden(isCreateRoutineOpen);
+    }, [isCreateRoutineOpen, setIsHidden]);
 
 
 
@@ -349,7 +348,7 @@ export default function Workout() {
                             <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
                                 <Text className="text-primary dark:text-primary_dark">+ New</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setRoutinesListOpen(true)}>
+                            <TouchableOpacity onPress={() => router.push('/routines')}>
                                 <Text className="text-primary dark:text-primary_dark">See All</Text>
                             </TouchableOpacity>
                          </View>
@@ -464,52 +463,7 @@ export default function Workout() {
 				</View>
 			</Modal>
 
-            {/* Routines List Modal */}
-            <Modal visible={isRoutinesListOpen} animationType="slide" transparent={true}>
-                <View className="flex-1 justify-center items-center bg-black/40">
-                    <View className="w-[90%] p-4 rounded-xl bg-background dark:bg-background_dark max-h-[80%]">
-                        <Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
-                        {routines.length === 0 ? (
-                            <Text className="text-gray-500 dark:text-gray-400">No routines found.</Text>
-                        ) : (
-                            <FlatList
-                                data={routines}
-                                keyExtractor={(i) => i.id}
-                                renderItem={({item}) => (
-                                    <View className="flex-row items-center justify-between py-2 border-b border-surface dark:border-surface_dark">
-                                        <View className="flex-1 mr-2">
-                                            <Text className="text-apptext dark:text-apptext_dark font-semibold text-base" numberOfLines={1}>{item.name}</Text>
-                                            <Text className="text-gray-500 dark:text-gray-400 text-xs">{item.sequence?.length || 0} Days</Text>
-                                        </View>
-                                        <View className="flex-row gap-2">
-                                            <TouchableOpacity 
-                                                onPress={() => {
-                                                    startActiveRoutine(item.id);
-                                                    setRoutinesListOpen(false);
-                                                }}
-                                                className="bg-primary dark:bg-primary_dark px-3 py-1.5 rounded-lg"
-                                            > 
-                                                <Text className="text-white text-xs font-semibold">Active</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity 
-                                                onPress={() => deleteRoutine(item.id)}
-                                                className="p-1.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark justify-center"
-                                            >
-                                                <Text className="text-red-500 font-bold text-xs">Del</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                )}
-                            />
-                        )}
-                        <View className="flex-row justify-end mt-3">
-                            <TouchableOpacity onPress={() => setRoutinesListOpen(false)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
-                                <Text className="text-apptext dark:text-apptext_dark">Close</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+
 
 
 
