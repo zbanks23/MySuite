@@ -313,7 +313,7 @@ export default function Workout() {
         });
 
         return (
-            <View style={{ width: LAYOUT_WIDTH, height: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginBottom: 12 }}>
+            <View style={{ width: LAYOUT_WIDTH, height: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
                  
                  {/* Gap from Card */}
                  <View style={{ width: CARD_GAP }} />
@@ -504,6 +504,7 @@ export default function Workout() {
 							data={savedWorkouts}
 							scrollEnabled={false}
 							keyExtractor={(i) => i.id}
+                            ItemSeparatorComponent={() => <View className="h-3" />}
 							renderItem={({item}) => {
                                 const isExpanded = expandedWorkoutId === item.id;
                                 return (
