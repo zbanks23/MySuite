@@ -171,19 +171,19 @@ export default function Workout() {
                 onDelete={onDelete}
                 onEdit={onEdit}
             >
-                <View className={`flex-row justify-between items-center p-3 ${isExpanded ? 'border-b border-black/5 dark:border-white/10' : ''}`}>
+                <View className={`flex-row justify-between items-center ${isExpanded ? 'border-b border-black/5 dark:border-white/10' : ''}`}>
                     <TouchableOpacity 
                         className="flex-1 mr-2"
                         onPress={onPress}
                     >
-                        <Text className="font-semibold text-apptext dark:text-apptext_dark text-lg mb-1" numberOfLines={1}>{item.name}</Text>
+                        <Text className="font-semibold text-apptext dark:text-apptext_dark text-lg mb-0.5" numberOfLines={1}>{item.name}</Text>
                         <Text className="text-gray-500 dark:text-gray-400 text-sm">{item.exercises?.length || 0} Exercises</Text>
                     </TouchableOpacity>
                     
-                    <View className="flex-row items-center gap-2">
+                    <View className="flex-row items-center">
                         <TouchableOpacity 
                             onPress={onStart}
-                            className="bg-primary dark:bg-primary_dark px-4 py-2 rounded-lg"
+                            className="bg-primary dark:bg-primary_dark px-3 py-1.5 rounded-lg"
                         >
                             <Text className="text-white font-semibold">Start</Text>
                         </TouchableOpacity>
@@ -252,7 +252,7 @@ export default function Workout() {
 							data={savedWorkouts}
 							scrollEnabled={false}
 							keyExtractor={(i) => i.id}
-                            ItemSeparatorComponent={() => <View className="h-3" />}
+                            ItemSeparatorComponent={() => <View className="h-2" />}
 							renderItem={({item}) => {
                                 const isExpanded = expandedWorkoutId === item.id;
                                 return (

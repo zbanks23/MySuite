@@ -230,7 +230,7 @@ const CardSwipeAction = ({
 
 export function Card({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
   // Base styling from RoutineCard
-  const baseClassName = `bg-surface dark:bg-surface_dark rounded-xl p-4 w-full mb-3 border border-black/5 dark:border-white/10 shadow-sm ${className || ''}`;
+  const baseClassName = `bg-surface dark:bg-surface_dark rounded-xl p-3 w-full mb-1 border border-black/5 dark:border-white/10 shadow-sm ${className || ''}`;
 
   // Track if we are deep enough to delete
   const shouldDelete = useRef(false);
