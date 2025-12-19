@@ -35,14 +35,13 @@ export function QuickUtilityButton() {
   const router = useRouter();
   const pathname = usePathname();
   const { activeButtonId, setActiveButtonId, isHidden } = useFloatingButton();
-  const { isRunning, startWorkout, pauseWorkout, finishWorkout, resetWorkout, cancelWorkout, isExpanded } = useActiveWorkout();
+  const { isRunning, startWorkout, pauseWorkout, resetWorkout, isExpanded, setExpanded } = useActiveWorkout();
 
 
   const currentActions = useMemo(() => {
      if (isExpanded || pathname.includes('active-workout')) {
          return [
-            { id: 'finish_workout', icon: 'flag.checkered', label: 'Finish', action: 'finish_workout' },
-            { id: 'cancel_workout', icon: 'xmark', label: 'Cancel', action: 'cancel_workout' },
+            { id: 'end_workout', icon: 'flag.checkered', label: 'End', action: 'end_workout' },
             { id: 'reset_workout', icon: 'arrow.counterclockwise', label: 'Reset', action: 'reset_workout' },
             { 
                 id: 'toggle_workout', 
@@ -75,19 +74,16 @@ export function QuickUtilityButton() {
           return;
       }
       
-      if (item.action === 'finish_workout') {
-        finishWorkout();
-        return; 
-      }
-
-      if (item.action === 'reset_workout') {
-          resetWorkout();
+      if (item.action === 'end_workout') {
+          pauseWorkout();
+          setExpanded(false);
+          router.push('/end-workout' as any);
           return;
       }
       
-      if (item.action === 'cancel_workout') {
-          cancelWorkout();
-          return;
+      if (item.action === 'reset_workout') {
+          resetWorkout();
+          return; 
       }
       
       if (item.route) {
@@ -95,7 +91,7 @@ export function QuickUtilityButton() {
       } else {
           console.log('Trigger action:', item.action);
       }
-  }, [router, isRunning, startWorkout, pauseWorkout, finishWorkout, resetWorkout, cancelWorkout]);
+  }, [router, isRunning, startWorkout, pauseWorkout, resetWorkout, setExpanded]);
 
 
   const menuItems: RadialMenuItem[] = useMemo(() => {

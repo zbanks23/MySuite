@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useUITheme } from '@mycsuite/ui';
-import { useRouter } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { IconSymbol } from './icon-symbol';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import * as Haptics from 'expo-haptics';
@@ -15,10 +15,19 @@ export function QuickBackButton() {
   const { activeButtonId, isHidden } = useFloatingButton();
   
   // Import useActiveWorkout hook at the top
-  const { isExpanded, setExpanded } = useActiveWorkout();
+  const { isExpanded, setExpanded, startWorkout } = useActiveWorkout();
   
+  const pathname = usePathname();
+
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    // Special handling for End Workout screen
+    if (pathname === '/end-workout') {
+        startWorkout(); // Resumes and maximizes
+        router.back();
+        return;
+    }
     
     if (isExpanded) {
         setExpanded(false);
