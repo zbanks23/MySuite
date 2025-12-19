@@ -10,28 +10,21 @@ import {
 
 import { ThemedView } from '../../components/ui/ThemedView';
 import { useRouter } from 'expo-router';
-// import { useUITheme as useTheme } from '@mycsuite/ui'; // Unused now
 import { useWorkoutManager } from '../../hooks/useWorkoutManager';
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RoutineCard } from '../../components/workouts/RoutineCard';
 import { ActiveRoutineCard } from '../../components/workouts/ActiveRoutineCard';
 
-// import { useFloatingButton } from '../../providers/FloatingButtonContext'; // Unused now
-
 import { SavedWorkout, Routine } from '../../types';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { Card } from '../../components/ui/Card';
 
 export default function Workout() {
-
-	// const theme = useTheme(); // Unused
 	const router = useRouter();
-    // const { setIsHidden } = useFloatingButton(); // Unused
     
 	// consume shared state
     const {
-
         startWorkout,
         finishWorkout,
         cancelWorkout,
@@ -68,14 +61,8 @@ export default function Workout() {
         }
     };
 
-
-
     const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
 
-
-    
-
-    
     const { 
         savedWorkouts, 
         routines, 
@@ -209,17 +196,17 @@ export default function Workout() {
     };
 
 	return (
-		<ThemedView className="flex-1 p-4">
+		<ThemedView className="flex-1">
 			<ScreenHeader title="Workout" />
 
 			{/* Dashboard: Routines & Saved Workouts */}
 			<ScrollView 
-				className="flex-1 mt-3"
+				className="flex-1"
 				contentContainerStyle={{paddingBottom: 120, flexGrow: 1}}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Controls Row */}
-				<View className="flex-row gap-2 my-3">
+				<View className="flex-row gap-2 my-3 px-4">
 					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={handleStartEmpty} accessibilityLabel="Start empty workout">
 						<Text className="text-apptext dark:text-apptext_dark">Start Empty</Text>
 					</TouchableOpacity>
@@ -228,6 +215,7 @@ export default function Workout() {
 					</TouchableOpacity>
 				</View>
 					
+                <View className="px-4">
                     {/* Saved Workouts Section (Quick Access) */}
                     <View className="flex-row justify-between items-center mb-3">
                          <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Saved Workouts</Text>
@@ -268,76 +256,81 @@ export default function Workout() {
                             }}
 						/>
                     )}
+                </View>
 
                     <View className="h-6" />
 
                     {/* Active Routine Section */}
-                    {activeRoutineObj ? (
-                        <ActiveRoutineCard
-                            activeRoutineObj={activeRoutineObj}
-                            timelineDays={timelineDays}
-                            dayIndex={dayIndex}
-                            isDayCompleted={isDayCompleted}
-                            onClearRoutine={clearActiveRoutine}
-                            onStartWorkout={(exercises) => startWorkout(exercises)}
-                            onMarkComplete={markRoutineDayComplete}
-                        />
-                    ) : (
-                        <View className="mb-6">
-                            <View className="flex-row justify-between items-center mb-3">
-                                <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Active Routine</Text>
-                            </View>
-                            <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10 shadow-sm">
-                                <View className="p-5 items-center">
-                                    <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">
-                                        No active routine
-                                    </Text>
-                                    <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
-                                        Select a routine below to start tracking your progress.
-                                    </Text>
-                                    <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark">
-                                        <Text className="text-white font-semibold">Choose Routine</Text>
-                                    </TouchableOpacity>
+                    <View className="px-4">
+                        {activeRoutineObj ? (
+                            <ActiveRoutineCard
+                                activeRoutineObj={activeRoutineObj}
+                                timelineDays={timelineDays}
+                                dayIndex={dayIndex}
+                                isDayCompleted={isDayCompleted}
+                                onClearRoutine={clearActiveRoutine}
+                                onStartWorkout={(exercises) => startWorkout(exercises)}
+                                onMarkComplete={markRoutineDayComplete}
+                            />
+                        ) : (
+                            <View className="mb-6">
+                                <View className="flex-row justify-between items-center mb-3">
+                                    <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Active Routine</Text>
+                                </View>
+                                <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10 shadow-sm">
+                                    <View className="p-5 items-center">
+                                        <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">
+                                            No active routine
+                                        </Text>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
+                                            Select a routine below to start tracking your progress.
+                                        </Text>
+                                        <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark">
+                                            <Text className="text-white font-semibold">Choose Routine</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    )}
+                        )}
+                    </View>
 
                     {/* Routines Section */}
-                    <View className="flex-row justify-between items-center mb-3 mt-6">
-                        <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
-                         <View className="flex-row items-center gap-4">
-                            <TouchableOpacity onPress={handleCreateRoutine}>
-                                <Text className="text-primary dark:text-primary_dark">+ New</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => router.push('/routines')}>
-                                <Text className="text-primary dark:text-primary_dark">See All</Text>
-                            </TouchableOpacity>
-                         </View>
-                    </View>
-                    
-                    {routines.length === 0 ? (
-                        <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
-                            <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
-                            <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
-                                <Text className="text-apptext dark:text-apptext_dark">Create a Routine</Text>
-                            </TouchableOpacity>
+                    <View className="px-4">
+                        <View className="flex-row justify-between items-center mb-3 mt-6">
+                            <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
+                             <View className="flex-row items-center gap-4">
+                                <TouchableOpacity onPress={handleCreateRoutine}>
+                                    <Text className="text-primary dark:text-primary_dark">+ New</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => router.push('/routines')}>
+                                    <Text className="text-primary dark:text-primary_dark">See All</Text>
+                                </TouchableOpacity>
+                             </View>
                         </View>
-                    ) : (
-                        <FlatList
-                            data={routines.slice(0, 5)}
-                            scrollEnabled={false}
-                            keyExtractor={(i) => i.id}
-                            renderItem={({item}) => (
-                                <RoutineCard 
-                                    routine={item} 
-                                    onPress={() => startActiveRoutine(item.id)}
-                                    onEdit={() => handleEditRoutine(item)}
-                                    onDelete={() => deleteRoutine(item.id)}
-                                />
-                            )}
-                        />
-                    )}
+                        
+                        {routines.length === 0 ? (
+                            <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
+                                <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
+                                <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+                                    <Text className="text-apptext dark:text-apptext_dark">Create a Routine</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <FlatList
+                                data={routines.slice(0, 5)}
+                                scrollEnabled={false}
+                                keyExtractor={(i) => i.id}
+                                renderItem={({item}) => (
+                                    <RoutineCard 
+                                        routine={item} 
+                                        onPress={() => startActiveRoutine(item.id)}
+                                        onEdit={() => handleEditRoutine(item)}
+                                        onDelete={() => deleteRoutine(item.id)}
+                                    />
+                                )}
+                            />
+                        )}
+                    </View>
                     
 			</ScrollView>
 			</ThemedView>
