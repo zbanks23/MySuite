@@ -82,7 +82,7 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                                             <Text className="text-sm text-gray-500">
                                                 {set.details?.reps ? `${set.details.reps} reps` : 'Completed'}
                                             </Text>
-                                             {set.details?.weight && (
+                                             {set.details?.weight != null && set.details.weight > 0 && (
                                                 <Text className="text-sm text-gray-500"> @ {set.details.weight}</Text>
                                              )}
                                         </View>
