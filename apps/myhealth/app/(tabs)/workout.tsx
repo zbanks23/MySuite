@@ -51,13 +51,13 @@ export default function Workout() {
                         onPress: () => {
                             cancelWorkout();
                             // Small timeout to ensure state clears before starting new
-                            setTimeout(() => startWorkout([]), 100);
+                            setTimeout(() => startWorkout([], "Empty Workout"), 100);
                         }
                     }
                 ]
             );
         } else {
-            startWorkout([]);
+            startWorkout([], "Empty Workout");
         }
     };
 
@@ -125,13 +125,13 @@ export default function Workout() {
                         style: "destructive",
                         onPress: () => {
                             cancelWorkout();
-                            setTimeout(() => startWorkout(workout.exercises), 100);
+                            setTimeout(() => startWorkout(workout.exercises, workout.name), 100);
                         }
                     }
                 ]
             );
         } else {
-            startWorkout(workout.exercises);
+            startWorkout(workout.exercises, workout.name);
         }
     }
 
@@ -269,7 +269,7 @@ export default function Workout() {
                                 dayIndex={dayIndex}
                                 isDayCompleted={isDayCompleted}
                                 onClearRoutine={clearActiveRoutine}
-                                onStartWorkout={(exercises) => startWorkout(exercises)}
+                                onStartWorkout={(exercises, name) => startWorkout(exercises, name)}
                                 onMarkComplete={markRoutineDayComplete}
                             />
                         ) : (

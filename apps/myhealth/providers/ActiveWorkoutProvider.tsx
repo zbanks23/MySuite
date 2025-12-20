@@ -12,7 +12,7 @@ interface ActiveWorkoutContextType {
     currentIndex: number;
     workoutName: string;
     setWorkoutName: (name: string) => void;
-    startWorkout: (exercisesToStart?: Exercise[]) => void;
+    startWorkout: (exercisesToStart?: Exercise[], name?: string) => void;
     pauseWorkout: () => void;
     resetWorkout: () => void;
     completeSet: (index: number, input?: { weight?: number; reps?: number; duration?: number; distance?: number }) => void;
@@ -100,11 +100,16 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
 
     // Actions
-    const startWorkout = useCallback((exercisesToStart?: Exercise[]) => {
+    const startWorkout = useCallback((exercisesToStart?: Exercise[], name?: string) => {
 		// Allow empty workouts
 		// if (targetExercises.length === 0) { ... }
         if (exercisesToStart) {
             setExercises(exercisesToStart);
+        }
+        if (name) {
+            setWorkoutName(name);
+        } else {
+             setWorkoutName("Current Workout");
         }
 		setRunning(true);
         setHasActiveSession(true);

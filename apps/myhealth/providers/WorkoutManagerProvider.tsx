@@ -61,7 +61,9 @@ async function fetchUserRoutines(user: any) {
 
 async function fetchWorkoutHistory(user: any) {
     if (!user) return { data: [], error: null };
-    const { data: logs, error } = await supabase
+    
+    // Try rich query first
+    let { data: logs, error } = await supabase
         .from("workout_logs")
         .select(`
             workout_log_id,
@@ -70,12 +72,26 @@ async function fetchWorkoutHistory(user: any) {
             workout_time,
             notes,
             created_at,
+            workout_name,
             workouts ( workout_name )
         `)
         .eq("user_id", user.id)
         .order("workout_time", { ascending: false });
 
-    if (error) return { data: [], error };
+    // Fallback to simple query if rich query fails
+    if (error) {
+        console.warn("Rich history fetch failed, trying simple query", error);
+        const { data: simpleLogs, error: simpleError } = await supabase
+            .from("workout_logs")
+            .select('*')
+            .eq("user_id", user.id)
+            .order("workout_time", { ascending: false });
+            
+        if (simpleError) {
+            return { data: [], error: simpleError };
+        }
+        logs = simpleLogs;
+    }
 
     const formatted = logs?.map((log: any) => {
         let fallbackName = undefined;
@@ -85,14 +101,26 @@ async function fetchWorkoutHistory(user: any) {
                 if (parsed.name) fallbackName = parsed.name;
             }
         } catch {}
+        
+        // Handle potential missing columns from fallback
+        // Check for 'exercises' if 'notes' is missing (schema change)
+        const notes = log.notes || (log.exercises ? log.exercises : undefined);
+        
+        // Try to parse name from exercises/notes JSON if workout_name is missing
+        if (!fallbackName && notes) {
+             try {
+                const parsed = typeof notes === 'string' ? JSON.parse(notes) : notes;
+                if (parsed.name) fallbackName = parsed.name;
+            } catch {}
+        }
 
         return {
             id: log.workout_log_id,
             workoutId: log.workout_id,
             userId: log.user_id,
             workoutTime: log.workout_time,
-            notes: log.notes,
-            workoutName: log.workouts?.workout_name || fallbackName ||
+            notes: typeof notes === 'string' ? notes : JSON.stringify(notes),
+            workoutName: log.workout_name || log.workouts?.workout_name || fallbackName ||
                 "Untitled Workout",
             createdAt: log.created_at,
         };
@@ -486,6 +514,9 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                         await fetchWorkoutHistory(user);
                     if (!hError) {
                         setWorkoutHistory(hData);
+                    } else {
+                        console.error("Failed to fetch workout history:", hError);
+                        Alert.alert("History Error", "Failed to load workout history: " + (hError.message || JSON.stringify(hError)));
                     }
                 } else {
                     if (typeof window !== "undefined" && window.localStorage) {
