@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedView } from '../components/ui/ThemedView';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
@@ -18,8 +18,10 @@ export default function EndWorkoutScreen() {
     const completedSetsCount = exercises.reduce((acc, ex) => acc + (ex.completedSets || 0), 0);
     const totalExercises = exercises.length;
 
+    const [notes, setNotes] = React.useState("");
+
     const handleSave = () => {
-        finishWorkout();
+        finishWorkout(notes);
         router.dismiss();
     };
 
@@ -58,6 +60,19 @@ export default function EndWorkoutScreen() {
                             <Text className="text-gray-500 dark:text-gray-400">Exercises</Text>
                         </View>
                     </View>
+                </View>
+
+                <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-6">
+                    <Text className="font-semibold text-apptext dark:text-apptext_dark mb-2 text-lg">Notes</Text>
+                    <TextInput 
+                        className="text-apptext dark:text-apptext_dark min-h-[80px] p-2 border border-black/10 dark:border-white/10 rounded-lg"
+                        multiline
+                        placeholder="How did it feel?"
+                        placeholderTextColor="#9CA3AF"
+                        value={notes}
+                        onChangeText={setNotes}
+                        textAlignVertical="top"
+                    />
                 </View>
 
                 <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-6">

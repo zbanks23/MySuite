@@ -73,6 +73,7 @@ async function fetchWorkoutHistory(user: any) {
             notes,
             created_at,
             workout_name,
+            note,
             workouts ( workout_name )
         `)
         .eq("user_id", user.id)
@@ -113,13 +114,17 @@ async function fetchWorkoutHistory(user: any) {
                 if (parsed.name) fallbackName = parsed.name;
             } catch {}
         }
+        
+        // Use the explicit user note column if available
+        // If not, don't show the JSON dump in the notes field
+        const userNote = log.note || log.user_note || null; 
 
         return {
             id: log.workout_log_id,
             workoutId: log.workout_id,
             userId: log.user_id,
             workoutTime: log.workout_time,
-            notes: typeof notes === 'string' ? notes : JSON.stringify(notes),
+            notes: userNote, // Only show user entered note
             workoutName: log.workout_name || log.workouts?.workout_name || fallbackName ||
                 "Untitled Workout",
             createdAt: log.created_at,
@@ -205,6 +210,7 @@ async function persistCompletedWorkoutToSupabase(
     exercises: Exercise[],
     duration: number,
     workoutId?: string,
+    note?: string,
 ) {
     if (!user) return { error: "User not logged in" };
 
@@ -225,13 +231,14 @@ async function persistCompletedWorkoutToSupabase(
             user_id: user.id,
             // workout_id is removed
             workout_time: new Date().toISOString(),
-            exercises: JSON.stringify(notesObj), // Renamed from notes
-            workout_name: name, // New column
-            duration: duration, // New column
+            exercises: JSON.stringify(notesObj), 
+            workout_name: name, 
+            duration: duration,
+            note: note || null, // New column
         }])
         .select()
         .single();
-
+    
     if (workoutLogError || !workoutLog) {
         return { data: null, error: workoutLogError };
     }
@@ -430,7 +437,7 @@ interface WorkoutManagerContextType {
     createCustomExercise: (name: string, type: string) => Promise<{ data?: any, error?: any }>;
     workoutHistory: WorkoutLog[];
     fetchWorkoutLogDetails: (logId: string) => Promise<{ data: any[], error: any }>;
-    saveCompletedWorkout: (name: string, exercises: Exercise[], duration: number, onSuccess?: () => void) => Promise<void>;
+    saveCompletedWorkout: (name: string, exercises: Exercise[], duration: number, onSuccess?: () => void, note?: string) => Promise<void>;
     deleteWorkoutLog: (id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) => void;
 }
 
@@ -649,6 +656,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         exercises: Exercise[],
         duration: number,
         onSuccess?: () => void,
+        note?: string
     ) {
         if (user) {
             setIsSaving(true);
@@ -658,6 +666,8 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                     name,
                     exercises,
                     duration,
+                    undefined,
+                    note
                 );
 
                 if (error) {

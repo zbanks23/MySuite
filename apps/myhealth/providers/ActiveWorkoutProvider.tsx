@@ -23,7 +23,7 @@ interface ActiveWorkoutContextType {
     isExpanded: boolean;
     toggleExpanded: () => void;
     setExpanded: (expanded: boolean) => void;
-    finishWorkout: () => void;
+    finishWorkout: (note?: string) => void;
     cancelWorkout: () => void;
     hasActiveSession: boolean;
 }
@@ -226,9 +226,9 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
     const { saveCompletedWorkout } = useWorkoutManager();
 
-    const handleFinishWorkout = useCallback(() => {
+    const handleFinishWorkout = useCallback((note?: string) => {
         // Save the workout
-        saveCompletedWorkout(workoutName, exercises, workoutSeconds);
+        saveCompletedWorkout(workoutName, exercises, workoutSeconds, undefined, note);
 
         // Reset state
 		setRunning(false);
