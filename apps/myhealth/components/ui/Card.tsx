@@ -52,7 +52,7 @@ const CardSwipeAction = ({
     const hasEdit = !!onEdit;
     const LAYOUT_WIDTH = hasEdit 
         ? (BUTTON_HEIGHT * 2) + GAP + MARGIN + CARD_GAP 
-        : BUTTON_HEIGHT + MARGIN + CARD_GAP + 20; // extra space if just one button
+        : BUTTON_HEIGHT + MARGIN + CARD_GAP + 5; // Reduced gap for single button
 
     // Sync dragX to parent shared value
     useAnimatedReaction(

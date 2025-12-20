@@ -6,6 +6,7 @@ import { ThemedView } from '../components/ui/ThemedView';
 import { useUITheme } from '@mycsuite/ui';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { useActiveWorkout } from '../providers/ActiveWorkoutProvider';
+import { useFloatingButton } from '../providers/FloatingButtonContext';
 
 export default function SavedWorkoutsScreen() {
   const router = useRouter();
@@ -13,6 +14,13 @@ export default function SavedWorkoutsScreen() {
   
   const { savedWorkouts, deleteSavedWorkout } = useWorkoutManager();
   const { hasActiveSession, setExercises } = useActiveWorkout();
+  
+  // Hide floating buttons
+  const { setIsHidden } = useFloatingButton();
+  React.useEffect(() => {
+      setIsHidden(true);
+      return () => setIsHidden(false);
+  }, [setIsHidden]);
 
   const handleLoad = (id: string, name: string, workoutExercises: any[]) => {
       if (hasActiveSession) {
