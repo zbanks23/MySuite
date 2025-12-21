@@ -87,16 +87,26 @@ export default function Workout() {
         if (total === 0) return [];
 
         const result = [];
-        // Show up to 7 days
-        for (let i = 0; i < 7; i++) {
+        // Show up to 7 visible days (skipping future rest days)
+        let count = 0;
+        let i = 0;
+        // Safety break at 30 days to prevent infinite loops if routine is weird
+        while (count < 7 && i < 30) {
             const index = (dayIndex + i) % total;
-            const d = new Date();
-            d.setDate(d.getDate() + i);
-            result.push({ 
-                ...seq[index], 
-                originalIndex: index,
-                date: d
-            });
+            const item = seq[index];
+            
+            // Allow today (i=0) even if rest, otherwise skip rest days
+            if (i === 0 || item.type !== 'rest') {
+                const d = new Date();
+                d.setDate(d.getDate() + i);
+                result.push({ 
+                    ...item, 
+                    originalIndex: index,
+                    date: d
+                });
+                count++;
+            }
+            i++;
         }
         return result;
     }, [activeRoutineObj, dayIndex]);
