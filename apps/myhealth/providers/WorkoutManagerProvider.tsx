@@ -145,7 +145,7 @@ export async function fetchExercises(user: any) {
         .select(`
             exercise_id, 
             exercise_name, 
-            exercise_type,
+            properties,
             exercise_muscle_groups (
                 role,
                 muscle_groups ( name )
@@ -162,8 +162,8 @@ export async function fetchExercises(user: any) {
         const firstMuscle = primary ? primary.muscle_groups?.name : (muscles[0]?.muscle_groups?.name);
         
         // Parse properties from comma-separated string
-        const properties = e.exercise_type 
-            ? e.exercise_type.split(',').map((s: string) => s.trim()) 
+        const properties = e.properties 
+            ? e.properties.split(',').map((s: string) => s.trim()) 
             : [];
 
         return {
@@ -172,7 +172,7 @@ export async function fetchExercises(user: any) {
             category: firstMuscle || "General", 
             properties: properties,
             // Keep rawType if needed for now, or just rely on properties
-            rawType: e.exercise_type 
+            rawType: e.properties 
         };
     });
 
@@ -202,7 +202,7 @@ async function createCustomExerciseInSupabase(
         .from("exercises")
         .insert([{
             exercise_name: name.trim(),
-            exercise_type: type,
+            properties: type,
             user_id: user.id,
         }])
         .select()

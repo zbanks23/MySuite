@@ -1,9 +1,9 @@
 -- Sample exercises for demo user (uses `gen_random_uuid()` for ids)
 -- Requires `supabase/seeds/seed_profiles.sql` and `supabase/seeds/seed_muscle_groups.sql` to be run first.
 
--- Ensure exercise_type is TEXT
+-- Ensure exercise_properties is TEXT
 DO $$ BEGIN
-    ALTER TABLE public.exercises ALTER COLUMN exercise_type TYPE TEXT;
+    ALTER TABLE public.exercises ALTER COLUMN properties TYPE TEXT;
 EXCEPTION WHEN OTHERS THEN NULL; END $$;
 
 -- Exercise Properties: Bodyweight, Distance, Duration, Reps, Weighted
@@ -16,7 +16,7 @@ WITH demo AS (
   )
   LIMIT 1
 )
-INSERT INTO public.exercises (exercise_id, exercise_name, exercise_type, description, user_id, created_at)
+INSERT INTO public.exercises (exercise_id, exercise_name, properties, description, user_id, created_at)
   SELECT gen_random_uuid(), e.name, e.type, e.description, demo.user_id, NOW()
 FROM demo, (
   VALUES
