@@ -72,7 +72,7 @@ async function fetchWorkoutHistory(user: any) {
             workout_id,
             user_id,
             workout_time,
-            notes,
+            exercises,
             created_at,
             workout_name,
             note,
