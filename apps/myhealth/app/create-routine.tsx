@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, ScrollView, Modal } from 'react-native';
-import DraggableFlatList, { ScaleDecorator, RenderItemParams } from 'react-native-draggable-flatlist';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { IconSymbol } from '../components/ui/icon-symbol';
 import { useUITheme as useTheme } from '@mycsuite/ui';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { useFloatingButton } from '../providers/FloatingButtonContext';
 import { ThemedView } from '../components/ui/ThemedView';
 import { ThemedText } from '../components/ui/ThemedText';
-import { createSequenceItem } from '../utils/workout-logic';
+import { useRoutineDraft } from '../hooks/useRoutineDraft';
+import { RoutineDraftItem } from '../components/routines/RoutineDraftItem';
+import { AddDayModal } from '../components/routines/AddDayModal';
 
 export default function CreateRoutineScreen() {
     const theme = useTheme();
@@ -32,7 +33,14 @@ export default function CreateRoutineScreen() {
 
     const editingRoutineId = typeof id === 'string' ? id : null;
     const [routineDraftName, setRoutineDraftName] = useState("");
-    const [routineSequence, setRoutineSequence] = useState<any[]>([]);
+    
+    const {
+        routineSequence,
+        setRoutineSequence,
+        addDay,
+        removeDay
+    } = useRoutineDraft([]);
+
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -52,7 +60,7 @@ export default function CreateRoutineScreen() {
             }
         }
         setIsLoading(false);
-    }, [editingRoutineId, routines, router]);
+    }, [editingRoutineId, routines, router, setRoutineSequence]);
 
     async function handleSaveRoutine() {
         if (!routineDraftName.trim()) {
@@ -75,44 +83,19 @@ export default function CreateRoutineScreen() {
 
     // --- Sequence Manipulation ---
 
-    function addDayToSequence(item: any) {
-        const newItem = createSequenceItem(item);
-        setRoutineSequence((s) => [...s, newItem]);
+    function handleAddDay(item: any) {
+        addDay(item);
         setIsAddingDay(false);
-    }
-
-    function removeSequenceItem(id: string) {
-        setRoutineSequence((s) => s.filter((x) => x.id !== id));
     }
     
     const renderItem = ({ item, drag, isActive }: RenderItemParams<any>) => {
         return (
-            <ScaleDecorator activeScale={1.05}>
-                <TouchableOpacity
-                    onLongPress={drag}
-                    disabled={isActive}
-                    activeOpacity={1}
-                    className={`bg-surface dark:bg-surface_dark rounded-xl mb-3 overflow-hidden border p-3 flex-row items-center justify-between ${isActive ? 'border-primary dark:border-primary_dark' : 'border-black/5 dark:border-white/10'}`}
-                >
-                    <View className="flex-row items-center flex-1 mr-2">
-                         <View>
-                            <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                            <Text className="text-gray-500 dark:text-gray-400 text-sm">
-                                {item.type === 'rest' ? 'Rest Day' : 'Workout'}
-                            </Text>
-                        </View>
-                    </View>
-                    
-                    <View className="flex-row items-center">
-                        <TouchableOpacity onPressIn={drag} className="p-2 mr-2"> 
-                             <IconSymbol name="line.3.horizontal" size={20} color={theme.icon || '#888'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={(e) => { e.stopPropagation(); removeSequenceItem(item.id); }} className="p-2"> 
-                            <IconSymbol name="trash.fill" size={18} color={theme.options?.destructiveColor || '#ff4444'} />
-                        </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
-            </ScaleDecorator>
+            <RoutineDraftItem
+                item={item}
+                drag={drag}
+                isActive={isActive}
+                onRemove={() => removeDay(item.id)}
+            />
         );
     };
 
@@ -197,53 +180,13 @@ export default function CreateRoutineScreen() {
             </View>
 
             {/* Add Day Modal */}
-            <Modal
+            <AddDayModal
                 visible={isAddingDay}
-                animationType="slide"
-                presentationStyle="pageSheet"
-                onRequestClose={() => setIsAddingDay(false)}
-            >
-                <ThemedView className="flex-1">
-                    <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
-                        <TouchableOpacity onPress={() => setIsAddingDay(false)} className="p-2">
-                             <ThemedText type="link">Cancel</ThemedText>
-                        </TouchableOpacity>
-                        <ThemedText type="subtitle">Add Day</ThemedText>
-                        <View style={{ width: 50 }} />
-                    </View>
-                    
-                    <ScrollView className="flex-1 p-4">
-                        <ThemedText type="defaultSemiBold" className="mb-3">Options</ThemedText>
-                        <TouchableOpacity 
-                            onPress={() => addDayToSequence('rest')} 
-                            className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-6 flex-row items-center"
-                        >
-                            <IconSymbol name="moon.zzz.fill" size={24} color={theme.primary} />
-                            <ThemedText className="ml-3 font-semibold text-lg">Rest Day</ThemedText>
-                        </TouchableOpacity>
-
-                        <ThemedText type="defaultSemiBold" className="mb-3">Saved Workouts</ThemedText>
-                        {savedWorkouts.length === 0 ? (
-                             <Text className="text-gray-500 dark:text-gray-400 italic">No saved workouts found.</Text>
-                        ) : (
-                            savedWorkouts.map((workout) => (
-                                <TouchableOpacity 
-                                    key={workout.id}
-                                    onPress={() => addDayToSequence(workout)}
-                                    className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-3 flex-row items-center justify-between"
-                                >
-                                    <View>
-                                        <ThemedText className="font-semibold text-lg">{workout.name}</ThemedText>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-sm">{workout.exercises?.length || 0} Exercises</Text>
-                                    </View>
-                                    <IconSymbol name="plus.circle" size={24} color={theme.primary} />
-                                </TouchableOpacity>
-                            ))
-                        )}
-                        <View className="h-20" /> 
-                    </ScrollView>
-                </ThemedView>
-            </Modal>
+                onClose={() => setIsAddingDay(false)}
+                onAddRestDay={() => handleAddDay('rest')}
+                onAddWorkout={handleAddDay}
+                savedWorkouts={savedWorkouts}
+            />
         </ThemedView>
     );
 }
