@@ -13,7 +13,7 @@ interface ActiveRoutineCardProps {
   dayIndex: number; // Current day index in the full sequence
   isDayCompleted: boolean;
   onClearRoutine: () => void;
-  onStartWorkout: (exercises: any[], name?: string) => void;
+  onStartWorkout: (exercises: any[], name?: string, workoutId?: string) => void;
   onMarkComplete: () => void;
   onJumpToDay: (index: number) => void;
   onWorkoutPress: (workout: any) => void;
@@ -227,7 +227,8 @@ export function ActiveRoutineCard({
                           className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark flex-1 items-center justify-center"
                           onPress={() => {
                             if (item?.type === 'workout' && item.workout) {
-                              onStartWorkout(item.workout.exercises || [], item.name || activeRoutineObj.name);
+                              console.log("ActiveRoutineCard: item.workout ID:", item.workout.id);
+                              onStartWorkout(item.workout.exercises || [], item.name || activeRoutineObj.name, item.workout.id);
                             } else {
                               Alert.alert('Rest Day', 'Enjoy your rest!', [
                                 { text: 'Mark Complete', onPress: () => onMarkComplete() },

@@ -305,7 +305,40 @@ export default function Workout() {
                                 dayIndex={dayIndex}
                                 isDayCompleted={isDayCompleted}
                                 onClearRoutine={clearActiveRoutine}
-                                onStartWorkout={(exercises, name) => startWorkout(exercises, name, activeRoutineObj.id)}
+                                onStartWorkout={(exercises, name, workoutId) => {
+                                    console.log("Workout.tsx: onStartWorkout called. ID:", workoutId);
+                                    console.log("Workout.tsx: SavedWorkouts IDs:", savedWorkouts.map(w => w.id));
+                                    
+                                    let exercisesToStart = exercises;
+                                    // Try to find fresh version from saved workouts if ID exists
+                                    let fresh;
+                                    
+                                    if (workoutId) {
+                                        fresh = savedWorkouts.find(w => w.id === workoutId);
+                                        if (fresh) {
+                                             console.log("Workout.tsx: Found fresh workout by ID.");
+                                        } else {
+                                            console.log("Workout.tsx: Fresh workout NOT FOUND for ID:", workoutId);
+                                        }
+                                    }
+
+                                    // Fallback to name match if ID failed
+                                    if (!fresh && name) {
+                                        console.log("Workout.tsx: Attempting name fallback for:", name);
+                                        fresh = savedWorkouts.find(w => w.name.trim() === name.trim());
+                                        if (fresh) {
+                                            console.log("Workout.tsx: Found fresh workout by NAME.");
+                                        }
+                                    }
+
+                                    if (fresh && fresh.exercises && fresh.exercises.length > 0) {
+                                        exercisesToStart = fresh.exercises;
+                                        // Also update the name to match the fresh workout (in case of subtle changes)
+                                        // But keep routine context.
+                                    }
+
+                                    startWorkout(exercisesToStart, name, activeRoutineObj.id);
+                                }}
                                 onMarkComplete={markRoutineDayComplete}
                                 onJumpToDay={setActiveRoutineIndex}
                                 onWorkoutPress={setPreviewWorkout}
