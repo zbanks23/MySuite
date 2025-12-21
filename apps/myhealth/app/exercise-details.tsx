@@ -150,7 +150,7 @@ export default function ExerciseDetailsScreen() {
                     }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                             <ThemedText type="defaultSemiBold" style={{ color: currentColors.text }}>Performance</ThemedText>
-                            {availableMetrics.length > 1 && (
+                            {availableMetrics.length > 0 && (
                                 <View style={{ 
                                     flexDirection: 'row', 
                                     backgroundColor: toggleBackground, 
