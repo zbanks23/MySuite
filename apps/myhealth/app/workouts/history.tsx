@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { WorkoutDetailsModal } from '../../components/workouts/WorkoutDetailsModal';
 import { Card } from '../../components/ui/Card';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: () => void, onPress: () => void }) => {
     return (
@@ -36,20 +37,22 @@ export default function WorkoutHistoryScreen() {
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
   return (
-    <SafeAreaView className="flex-1 bg-background dark:bg-background_dark">
+    <View className="flex-1 bg-background dark:bg-background_dark">
       <Stack.Screen options={{ headerShown: false }} />
       
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-surface dark:border-white/10">
-        <Text className="text-2xl font-bold text-apptext dark:text-apptext_dark">Workout History</Text>
-        <TouchableOpacity onPress={() => router.back()} className="p-2">
-          <Text className="text-primary dark:text-primary_dark text-base font-semibold">Close</Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader 
+        title="Workout History" 
+        rightAction={
+            <TouchableOpacity onPress={() => router.back()} className="p-2">
+              <Text className="text-primary dark:text-primary_dark text-base font-semibold">Close</Text>
+            </TouchableOpacity>
+        }
+      />
 
       <FlatList
         data={workoutHistory}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
         renderItem={({ item }) => (
             <WorkoutHistoryItem 
                 item={item} 
@@ -71,6 +74,6 @@ export default function WorkoutHistoryScreen() {
         onClose={() => setSelectedLogId(null)} 
         workoutLogId={selectedLogId} 
       />
-    </SafeAreaView>
+    </View>
   );
 }
