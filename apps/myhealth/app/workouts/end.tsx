@@ -150,23 +150,22 @@ export default function EndWorkoutScreen() {
                         </View>
                     ))}
                 </View>
+                <View className="gap-3 pb-40">
+                     <TouchableOpacity 
+                        onPress={handleSave}
+                        className="bg-primary dark:bg-primary_dark py-4 rounded-xl items-center"
+                    >
+                        <Text className="text-white font-bold text-lg">Save Workout</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        onPress={handleDiscard}
+                        className="bg-red-500/10 py-4 rounded-xl items-center border border-red-500/20"
+                    >
+                        <Text className="text-red-500 font-bold text-lg">Discard Workout</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
-
-            <View className="mb-32 gap-3">
-                 <TouchableOpacity 
-                    onPress={handleSave}
-                    className="bg-primary dark:bg-primary_dark py-4 rounded-xl items-center"
-                >
-                    <Text className="text-white font-bold text-lg">Save Workout</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                    onPress={handleDiscard}
-                    className="bg-red-500/10 py-4 rounded-xl items-center border border-red-500/20"
-                >
-                    <Text className="text-red-500 font-bold text-lg">Discard Workout</Text>
-                </TouchableOpacity>
-            </View>
         </ThemedView>
     );
 }
