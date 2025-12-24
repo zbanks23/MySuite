@@ -50,7 +50,12 @@ export function WeightLogModal({ visible, onClose, onSave }: WeightLogModalProps
                     <TextInput
                         className="text-4xl font-bold text-center py-4 bg-gray-50 dark:bg-zinc-800/50 rounded-xl text-black dark:text-white"
                         value={weight}
-                        onChangeText={setWeight}
+                        onChangeText={(text) => {
+                          // Allow empty string, or numbers with up to 2 decimal places
+                          if (text === '' || /^\d*\.?\d{0,2}$/.test(text)) {
+                            setWeight(text);
+                          }
+                        }}
                         keyboardType="numeric"
                         placeholder="0.0"
                         placeholderTextColor={theme.placeholder}
