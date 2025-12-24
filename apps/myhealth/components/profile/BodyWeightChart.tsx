@@ -10,9 +10,10 @@ interface BodyWeightChartProps {
   textColor?: string;
   maxPoints?: number;
   selectedRange?: DateRange;
+  onPointSelect?: (value: number | null) => void;
 }
 
-export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af', maxPoints, selectedRange }: BodyWeightChartProps) {
+export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af', maxPoints, selectedRange, onPointSelect }: BodyWeightChartProps) {
   
   if (!data || data.length === 0) {
     return null;
@@ -104,6 +105,7 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
   const chartData = sortedData.map(item => ({
     value: item.value - minAxis + 1.5, // Small manual shift up to meet grid line
     label: item.label,
+    realValue: item.value,
     dataPointText: '', 
     spacing: (item as any).spacing, // Pass calculated spacing
   }));
@@ -156,7 +158,7 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
         hideRules
         hideDataPoints={false}
         dataPointsColor={color}
-        dataPointsRadius={4}
+        dataPointsRadius={6}
         width={computedWidth}
         height={150}
         spacing={spacing}
@@ -172,6 +174,28 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
         yAxisOffset={0}
         yAxisLabelTexts={yAxisLabelTexts}
         formatYLabel={(label: string) => JSON.stringify(label)}
+        focusEnabled
+        showStripOnFocus
+        pointerConfig={{
+          pointerStripUptoDataPoint: true,
+          pointerStripColor: textColor,
+          pointerStripWidth: 1,
+          strokeDashArray: [2, 4],
+          pointerColor: color,
+          radius: 5,
+          activatePointersOnLongPress: false,
+          autoAdjustPointerLabelPosition: true,
+          pointerVibrateOnPress: true,
+          pointerOnPress: true,
+          persistPointer: true,
+          onPointerChange: (items: any) => {
+            if (items && items.length > 0) {
+              onPointSelect?.(items[0].realValue);
+            } else {
+              onPointSelect?.(null);
+            }
+          },
+        }}
       />
       {/* Custom X-Axis Labels for Fixed Timeline */}
       {maxPoints && fixedLabels.length > 0 && (

@@ -33,6 +33,13 @@ export function BodyWeightCard({
   primaryColor,
   textColor,
 }: BodyWeightCardProps) {
+  const [hoveredWeight, setHoveredWeight] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    setHoveredWeight(null);
+  }, [selectedRange]);
+
+  const displayWeight = hoveredWeight ?? weight;
 
   return (
     <View className="p-4 rounded-xl mb-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
@@ -52,12 +59,17 @@ export function BodyWeightCard({
       </View>
       
       <View className="mt-2">
-        {weight ? (
+        {displayWeight ? (
             <View>
                 <View className="flex-row justify-between items-end mb-4">
                     <View className="flex-row items-baseline">
-                        <Text className="text-3xl font-bold mr-1 text-gray-900 dark:text-white">{weight}</Text>
+                        <Text className="text-3xl font-bold mr-1 text-gray-900 dark:text-white">{displayWeight}</Text>
                         <Text className="text-gray-500 text-sm">lbs</Text>
+                        {hoveredWeight && (
+                            <View className="ml-2 px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40">
+                                <Text className="text-[10px] font-bold text-blue-600 dark:text-blue-400">SELECTED</Text>
+                            </View>
+                        )}
                     </View>
                     
                     <SegmentedControl
@@ -72,6 +84,7 @@ export function BodyWeightCard({
                     textColor={textColor}
                     maxPoints={selectedRange === 'Day' ? 17 : selectedRange === 'Week' ? 13 : selectedRange === 'Month' ? 13 : undefined}
                     selectedRange={selectedRange}
+                    onPointSelect={(val) => setHoveredWeight(val)}
                 />
             </View>
         ) : (
