@@ -22,87 +22,59 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
   const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const screenWidth = Dimensions.get('window').width;
-  // Card has mx-4 (32) and p-4 (32) = 64 total reduction.
-  // Chart has -ml-4 (-16) negative margin.
-  // Let's try 50 to maximize space on the right.
-  const paddingHorizontal = 75; 
+  const paddingHorizontal = 75; // Card mx-4 (32) + p-4 (32) + buffer
+  const yAxisLabelWidth = 20;
   const chartWidth = screenWidth - paddingHorizontal;
-  
+  const DRAWING_PADDING = 10;
+  const availableDrawingWidth = chartWidth - yAxisLabelWidth - DRAWING_PADDING;
+
   let spacing = 40;
-  let initialSpacing = 0;
+  let initialSpacing = DRAWING_PADDING;
   let computedWidth = chartWidth;
-  const yAxisLabelWidth = 20; // Reduced from 30 to close gap
 
-  // If maxPoints is provided (Fixed Timeline mode), calculate exact positioning
-  if (maxPoints) {
-      // The drawing area is reduced by the Y Axis Width
-      // AND we want 10px padding on left (after Y axis) and 10px on right
-      const availableDrawingWidth = chartWidth - yAxisLabelWidth - 10; 
-      const unitSpacing = availableDrawingWidth / (maxPoints - 1);
-      
-      // Calculate initial offset based on the first point's spine position
-      const firstIndex = sortedData[0].spineIndex ?? 0;
-      initialSpacing = (firstIndex * unitSpacing);
-      
-      // Calculate spacing for each point to bridge gaps
-      sortedData.forEach((item, i) => {
-          if (i < sortedData.length - 1) {
-              const currentIdx = item.spineIndex ?? 0;
-              const nextIdx = sortedData[i + 1].spineIndex ?? 0;
-              const gap = nextIdx - currentIdx;
-              // Set spacing on this item to reach the next item
-              (item as any).spacing = gap * unitSpacing;
-          } else {
-              (item as any).spacing = unitSpacing; 
-          }
-      });
-      
-      spacing = unitSpacing;
-      computedWidth = chartWidth;
+  if (maxPoints || (sortedData.length > 1 && sortedData.length <= 32)) {
+    const pointsCount = maxPoints || sortedData.length;
+    const unitSpacing = availableDrawingWidth / (pointsCount - 1);
+    
+    spacing = unitSpacing;
+    initialSpacing = (sortedData[0].spineIndex ?? (maxPoints ? 0 : 0)) * unitSpacing + (maxPoints ? 0 : DRAWING_PADDING);
+    
+    // In fixed timeline mode, initialSpacing starts from 0 (relative to drawing area)
+    if (maxPoints) initialSpacing = (sortedData[0].spineIndex ?? 0) * unitSpacing;
 
+    sortedData.forEach((item, i) => {
+      const currentIdx = item.spineIndex ?? i;
+      const nextIdx = sortedData[i + 1]?.spineIndex ?? (currentIdx + 1);
+      (item as any).spacing = (nextIdx - currentIdx) * unitSpacing;
+    });
   } else {
-      // Logic for 'All' or variable ranges
-      const numPoints = sortedData.length;
-      if (numPoints > 1 && numPoints <= 32) {
-          const availableDrawingWidth = chartWidth - yAxisLabelWidth - 10;
-          spacing = availableDrawingWidth / (numPoints - 1);
-          initialSpacing = 10;
-          computedWidth = chartWidth;
-      } else {
-          // Dynamic right alignment for large sets
-          const contentWidth = numPoints > 1 ? (numPoints - 1) * spacing : 0;
-          const calculatedInitialSpacing = chartWidth - yAxisLabelWidth - 10 - contentWidth;
-          initialSpacing = Math.max(10, calculatedInitialSpacing);
-          computedWidth = Math.max(chartWidth, contentWidth + initialSpacing + 10);
-      }
+    // Large dataset ('All' range)
+    const contentWidth = (sortedData.length - 1) * spacing;
+    const calculatedInitialSpacing = availableDrawingWidth - contentWidth;
+    initialSpacing = Math.max(DRAWING_PADDING, calculatedInitialSpacing);
+    computedWidth = Math.max(chartWidth, contentWidth + initialSpacing + DRAWING_PADDING);
   }
 
   // Generate Fixed Labels if in Fixed Mode
   const fixedLabels: string[] = [];
   if (maxPoints && selectedRange && selectedRange !== 'All') {
-      const now = new Date();
-      // Generate 5 labels: 0%, 25%, 50%, 75%, 100%
-      const indices = [0, 0.25, 0.5, 0.75, 1];
+    const now = new Date();
+    const config = {
+      Day: { count: 17, unit: 'date' as const },
+      Week: { count: 13, unit: 'week' as const },
+      Month: { count: 13, unit: 'month' as const },
+    };
+    
+    const { count, unit } = config[selectedRange as keyof typeof config];
+    [0, 0.25, 0.5, 0.75, 1].forEach(percent => {
+      const d = new Date(now);
+      const unitsAgo = Math.round((count - 1) * (1 - percent));
+      if (unit === 'date') d.setDate(d.getDate() - unitsAgo);
+      else if (unit === 'week') d.setDate(d.getDate() - unitsAgo * 7);
+      else if (unit === 'month') d.setMonth(d.getMonth() - unitsAgo);
       
-      indices.forEach(percent => {
-          const d = new Date(now);
-          if (selectedRange === 'Day') {
-             // range 17 days (16 intervals)
-             const daysAgo = Math.round((17 - 1) * (1 - percent));
-             d.setDate(d.getDate() - daysAgo);
-             fixedLabels.push(d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
-          } else if (selectedRange === 'Week') {
-             // range 13 weeks (12 intervals)
-             const weeksAgo = Math.round((13 - 1) * (1 - percent));
-             d.setDate(d.getDate() - (weeksAgo * 7));
-             fixedLabels.push(d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
-          } else if (selectedRange === 'Month') {
-             // range 13 months (12 intervals)
-             const monthsAgo = Math.round((13 - 1) * (1 - percent));
-             d.setMonth(d.getMonth() - monthsAgo);
-             fixedLabels.push(d.toLocaleDateString(undefined, { month: 'short' }));
-          }
-      });
+      fixedLabels.push(d.toLocaleDateString(undefined, unit === 'month' ? { month: 'short' } : { month: 'short', day: 'numeric' }));
+    });
   }
 
   // Calculate Y-Axis bounds centered on average
@@ -118,23 +90,15 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
   // Search for the smallest stepValue (10, 20, 30...) that fits the data centered on avg
   for (let s = 10; s <= 1000; s += 10) {
     const range = s * targetSections;
-    // Try to center: start at avg - range/2, floor to 10
-    const idealStart = Math.floor((avg - range / 2) / 10) * 10;
-    const start = Math.max(0, idealStart); // Don't go below 0 for weight
-    const end = start + range;
-    
-    if (minData >= start && maxData <= end) {
+    const start = Math.max(0, Math.floor((avg - range / 2) / 10) * 10);
+    if (minData >= start && maxData <= start + range) {
       stepValue = s;
       minAxis = start;
       break;
     }
   }
 
-  const noOfSections = targetSections;
-  const yAxisLabelTexts = [];
-  for (let i = 0; i <= targetSections; i++) {
-    yAxisLabelTexts.push((minAxis + i * stepValue).toString());
-  }
+  const yAxisLabelTexts = Array.from({ length: targetSections + 1 }, (_, i) => (minAxis + i * stepValue).toString());
 
   // Format for gifted-charts - SUBTRACT minAxis to ensure perfect alignment with 0-height
   const chartData = sortedData.map(item => ({
@@ -152,24 +116,22 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
             pointerEvents="none"
             style={{
               position: 'absolute',
-              top: 10, // Matches paddingTop
+              top: 10,
               left: 0,
               width: chartWidth - yAxisLabelWidth,
-              height: 151, // +1 for border alignment
+              height: 151,
               borderWidth: 1,
               borderColor: textColor,
-              opacity: 0.08, // Faint
+              opacity: 0.08,
             }}
           >
-             {/* Vertical Lines */}
-             <View style={{ position: 'absolute', left: '25%', top: 0, bottom: 0, width: 1, backgroundColor: textColor }} />
-             <View style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, backgroundColor: textColor }} />
-             <View style={{ position: 'absolute', left: '75%', top: 0, bottom: 0, width: 1, backgroundColor: textColor }} />
-             
-             {/* Horizontal Lines */}
-             <View style={{ position: 'absolute', top: '25%', left: 0, right: 0, height: 1, backgroundColor: textColor }} />
-             <View style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, backgroundColor: textColor }} />
-             <View style={{ position: 'absolute', top: '75%', left: 0, right: 0, height: 1, backgroundColor: textColor }} />
+             {/* Cross-hair Style Grid */}
+             {[0.25, 0.5, 0.75].map(p => (
+               <React.Fragment key={p}>
+                 <View style={{ position: 'absolute', left: `${p * 100}%`, top: 0, bottom: 0, width: 1, backgroundColor: textColor }} />
+                 <View style={{ position: 'absolute', top: `${p * 100}%`, left: 0, right: 0, height: 1, backgroundColor: textColor }} />
+               </React.Fragment>
+             ))}
           </View>
       )}
       <LineChart
@@ -205,8 +167,8 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
         disableScroll={!!maxPoints}
         yAxisLabelWidth={yAxisLabelWidth}
         yAxisSide={1}
-        maxValue={stepValue * targetSections} 
-        noOfSections={noOfSections}
+        maxValue={stepValue * targetSections}
+        noOfSections={targetSections}
         yAxisOffset={0}
         yAxisLabelTexts={yAxisLabelTexts}
         formatYLabel={(label: string) => JSON.stringify(label)}
