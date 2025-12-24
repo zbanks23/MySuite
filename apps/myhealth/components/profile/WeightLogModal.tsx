@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { ThemedView, ThemedText, SharedButton, useUITheme } from '@mycsuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface WeightLogModalProps {
   visible: boolean;
@@ -11,7 +12,8 @@ interface WeightLogModalProps {
 
 export function WeightLogModal({ visible, onClose, onSave }: WeightLogModalProps) {
   const [weight, setWeight] = useState('');
-  const [date] = useState(new Date()); // Keeping it simple for now, defaulting to today
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const theme = useUITheme();
 
   const handleSave = () => {
@@ -19,8 +21,27 @@ export function WeightLogModal({ visible, onClose, onSave }: WeightLogModalProps
     if (!isNaN(numericWeight)) {
       onSave(numericWeight, date);
       setWeight('');
+      setDate(new Date()); // Reset to today for next time
       onClose();
     }
+  };
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+
+  const formatDate = (d: Date) => {
+    return d.toLocaleDateString(undefined, { 
+        weekday: 'short', 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+    });
   };
 
   return (
@@ -46,12 +67,46 @@ export function WeightLogModal({ visible, onClose, onSave }: WeightLogModalProps
                 </View>
 
                 <View className="mb-6">
+                    <Text className="text-sm text-gray-500 mb-2 font-medium">DATE</Text>
+                    <TouchableOpacity 
+                        onPress={() => setShowDatePicker(true)}
+                        className="flex-row items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-xl"
+                    >
+                        <Text className="text-lg text-black dark:text-white">
+                            {formatDate(date)}
+                        </Text>
+                        <IconSymbol name="calendar" size={18} color={theme.primary} />
+                    </TouchableOpacity>
+
+                    {(showDatePicker || Platform.OS === 'ios') && (
+                        <View className={Platform.OS === 'ios' ? 'mt-2' : ''}>
+                             {Platform.OS === 'ios' ? (
+                                <DateTimePicker
+                                    value={date}
+                                    mode="date"
+                                    display="spinner"
+                                    onChange={onDateChange}
+                                    maximumDate={new Date()}
+                                />
+                             ) : showDatePicker && (
+                                <DateTimePicker
+                                    value={date}
+                                    mode="date"
+                                    display="default"
+                                    onChange={onDateChange}
+                                    maximumDate={new Date()}
+                                />
+                             )}
+                        </View>
+                    )}
+                </View>
+
+                <View className="mb-6">
                     <Text className="text-sm text-gray-500 mb-2 font-medium">WEIGHT (LBS)</Text>
                     <TextInput
                         className="text-4xl font-bold text-center py-4 bg-gray-50 dark:bg-zinc-800/50 rounded-xl text-black dark:text-white"
                         value={weight}
                         onChangeText={(text) => {
-                          // Allow empty string, or numbers with up to 2 decimal places
                           if (text === '' || /^\d*\.?\d{0,2}$/.test(text)) {
                             setWeight(text);
                           }
@@ -59,7 +114,7 @@ export function WeightLogModal({ visible, onClose, onSave }: WeightLogModalProps
                         keyboardType="numeric"
                         placeholder="0.0"
                         placeholderTextColor={theme.placeholder}
-                        autoFocus
+                        autoFocus={Platform.OS !== 'ios'} // Prevent keyboard from covering picker on iOS if date is first
                     />
                 </View>
 

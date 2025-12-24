@@ -5,13 +5,13 @@ import { BodyWeightChart } from './BodyWeightChart';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
 
 // Defined locally to avoid circular dependencies if any
-type DateRange = 'Day' | 'Week' | 'Month' | 'All';
+type DateRange = 'Day' | 'Week' | 'Month' | 'Year';
 
 const RANGE_OPTIONS: SegmentedControlOption<DateRange>[] = [
   { label: 'Day', value: 'Day' },
   { label: 'Week', value: 'Week' },
   { label: 'Month', value: 'Month' },
-  { label: 'All', value: 'All' },
+  { label: 'Year', value: 'Year' },
 ];
 
 interface BodyWeightCardProps {
@@ -33,13 +33,40 @@ export function BodyWeightCard({
   primaryColor,
   textColor,
 }: BodyWeightCardProps) {
-  const [hoveredWeight, setHoveredWeight] = React.useState<number | null>(null);
+  const [selectedPoint, setSelectedPoint] = React.useState<{ value: number; date: string } | null>(null);
 
   React.useEffect(() => {
-    setHoveredWeight(null);
+    setSelectedPoint(null);
   }, [selectedRange]);
 
-  const displayWeight = hoveredWeight ?? weight;
+  const displayWeight = selectedPoint ? selectedPoint.value : weight;
+
+  const getSelectionLabel = () => {
+    if (!selectedPoint) return 'Latest Weight';
+    
+    const d = new Date(selectedPoint.date);
+    const date = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    
+    if (selectedRange === 'Day') {
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    
+    if (selectedRange === 'Week') {
+      const end = new Date(date);
+      end.setDate(date.getDate() + 6);
+      return `${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+    }
+    
+    if (selectedRange === 'Month') {
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    if (selectedRange === 'Year') {
+      return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    }
+    
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  };
 
   return (
     <View className="p-4 rounded-xl mb-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
@@ -62,14 +89,14 @@ export function BodyWeightCard({
         {displayWeight ? (
             <View>
                 <View className="flex-row justify-between items-end mb-4">
-                    <View className="flex-row items-baseline">
-                        <Text className="text-3xl font-bold mr-1 text-gray-900 dark:text-white">{displayWeight}</Text>
-                        <Text className="text-gray-500 text-sm">lbs</Text>
-                        {hoveredWeight && (
-                            <View className="ml-2 px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40">
-                                <Text className="text-[10px] font-bold text-blue-600 dark:text-blue-400">SELECTED</Text>
-                            </View>
-                        )}
+                    <View>
+                        <View className="flex-row items-baseline">
+                            <Text className="text-3xl font-bold mr-1 text-gray-900 dark:text-white">{displayWeight}</Text>
+                            <Text className="text-gray-500 text-sm">lbs</Text>
+                        </View>
+                        <Text className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">
+                            {getSelectionLabel()}
+                        </Text>
                     </View>
                     
                     <SegmentedControl
@@ -82,9 +109,9 @@ export function BodyWeightCard({
                     data={history} 
                     color={primaryColor}
                     textColor={textColor}
-                    maxPoints={selectedRange === 'Day' ? 17 : selectedRange === 'Week' ? 13 : selectedRange === 'Month' ? 13 : undefined}
+                    maxPoints={selectedRange === 'Day' ? 17 : selectedRange === 'Week' ? 13 : selectedRange === 'Month' ? 33 : 13} // Year is also 13 (months)
                     selectedRange={selectedRange}
-                    onPointSelect={(val) => setHoveredWeight(val)}
+                    onPointSelect={(point) => setSelectedPoint(point)}
                 />
             </View>
         ) : (

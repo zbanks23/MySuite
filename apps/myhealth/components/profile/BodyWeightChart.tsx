@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Dimensions, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
-type DateRange = 'Day' | 'Week' | 'Month' | 'All';
+type DateRange = 'Day' | 'Week' | 'Month' | 'Year';
 
 interface BodyWeightChartProps {
   data: { value: number; label: string; date: string; spineIndex?: number }[];
@@ -10,7 +10,7 @@ interface BodyWeightChartProps {
   textColor?: string;
   maxPoints?: number;
   selectedRange?: DateRange;
-  onPointSelect?: (value: number | null) => void;
+  onPointSelect?: (item: { value: number; date: string } | null) => void;
 }
 
 export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af', maxPoints, selectedRange, onPointSelect }: BodyWeightChartProps) {
@@ -58,12 +58,13 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
 
   // Generate Fixed Labels if in Fixed Mode
   const fixedLabels: string[] = [];
-  if (maxPoints && selectedRange && selectedRange !== 'All') {
+  if (maxPoints && selectedRange) {
     const now = new Date();
     const config = {
       Day: { count: 17, unit: 'date' as const },
       Week: { count: 13, unit: 'week' as const },
-      Month: { count: 13, unit: 'month' as const },
+      Month: { count: 33, unit: 'date' as const }, // Monthly view is now daily points for ~32 days
+      Year: { count: 13, unit: 'month' as const },
     };
     
     const { count, unit } = config[selectedRange as keyof typeof config];
@@ -101,11 +102,12 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
 
   const yAxisLabelTexts = Array.from({ length: targetSections + 1 }, (_, i) => (minAxis + i * stepValue).toString());
 
-  // Format for gifted-charts - SUBTRACT minAxis to ensure perfect alignment with 0-height
+  // Format for gifted-charts - SUBTRACT minAxis to ensure perfect alignment
   const chartData = sortedData.map(item => ({
-    value: item.value - minAxis + 1.5, // Small manual shift up to meet grid line
+    value: item.value - minAxis,
     label: item.label,
     realValue: item.value,
+    date: item.date,
     dataPointText: '', 
     spacing: (item as any).spacing, // Pass calculated spacing
   }));
@@ -174,6 +176,12 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
         yAxisOffset={0}
         yAxisLabelTexts={yAxisLabelTexts}
         formatYLabel={(label: string) => JSON.stringify(label)}
+        onPress={(item: any) => {
+          onPointSelect?.({ value: item.realValue, date: item.date });
+        }}
+        onBackgroundPress={() => {
+          onPointSelect?.(null);
+        }}
         focusEnabled
         showStripOnFocus
         pointerConfig={{
@@ -182,16 +190,16 @@ export function BodyWeightChart({ data, color = '#3b82f6', textColor = '#9ca3af'
           pointerStripWidth: 1,
           strokeDashArray: [2, 4],
           pointerColor: color,
-          radius: 5,
+          radius: 0, // Hide redundant pointer dot, use data points instead
           activatePointersOnLongPress: false,
           autoAdjustPointerLabelPosition: true,
           pointerVibrateOnPress: true,
           pointerOnPress: true,
-          persistPointer: true,
+          persistPointer: false,
           onPointerChange: (items: any) => {
-            if (items && items.length > 0) {
-              onPointSelect?.(items[0].realValue);
-            } else {
+            if (items && items.length > 0 && items[0].realValue !== undefined) {
+              onPointSelect?.({ value: items[0].realValue, date: items[0].date });
+            } else if (!items || items.length === 0) {
               onPointSelect?.(null);
             }
           },

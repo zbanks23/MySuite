@@ -8,7 +8,7 @@ import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
 import { WeightLogModal } from '../../components/profile/WeightLogModal';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
-type DateRange = 'Day' | 'Week' | 'Month' | 'All';
+type DateRange = 'Day' | 'Week' | 'Month' | 'Year';
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -96,8 +96,8 @@ export default function ProfileScreen() {
       const d = new Date(dateStr);
       const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
       
-      if (range === 'Week') return utcDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      if (range === 'Month' || range === 'All') return utcDate.toLocaleDateString(undefined, { month: 'short' });
+      if (range === 'Week' || range === 'Year') return utcDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      if (range === 'Month') return utcDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       return utcDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   };
 
@@ -131,14 +131,21 @@ export default function ProfileScreen() {
              spine.push(temp.toISOString().split('T')[0]);
         }
     } else if (selectedRange === 'Month') {
-        // Last 13 months (12 intervals, divisible by 4)
-        // Start from 1st of current month
+        // Last 33 days (32 intervals)
+        const d = new Date(todayStr);
+        for (let i = 32; i >= 0; i--) {
+            const temp = new Date(d);
+            temp.setUTCDate(d.getUTCDate() - i);
+            spine.push(temp.toISOString().split('T')[0]);
+        }
+    } else if (selectedRange === 'Year') {
+        // Last 13 months
         const currentMonthStartStr = `${todayY}-${todayM}-01`;
         const d = new Date(currentMonthStartStr);
         for (let i = 12; i >= 0; i--) {
-            const temp = new Date(d);
-            temp.setUTCMonth(d.getUTCMonth() - i);
-            spine.push(temp.toISOString().split('T')[0].substring(0, 7) + '-01'); 
+             const temp = new Date(d);
+             temp.setUTCMonth(d.getUTCMonth() - i);
+             spine.push(temp.toISOString().split('T')[0].substring(0, 7) + '-01'); 
         }
     }
 
@@ -148,15 +155,9 @@ export default function ProfileScreen() {
       .select('weight, date')
       .eq('user_id', user.id);
 
-    if (selectedRange !== 'All') {
-        // Optimize fetch to relevant range
-        // Safe to use spine[0] as it is a valid YYYY-MM-DD string matching DB format
         if (spine.length > 0) {
             query = query.gte('date', spine[0]).order('date', { ascending: true });
         }
-    } else {
-        query = query.order('date', { ascending: true });
-    }
 
     const { data: rawData, error } = await query;
       
@@ -176,22 +177,14 @@ export default function ProfileScreen() {
     rawData.forEach(item => {
         let key = item.date;
         if (selectedRange === 'Week') key = getWeekStartDate(item.date); // item.date is YYYY-MM-DD
-        else if (selectedRange === 'Month' || selectedRange === 'All') key = item.date.substring(0, 7) + '-01';
-
-        // For All, we need to build spine dynamically
-        if (selectedRange === 'All') {
-             if (!spine.includes(key)) spine.push(key);
-        }
+        else if (selectedRange === 'Year') key = item.date.substring(0, 7) + '-01';
+        else key = item.date; // Day and Month use individual days
 
         if (!groups[key]) groups[key] = { total: 0, count: 0 };
         groups[key].total += item.weight;
         groups[key].count += 1;
     });
-    
-    // Sort spine for 'All' case as it was built out of order potentially
-    if (selectedRange === 'All') {
-        spine.sort();
-    }
+
 
     // 4. Fill Spine & Interpolate -> NO BACKFILL.
     // Just map existing data to their positions in the spine.
