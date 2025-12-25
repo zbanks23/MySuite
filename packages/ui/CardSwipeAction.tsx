@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Animated, { 
     useAnimatedStyle, 
@@ -12,7 +12,7 @@ import Animated, {
     useDerivedValue
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { IconSymbol } from './icon-symbol';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface CardSwipeActionProps { 
     dragX: SharedValue<number>; 
@@ -206,7 +206,7 @@ export const CardSwipeAction = ({
         return {
             transform: [{ translateX }, { scale }],
             opacity: isDeleting ? 0 : opacity,
-        };
+        } as any;
     });
     
 
@@ -233,7 +233,7 @@ export const CardSwipeAction = ({
                             }}
                             className="bg-primary dark:bg-primary-dark"
                         >
-                            <IconSymbol name="pencil" size={18} color="white" />
+                            <MaterialIcons name="edit" size={18} color="white" />
                         </TouchableOpacity>
                         <Animated.Text className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold mt-1">
                             Edit
@@ -257,7 +257,7 @@ export const CardSwipeAction = ({
                     >
                         <TouchableOpacity onPress={onDelete} activeOpacity={0.8} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <Animated.View style={[deleteIconStyle]}>
-                                <IconSymbol name="trash.fill" size={16} color="white" />
+                                <MaterialIcons name="delete" size={16} color="white" />
                             </Animated.View>
                         </TouchableOpacity>
                     </Animated.View>

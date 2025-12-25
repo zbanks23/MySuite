@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { RaisedCard } from '../ui/RaisedCard';
+import { RaisedCard } from '../../../../packages/ui/RaisedCard';
 import { SavedWorkout } from '../../types';
 
 interface SavedWorkoutItemProps {

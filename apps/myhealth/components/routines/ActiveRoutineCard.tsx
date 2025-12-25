@@ -4,7 +4,7 @@ import { ActiveRoutineHeader } from './ActiveRoutineHeader';
 import { ActiveRoutineCompletion } from './ActiveRoutineCompletion';
 import { ActiveRoutineTimelineItem } from './ActiveRoutineTimelineItem';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
-import { RaisedCard } from '../ui/RaisedCard';
+import { RaisedCard } from '@mysuite/ui';
 
 type ViewMode = 'next_3' | 'next_7' | 'week';
 

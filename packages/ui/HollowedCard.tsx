@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import * as React from 'react';
 import { View, TouchableOpacity, ViewProps, TouchableOpacityProps, useWindowDimensions } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { 
@@ -6,6 +6,8 @@ import Animated, {
     useSharedValue,
 } from 'react-native-reanimated';
 import { CardSwipeAction } from './CardSwipeAction';
+import { cssInterop } from 'nativewind';
+// cssInterop(Swipeable, { className: 'style' });
 
 interface CardProps extends ViewProps {
   onPress?: () => void;
@@ -35,8 +37,8 @@ export function HollowedCard({ children, style, className, onPress, activeOpacit
   };
 
   // Track if we are deep enough to delete
-  const shouldDelete = useRef(false);
-  const swipeableRef = useRef<any>(null);
+  const shouldDelete = React.useRef(false);
+  const swipeableRef = React.useRef<any>(null);
   
   // Shared drag X for coordinating main card movement
   const sharedDragX = useSharedValue(0);

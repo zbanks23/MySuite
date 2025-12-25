@@ -4,7 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { WorkoutDetailsModal } from '../../components/workouts/WorkoutDetailsModal';
-import { RaisedCard } from '../../components/ui/RaisedCard';
+import { RaisedCard } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: () => void, onPress: () => void }) => {

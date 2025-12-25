@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { BodyWeightChart } from './BodyWeightChart';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
-import { RaisedCard } from '../ui/RaisedCard';
+import { RaisedCard } from '../../../../packages/ui/RaisedCard';
 
 // Defined locally to avoid circular dependencies if any
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';

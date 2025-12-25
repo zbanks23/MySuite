@@ -18,11 +18,10 @@ import { ActiveRoutineCard } from '../../components/routines/ActiveRoutineCard';
 import { SavedWorkoutItem } from '../../components/workouts/SavedWorkoutItem';
 import { WorkoutPreviewModal } from '../../components/workouts/WorkoutPreviewModal';
 import { useRoutineTimeline } from '../../hooks/routines/useRoutineTimeline';
-import { HollowedCard } from '../../components/ui/HollowedCard';
+import { HollowedCard, RaisedButton } from '@mysuite/ui';
 
 import { SavedWorkout, Routine } from '../../types';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { RaisedButton } from '@mysuite/ui';
 
 export default function Workout() {
 	const router = useRouter();

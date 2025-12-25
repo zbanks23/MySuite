@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
-import { RaisedCard } from '../ui/RaisedCard';
+import { RaisedCard } from '../../../../packages/ui/RaisedCard';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {

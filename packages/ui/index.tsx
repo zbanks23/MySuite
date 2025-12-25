@@ -9,6 +9,9 @@ cssInterop(Text, { className: 'style' });
 
 export { RaisedButton } from './RaisedButton';
 export { HollowedButton } from './HollowedButton';
+export { RaisedCard } from './RaisedCard';
+export { HollowedCard } from './HollowedCard';
+
 
 
 export { UIThemeProvider, useUITheme } from './theme';
