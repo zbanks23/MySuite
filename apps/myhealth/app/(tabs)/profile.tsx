@@ -270,16 +270,17 @@ export default function ProfileScreen() {
         } 
       />
       
-
-      <BodyWeightCard 
-        weight={latestWeight} 
-        history={weightHistory}
-        onLogWeight={() => setIsWeightModalVisible(true)} 
-        selectedRange={selectedRange}
-        onRangeChange={setSelectedRange}
-        primaryColor={theme.primary}
-        textColor={theme.textMuted}
+      <View className="mt-10 px-4">
+        <BodyWeightCard 
+          weight={latestWeight} 
+          history={weightHistory}
+          onLogWeight={() => setIsWeightModalVisible(true)} 
+          selectedRange={selectedRange}
+          onRangeChange={setSelectedRange}
+          primaryColor={theme.primary}
+          textColor={theme.textMuted}
       />
+      </View> 
 
       <WeightLogModal
         visible={isWeightModalVisible}
