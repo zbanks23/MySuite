@@ -14,6 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { RadialMenuBackdrop } from './RadialMenuBackdrop';
 import { RadialMenuFan } from './RadialMenuFan';
 import { RadialMenuItem, RadialMenuItemType } from './RadialMenuItem';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Configuration
 const BUTTON_SIZE = 60;
@@ -146,15 +147,15 @@ export function RadialMenu({
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }],
-      backgroundColor: theme.background, 
+      // backgroundColor is handled in the child view to allow for borders
       width: buttonSize,
       height: buttonSize,
       borderRadius: buttonSize / 2,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
+      shadowOffset: { width: 4, height: 4 }, // Deeper shadow for floating effect
+      shadowOpacity: 0.3,
+      shadowRadius: 5,
+      elevation: 8,
       zIndex: 3000, // Ensure button is ABOVE items
       alignItems: 'center',
       justifyContent: 'center',
@@ -182,12 +183,36 @@ export function RadialMenu({
            />
        ))}
 
-      <GestureDetector gesture={composedGesture}>
-        <Animated.View style={buttonStyle}>
-           <View className="absolute inset-0" style={[{ backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.bgLight, borderRadius: buttonSize/2 }]} />
-          <IconSymbol name={icon as any} size={buttonSize * 0.5} color={theme.text} />
-        </Animated.View>
-      </GestureDetector>
+       <GestureDetector gesture={composedGesture}>
+         <Animated.View style={buttonStyle}>
+            {/* Base Background Layer */}
+            <View 
+             className="absolute inset-0" 
+             style={[{ 
+                 backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.bgLight, 
+                 borderRadius: buttonSize/2 
+             }]} 
+            />
+            
+            {/* Gradient Overlay for Smooth Convex Effect */}
+            <LinearGradient
+                colors={theme.dark ? ['hsla(0, 0%, 100%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] : ['hsla(0, 0%, 100%, 0.9)', 'hsla(0, 0%, 70%, 0.05)']}
+                locations={[0.5, 1]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: buttonSize / 2,
+                }}
+            />
+
+           <IconSymbol name={icon as any} size={buttonSize * 0.5} color={theme.text} />
+         </Animated.View>
+       </GestureDetector>
     </View>
   );
 }
