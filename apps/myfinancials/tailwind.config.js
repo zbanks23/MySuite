@@ -1,13 +1,12 @@
-const { baseColors, appThemes } = require('./packages/ui/colors');
+const { baseColors, appThemes } = require('../../packages/ui/colors');
+const brand = appThemes.myfinancials;
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./apps/myhealth/app/**/*.{js,jsx,ts,tsx}",
-    "./apps/myhealth/components/**/*.{js,jsx,ts,tsx}",
-    "./apps/myfinancials/app/**/*.{js,jsx,ts,tsx}",
-    "./apps/myfinancials/components/**/*.{js,jsx,ts,tsx}",
-    "./packages/ui/**/*.{js,jsx,ts,tsx}",
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+    "../../packages/ui/**/*.{js,jsx,ts,tsx}",
   ],
   presets: [require("nativewind/preset")],
   theme: {
@@ -21,10 +20,10 @@ module.exports = {
         'dark': baseColors.dark.bg,
         'dark-darker': baseColors.dark.bgDark,
 
-        primary: baseColors.light.text,
-        'primary-dark': baseColors.dark.text,
-        accent: baseColors.light.textMuted,
-        'accent-dark': baseColors.dark.textMuted,
+        primary: brand.light.primary,
+        'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
+        'accent-dark': brand.dark.accent,
       },
       textColor: {
         'light': baseColors.light.text,
@@ -32,19 +31,19 @@ module.exports = {
         'dark': baseColors.dark.text,
         'dark-muted': baseColors.dark.textMuted,
 
-        primary: baseColors.light.text,
-        'primary-dark': baseColors.dark.text,
-        accent: baseColors.light.textMuted,
-        'accent-dark': baseColors.dark.textMuted,
+        primary: brand.light.primary,
+        'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
+        'accent-dark': brand.dark.accent,
       },
       borderColor: {
         'light': baseColors.light.border,
         'dark': baseColors.dark.border,
 
-        primary: baseColors.light.text,
-        'primary-dark': baseColors.dark.text,
-        accent: baseColors.light.textMuted,
-        'accent-dark': baseColors.dark.textMuted,
+        primary: brand.light.primary,
+        'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
+        'accent-dark': brand.dark.accent,
       },
       colors: {
         error: baseColors.light.error,
