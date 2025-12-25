@@ -136,8 +136,8 @@ export function ActiveRoutineTimelineItem({
                 </Text>
               )}
               {isToday && !isCompletedToday && (
-                <View className="bg-dark dark:bg-dark-darker px-2 py-0.5 rounded">
-                  <Text className="text-[10px] text-light-muted dark:text-dark-muted font-bold">
+                <View className="bg-light-lighter px-2 py-0.5 rounded">
+                  <Text className="text-[10px] text-black font-bold">
                     TODAY
                   </Text>
                 </View>
