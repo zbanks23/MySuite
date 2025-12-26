@@ -21,7 +21,7 @@ const baseColors = {
     tabIconDefault: 'hsl(0, 0%, 89%)',
     error: 'hsl(0, 84%, 60%)',
     border: 'hsl(0, 0%, 10%)',
-    highlight: 'hsla(0, 0%, 100%, 0.3)',
+    highlight: 'hsla(0, 0%, 100%, 0.15)',
   }
 };
 

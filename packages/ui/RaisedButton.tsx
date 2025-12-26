@@ -28,14 +28,35 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
       style={[shadowStyle, { borderRadius }, style] as any}>
         {({ pressed, hovered }: { pressed: boolean; hovered?: boolean }) => (
           <>
+            {/* Base Gradient - Always Visible */}
+            <LinearGradient
+                colors={theme.dark 
+                  ? ['hsla(0, 0%, 40%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] 
+                  : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
+                locations={[0.3, 1]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: borderRadius,
+                    zIndex: -1,
+                }}
+                pointerEvents="none"
+            />
+
+            {/* Interaction Gradient - Visible on Press/Hover */}
             {(pressed || hovered) && (
               <LinearGradient
                 colors={theme.dark 
-                  ? ['hsla(0, 0%, 50%, 0.2)', 'hsla(0, 0%, 40%, 0.3)'] 
-                  : ['hsla(0, 0%, 100%, 0.7)', 'hsla(0, 0%, 75%, 0.05)']}
-                locations={[0, 1]}
+                  ? ['hsla(0, 0%, 50%, 0.25)', 'hsla(0, 0%, 10%, 0.3)'] 
+                  : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
+                locations={[0.5, 1]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 0.2, y: 1 }} // Adjusted for typical button aspect ratio
+                end={{ x: 1, y: 1 }}
                 style={{
                     position: 'absolute',
                     top: 0,
