@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
-import { RaisedCard } from '../../../../packages/ui/RaisedCard';
+import { RaisedCard, HollowedButton } from '../../../../packages/ui';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {
@@ -76,13 +76,15 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                 )}
 
                 {/* Add Set Button */}
-                <TouchableOpacity 
-                    className="flex-row items-center justify-center pt-3 pb-5 gap-2 border-b border-light dark:border-dark" 
-                    onPress={onAddSet}
-                >
-                     <IconSymbol name="plus.circle.fill" size={20} color={theme.primary} />
-                     <Text className="text-sm font-semibold text-primary dark:text-primary-dark">Add Set</Text>
-                </TouchableOpacity>
+                {/* Add Set Button */}
+                <View className="items-center justify-center mt-1">
+                    <HollowedButton 
+                        title="+ Add Set" 
+                        onPress={onAddSet} 
+                        className="py-3 w-full"
+                        textClassName="text-sm font-semibold text-primary dark:text-primary-dark"
+                    />
+                </View>
             </View>
         </RaisedCard>
     );
