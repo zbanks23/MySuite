@@ -6,7 +6,7 @@ import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
 import { IconSymbol } from '../ui/icon-symbol';
 
-export function WorkoutStickyHeader() {
+export function ActiveWorkoutHeader() {
     const theme = useUITheme();
     
 

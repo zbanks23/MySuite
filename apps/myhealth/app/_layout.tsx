@@ -12,7 +12,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { ActiveWorkoutProvider } from '../providers/ActiveWorkoutProvider'; // Fixed import path
 import { WorkoutManagerProvider } from '../providers/WorkoutManagerProvider';
-import { WorkoutStickyHeader } from '../components/workouts/WorkoutStickyHeader';
+import { ActiveWorkoutHeader } from '../components/workouts/ActiveWorkoutHeader';
 import { ActiveWorkoutOverlay } from '../components/workouts/ActiveWorkoutOverlay'; 
 import { QuickNavigationButton } from '../components/ui/QuickNavigationMenu';
 import { QuickUtilityButton } from '../components/ui/QuickUtilityMenu';
@@ -87,7 +87,7 @@ export default function RootLayout() {
                 <ActiveWorkoutProvider>
                   <FloatingButtonProvider>
                     <RootLayoutNav />
-                    <WorkoutStickyHeader />
+                    <ActiveWorkoutHeader />
                     <ActiveWorkoutOverlay />
                     <GlobalOverlay>
                       <QuickNavigationButton />
