@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
 import { useUITheme } from '@mysuite/ui';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { ProfileEditModal } from '../../components/ui/ProfileEditModal';
 
 export default function SettingsScreen() {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ export default function SettingsScreen() {
   const [username, setUsername] = React.useState('');
   const [fullName, setFullName] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (user) {
@@ -30,19 +32,25 @@ export default function SettingsScreen() {
     }
   }, [user]);
 
-  const handleUpdateProfile = async () => {
+  const handleUpdateProfile = async (newUsername: string, newFullName: string) => {
     if (!user) return;
     setLoading(true);
     const { error } = await supabase.from('profiles').upsert({
       id: user.id,
-      username,
-      full_name: fullName,
+      username: newUsername,
+      full_name: newFullName,
       updated_at: new Date().toISOString(),
     });
     setLoading(false);
 
-    if (error) Alert.alert('Error', error.message);
-    else Alert.alert('Success', 'Profile updated successfully!');
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      setUsername(newUsername);
+      setFullName(newFullName);
+      setIsEditModalVisible(false);
+      Alert.alert('Success', 'Profile updated successfully!');
+    }
   };
 
   const handleSignOut = async () => {
@@ -83,42 +91,37 @@ export default function SettingsScreen() {
         </View>
 
         <View className="mb-6">
-          <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Account</Text>
-          <View className="py-3">
-            <Text className="text-base text-light dark:text-dark">Email</Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-sm font-semibold text-gray-500 uppercase">Account</Text>
+            <TouchableOpacity onPress={() => setIsEditModalVisible(true)}>
+              <Text className="text-primary font-semibold">Edit</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View className="py-3 border-b border-light dark:border-white/5">
+            <Text className="text-sm text-gray-500 mb-1">Email</Text>
             <Text className="text-base text-light dark:text-dark">{user?.email}</Text>
           </View>
           
-          <View className="py-3">
-            <Text className="text-base text-light dark:text-dark">Username</Text>
-            <TextInput
-              className="p-3 border border-light dark:border-dark rounded-lg mt-2 text-base text-light dark:text-dark"
-              value={username}
-              onChangeText={setUsername}
-              placeholder="Username"
-              placeholderTextColor={theme.icon || "#9ca3af"}
-            />
+          <View className="py-3 border-b border-light dark:border-white/5">
+            <Text className="text-sm text-gray-500 mb-1">Username</Text>
+            <Text className="text-base text-light dark:text-dark">{username || 'Not set'}</Text>
           </View>
 
           <View className="py-3">
-            <Text className="text-base text-light dark:text-dark">Full Name</Text>
-            <TextInput
-              className="p-3 border border-light dark:border-dark rounded-lg mt-2 text-base text-light dark:text-dark"
-              value={fullName}
-              onChangeText={setFullName}
-              placeholder="Full Name"
-              placeholderTextColor={theme.icon || "#9ca3af"}
-            />
+            <Text className="text-sm text-gray-500 mb-1">Full Name</Text>
+            <Text className="text-base text-light dark:text-dark">{fullName || 'Not set'}</Text>
           </View>
-
-          <TouchableOpacity 
-            className="mt-4 p-4 items-center bg-dark dark:bg-dark-darker rounded-lg" 
-            onPress={handleUpdateProfile}
-            disabled={loading}
-          >
-            <Text className="text-base font-semibold text-primary dark:text-primary-dark">{loading ? 'Saving...' : 'Save Changes'}</Text>
-          </TouchableOpacity>
         </View>
+
+        <ProfileEditModal
+          visible={isEditModalVisible}
+          onClose={() => setIsEditModalVisible(false)}
+          onSave={handleUpdateProfile}
+          initialUsername={username}
+          initialFullName={fullName}
+          loading={loading}
+        />
 
         <View className="mb-6">
           <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Legal</Text>
