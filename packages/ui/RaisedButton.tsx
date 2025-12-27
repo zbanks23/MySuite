@@ -6,10 +6,11 @@ import { useUITheme } from './theme';
 // Enable className support for React Native components (if not already enabled globally)
 cssInterop(Text, { className: 'style' });
 
-export const RaisedButton = ({ title, className, textClassName, style, children, borderRadius = 12, ...props }: { title?: string; className?: string; textClassName?: string; children?: React.ReactNode; borderRadius?: number } & TouchableOpacityProps) => {
+export const RaisedButton = ({ title, className, textClassName, style, children, borderRadius = 12, showGradient = true, ...props }: { title?: string; className?: string; textClassName?: string; children?: React.ReactNode; borderRadius?: number; showGradient?: boolean } & TouchableOpacityProps) => {
   const theme = useUITheme();
-  const defaultClasses = 'p-4 my-4 rounded-xl items-center justify-center bg-light dark:bg-dark border border-t-highlight border-l-highlight border-b-transparent border-r-transparent dark:border-t-highlight-dark dark:border-l-highlight-dark';
-  const combined = `${defaultClasses}${className ? ' ' + className : ''}`;
+  
+  const baseClasses = 'rounded-xl items-center justify-center bg-light dark:bg-dark border border-t-highlight border-l-highlight border-b-transparent border-r-transparent dark:border-t-highlight-dark dark:border-l-highlight-dark';
+  const combined = `${baseClasses}${className ? ' ' + className : ''}`;
 
   const shadowStyle = {
     shadowColor: '#000',
@@ -25,6 +26,7 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
       className={combined}
       activeOpacity={0.9}
       style={[shadowStyle, { borderRadius }, style] as any}>
+        {showGradient && (
         <LinearGradient
             colors={theme.dark 
                 ? ['hsla(0, 0%, 40%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] 
@@ -43,7 +45,8 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
             }}
             pointerEvents="none"
         />
-        <View style={{ zIndex: 1 }}>
+        )}
+        <View style={{ zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             {children ? children : <Text className={textClassName || "text-center text-primary font-bold text-lg"}>{title}</Text>}
         </View>
     </TouchableOpacity>

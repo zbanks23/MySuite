@@ -12,7 +12,9 @@ import Animated, {
     useDerivedValue
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { IconSymbol } from '../../apps/myhealth/components/ui/icon-symbol';
+import { RaisedButton } from './RaisedButton';
+import { useUITheme } from './theme';
 
 interface CardSwipeActionProps { 
     dragX: SharedValue<number>; 
@@ -29,6 +31,7 @@ export const CardSwipeAction = ({
     onEdit,
     onSetReadyToDelete
 }: CardSwipeActionProps) => {
+    const theme = useUITheme();
     const { width } = useWindowDimensions();
     const hasTriggered = useSharedValue(false);
     // Trigger when card is swiped past 45% of screen width
@@ -93,7 +96,7 @@ export const CardSwipeAction = ({
         
         // 2. Calculate Snapped State (Full Screen)
         // Fit exactly to screen width (anchored right, so left edge is at 0)
-        const snappedW = width - 35;
+        const snappedW = width - 70;
         
         // 3. Interpolate
         const progress = snapProgress.value;
@@ -127,6 +130,7 @@ export const CardSwipeAction = ({
             transform: [{ scale: isDeleting ? 1 : scale }],
             opacity,
             zIndex: isDeleting ? 100 : 0, // High z-index to cover everything
+            top: 0,
         };
     });
 
@@ -138,35 +142,6 @@ export const CardSwipeAction = ({
             Extrapolation.CLAMP
         );
         return { transform: [{ scale }] };
-    });
-
-    const deleteLabelStyle = useAnimatedStyle(() => {
-        const drag = dragX.value;
-        const absDrag = Math.abs(drag);
-        
-        let linearTranslateX = 0;
-        let snappedTranslateX = 0;
-        
-        // 1. Linear Centering
-        if (absDrag > LAYOUT_WIDTH) {
-             // The blob grows leftwards from the right edge (+20).
-             // Center of blob = +20 - width/2
-             // We want label at Center of blob.
-             // Width = 40 + (absDrag - LAYOUT_WIDTH)
-             // Target = 20 - (40 + absDrag - LAYOUT_WIDTH)/2 = -(absDrag - LAYOUT_WIDTH)/2
-             linearTranslateX = -(absDrag - LAYOUT_WIDTH) / 2;
-        }
-        
-        // 2. Snapped Centering
-        // Snapped width = width - 35
-        // Target = 20 - (width - 35)/2
-        snappedTranslateX = 20 - (width - 35) / 2;
-
-        const translateX = interpolate(snapProgress.value, [0, 1], [linearTranslateX, snappedTranslateX]);
-
-        return {
-            transform: [{ translateX }],
-        };
     });
 
     // Edit Button Animation
@@ -220,56 +195,44 @@ export const CardSwipeAction = ({
              {hasEdit && (
                  <View style={{ marginRight: GAP, alignItems: 'center', justifyContent: 'center' }}>
                     <Animated.View style={[editStyle]} className="justify-center items-center">
-                        <TouchableOpacity 
+                        <RaisedButton 
                             onPress={onEdit} 
-                            activeOpacity={0.8}
                             style={{ 
                                 width: BUTTON_HEIGHT, 
                                 height: BUTTON_HEIGHT, 
-                                borderRadius: BUTTON_HEIGHT/2, 
-                                backgroundColor: '#2563eb', // blue-600
-                                justifyContent: 'center', 
-                                alignItems: 'center',
                             }}
-                            className="bg-primary dark:bg-primary-dark"
+                            borderRadius={BUTTON_HEIGHT / 2}
+                            // Re-adding p-0 my-0 because default p-4 is too big for 40px button
+                            className="bg-blue-500"
                         >
-                            <MaterialIcons name="edit" size={18} color="white" />
-                        </TouchableOpacity>
-                        <Animated.Text className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold mt-1">
-                            Edit
-                        </Animated.Text>
+                            <IconSymbol name="pencil" size={20} color="white" />
+                        </RaisedButton>
                     </Animated.View>
                  </View>
              )}
 
              {/* Delete Button Wrapper */}
-            <View style={{ marginRight: MARGIN, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ marginRight: MARGIN, alignItems: 'center', justifyContent: 'center', width: BUTTON_HEIGHT, height: BUTTON_HEIGHT, position: 'relative'}}>
                 {/* 
                     Top part: The Button Anchor. 
                     We use a relative container of 40x40 to match the Edit button's circle slot.
                     The Expanding Red Blob is absolute positioned inside this anchor so it grows from right-to-left 
                     without breaking the layout or alignment.
                 */}
-                <View style={{ width: BUTTON_HEIGHT, height: BUTTON_HEIGHT, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-                     <Animated.View 
-                        className="bg-red-500 overflow-hidden" 
+                    <Animated.View 
                         style={[deleteStyle, { position: 'absolute' }]} 
                     >
-                        <TouchableOpacity onPress={onDelete} activeOpacity={0.8} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <RaisedButton 
+                            onPress={onDelete} 
+                            style={{ flex: 1 }} 
+                            borderRadius={BUTTON_HEIGHT / 2}
+                            className="bg-red-500"
+                        >
                             <Animated.View style={[deleteIconStyle]}>
-                                <MaterialIcons name="delete" size={16} color="white" />
+                                <IconSymbol name="trash.fill" size={20} color="white" />
                             </Animated.View>
-                        </TouchableOpacity>
+                        </RaisedButton>
                     </Animated.View>
-                </View>
-                
-                {/* Bottom part: The Label. visible in static state, hidden in expansion */}
-                <Animated.Text 
-                    className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold mt-1"
-                    style={[deleteLabelStyle]}
-                >
-                    Trash
-                </Animated.Text>
             </View>
         </View>
     );

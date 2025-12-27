@@ -82,8 +82,8 @@ export default function AuthScreen() {
           {status.message ?? (status.type === 'typing' ? 'Typing...' : '')}
         </Text>
       )}
-      <RaisedButton title="Sign In" onPress={handleSignIn} />
-      <RaisedButton title="Sign Up" onPress={handleSignUp} />
+      <RaisedButton title="Sign In" onPress={handleSignIn} className="h-12 my-2 w-full" />
+      <RaisedButton title="Sign Up" onPress={handleSignUp} className="h-12 my-2 w-full" />
     </View>
   );
 }
