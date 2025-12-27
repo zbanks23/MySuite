@@ -22,12 +22,7 @@ export const ThemeToggle = () => {
         textClassName={preference === 'dark' ? 'text-white' : 'text-light dark:text-dark'}
       />
 
-      <RaisedButton
-        title="System"
-        onPress={() => setPreference('system')}
-        className={`px-3 py-2 my-0 rounded-md ${preference === 'system' ? 'bg-primary dark:bg-primary-dark' : 'border border-primary dark:border-primary-dark'}`}
-        textClassName={preference === 'system' ? 'text-white' : 'text-light dark:text-dark'}
-      />
+
     </View>
   );
 };
