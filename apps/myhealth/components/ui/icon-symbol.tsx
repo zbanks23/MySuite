@@ -34,6 +34,7 @@ const MAPPING = {
   'line.3.horizontal': 'menu',
   'magnifyingglass': 'search',
   'xmark.circle.fill': 'cancel',
+  'scalemass.fill': 'monitor-weight',
 } as const;
 
 
