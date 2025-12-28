@@ -1,7 +1,8 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-// import { useUITheme } from '@mysuite/ui'; // Removed
+import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { IconSymbol } from '../../components/ui/icon-symbol';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -13,6 +14,7 @@ export default function RoutinesScreen() {
   
   const { routines, deleteRoutine, startActiveRoutine } = useWorkoutManager();
   const { hasActiveSession, setExercises } = useActiveWorkout();
+  const theme = useUITheme();
 
     // Hide floating buttons
     const { setIsHidden } = useFloatingButton();
@@ -63,6 +65,19 @@ export default function RoutinesScreen() {
             <TouchableOpacity onPress={() => router.back()} className="p-2">
                 <Text className="text-base font-semibold text-primary dark:text-primary-dark">Close</Text>
             </TouchableOpacity>
+        }
+        rightAction={
+            <RaisedButton 
+                onPress={() => router.push('/routines/create')}
+                borderRadius={20}
+                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
+            >
+                <IconSymbol 
+                    name="plus" 
+                    size={20} 
+                    color={theme.primary} 
+                />
+            </RaisedButton>
         }
       />
       

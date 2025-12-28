@@ -321,17 +321,7 @@ export default function Workout() {
                             <View className="flex-row justify-between items-center mb-3">
                                 <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">My Routines</Text>
                                  <View className="flex-row items-center gap-4">
-                                    <RaisedButton 
-                                        onPress={handleCreateRoutine}
-                                        borderRadius={20}
-                                        className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center"
-                                    >
-                                        <IconSymbol 
-                                            name="plus" 
-                                            size={20} 
-                                            color={theme.primary} 
-                                        />
-                                    </RaisedButton>
+
                                     <RaisedButton 
                                         onPress={() => router.push('/routines')}
                                         borderRadius={20}
