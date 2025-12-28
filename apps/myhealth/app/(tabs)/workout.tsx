@@ -212,9 +212,9 @@ export default function Workout() {
                         </View>
 
                         {savedWorkouts.length === 0 ? (
-                            <View className="items-center justify-center border border-dashed border-light dark:border-dark rounded-xl p-4">
-                                <Text className="text-gray-500 dark:text-gray-400 mb-2">No saved workouts.</Text>
-                                <TouchableOpacity onPress={handleCreateSavedWorkout} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
+                            <View className="items-center justify-center border border-dashed border-light-darker dark:border-highlight-dark rounded-xl p-4">
+                                <Text className="text-light-muted dark:text-dark-muted mb-2">No saved workouts.</Text>
+                                <TouchableOpacity onPress={handleCreateSavedWorkout} className="p-2.5 rounded-lg border border-light-darker dark:border-highlight-dark bg-light dark:bg-dark">
                                     <Text className="text-light dark:text-dark">Create a Workout</Text>
                                 </TouchableOpacity>
                             </View>
@@ -292,7 +292,7 @@ export default function Workout() {
                                         <Text className="text-base font-semibold text-light dark:text-dark mb-2">
                                             No active routine
                                         </Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
+                                        <Text className="text-light-muted dark:text-dark-muted text-center mb-4">
                                             Select a routine below to start tracking your progress.
                                         </Text>
                                         <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary-dark">
@@ -336,9 +336,9 @@ export default function Workout() {
                             </View>
                             
                             {routines.length === 0 ? (
-                                <View className="items-center justify-center border border-dashed border-light dark:border-dark rounded-xl p-4">
-                                    <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
-                                    <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
+                                <View className="items-center justify-center border border-dashed border-light-darker dark:border-highlight-dark rounded-xl p-4">
+                                    <Text className="text-light-muted dark:text-dark-muted mb-2">No routines yet.</Text>
+                                    <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-light-darker dark:border-highlight-dark bg-light dark:bg-dark">
                                         <Text className="text-light dark:text-dark">Create a Routine</Text>
                                     </TouchableOpacity>
                                 </View>
