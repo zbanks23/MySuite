@@ -4,12 +4,12 @@ import { Stack, useRouter } from 'expo-router';
 
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { WorkoutDetailsModal } from '../../components/workouts/WorkoutDetailsModal';
-import { RaisedCard } from '@mysuite/ui';
+import { ActionCard } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: () => void, onPress: () => void }) => {
     return (
-        <RaisedCard
+        <ActionCard
             onPress={onPress}
             onDelete={onDelete}
             activeOpacity={0.7}
@@ -27,7 +27,7 @@ const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: 
             <View className="mt-2 items-end">
                 <Text className="text-xs text-primary dark:text-primary-dark">Tap for details</Text>
             </View>
-        </RaisedCard>
+        </ActionCard>
     );
 };
 
