@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, ActivityIndicator, TextInput, Alert, Text } from 'react-native'; 
 import { useRouter } from 'expo-router';
 
-import { useUITheme } from '@mysuite/ui';
+import { useUITheme, RaisedButton } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { IconSymbol } from '../../components/ui/icon-symbol';
@@ -49,9 +49,17 @@ export default function ExercisesScreen() {
         title="Exercises"
         withBackButton={true}
         rightAction={
-            <TouchableOpacity onPress={() => router.push('/exercises/create')} className="p-2">
-                <Text className="text-base font-semibold text-primary dark:text-primary-dark">Create</Text>
-            </TouchableOpacity>
+            <RaisedButton 
+                onPress={() => router.push('/exercises/create')}
+                borderRadius={20}
+                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
+            >
+                <IconSymbol 
+                    name="plus" 
+                    size={20} 
+                    color={theme.primary} 
+                />
+            </RaisedButton>
         }
       />
       
