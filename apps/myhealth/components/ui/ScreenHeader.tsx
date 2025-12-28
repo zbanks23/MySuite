@@ -29,7 +29,7 @@ export function ScreenHeader({ title, rightAction, leftAction, className }: Scre
                 {leftAction}
             </View>
         )}
-        <Text className="text-3xl font-bold text-light dark:text-dark text-center flex-1 mx-16" numberOfLines={1}>{title}</Text>
+        <Text className="text-2xl font-bold text-light dark:text-dark text-center flex-1 mx-16" numberOfLines={1}>{title}</Text>
         {rightAction && (
           <View className="absolute right-5">
               {rightAction}
