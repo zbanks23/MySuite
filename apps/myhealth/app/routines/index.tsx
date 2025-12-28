@@ -64,7 +64,7 @@ export default function RoutinesScreen() {
         withBackButton={true}
         rightAction={
             <RaisedButton 
-                onPress={() => router.push('/routines/create')}
+                onPress={() => router.push('/routines/editor')}
                 borderRadius={20}
                 className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
             >
@@ -89,8 +89,8 @@ export default function RoutinesScreen() {
 
               <TouchableOpacity onPress={() => {
                   router.push({
-                      pathname: '/routines/details',
-                      params: { routine: JSON.stringify(item) }
+                      pathname: '/routines/editor',
+                      params: { id: item.id }
                   });
               }} activeOpacity={0.7}>
               <RaisedCard className="flex-row items-center justify-between p-4 mb-3">
