@@ -22,6 +22,7 @@ import { HollowedCard, RaisedButton, RaisedCard, useUITheme } from '@mysuite/ui'
 import { SavedWorkout } from '../../types';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { IconSymbol } from '../../components/ui/icon-symbol';
+import { ProfileButton } from '../../components/ui/ProfileButton';
 
 export default function Workout() {
 	const router = useRouter();
@@ -129,7 +130,7 @@ export default function Workout() {
 
 	return (
 		<View className="flex-1 bg-light dark:bg-dark">
-			<ScreenHeader title="Workout" />
+			<ScreenHeader title="Workout" leftAction={<ProfileButton />} />
 
 			{/* Dashboard: Routines & Saved Workouts */}
 			<ScrollView 

@@ -7,6 +7,7 @@ import { IconSymbol } from '../../components/ui/icon-symbol';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
 import { WeightLogModal } from '../../components/profile/WeightLogModal';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
 
@@ -263,6 +264,7 @@ export default function ProfileScreen() {
     <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader 
         title={username || 'Profile'} 
+        leftAction={<BackButton />}
         rightAction={
             <TouchableOpacity onPress={() => router.push('/settings')}>
               <IconSymbol name="gearshape.fill" size={24} color={theme.text} />

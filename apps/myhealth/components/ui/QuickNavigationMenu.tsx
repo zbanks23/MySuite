@@ -10,7 +10,6 @@ import { useFloatingButton } from '../../providers/FloatingButtonContext';
 const BUTTON_SIZE = 60;
 
 const PATH_CONFIG = [
-    { match: ['/profile', '/(tabs)/profile'], icon: 'person.fill' },
     { match: ['/', '/index', '/(tabs)', '/(tabs)/index'], icon: 'house.fill' },
     { match: ['/workout', '/(tabs)/workout'], icon: 'dumbbell.fill' },
 ];
@@ -32,13 +31,11 @@ export function QuickNavigationButton() {
 
       if (route === 'index') router.navigate('/(tabs)');
       else if (route === 'workout') router.navigate('/(tabs)/workout');
-      else if (route === 'profile') router.navigate('/(tabs)/profile');
       else router.navigate(route as any);
   }, [router]);
 
 
   const menuItems: RadialMenuItem[] = useMemo(() => [
-    { id: 'profile', icon: 'person.fill', label: 'Profile', onPress: () => navigateTo('profile'), angle: 0 },   // Up
     { id: 'home', icon: 'house.fill', label: 'Home', onPress: () => navigateTo('index'), angle: 45 },           // Diagonal
     { id: 'workout', icon: 'dumbbell.fill', label: 'Workout', onPress: () => navigateTo('workout'), angle: 90 }, // Right
   ], [navigateTo]);
