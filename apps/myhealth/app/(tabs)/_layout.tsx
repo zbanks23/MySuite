@@ -12,7 +12,7 @@ import { useColorScheme } from '../../hooks/ui/use-color-scheme';
 import { ActiveWorkoutHeader } from '../../components/workouts/ActiveWorkoutHeader';
 import { ActiveWorkoutOverlay } from '../../components/workouts/ActiveWorkoutOverlay';
 import { GlobalOverlay } from '../../components/ui/GlobalOverlay';
-import { QuickNavigationButton } from '../../components/ui/QuickNavigationMenu';
+// import { QuickNavigationButton } from '../../components/ui/QuickNavigationMenu';
 import { QuickUtilityButton } from '../../components/ui/QuickUtilityMenu';
 
 export default function TabLayout() {
@@ -35,13 +35,13 @@ export default function TabLayout() {
           tabBarButton: HapticTab,
         }}
       >
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
           }}
-        />
+        /> */}
         <Tabs.Screen
           name='workout'
           options={{
@@ -55,7 +55,7 @@ export default function TabLayout() {
       <ActiveWorkoutHeader />
       <ActiveWorkoutOverlay />
       <GlobalOverlay>
-        <QuickNavigationButton />
+        {/* <QuickNavigationButton /> */}
         <QuickUtilityButton />
       </GlobalOverlay>
     </View>

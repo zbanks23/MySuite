@@ -1,14 +1,5 @@
-import { View, ScrollView } from 'react-native';
-import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { QuickStartAction } from '../../components/dashboard/QuickStartAction';
+import { Redirect } from 'expo-router';
 
 export default function HomeScreen() {
-  return (
-    <View className="flex-1 bg-light dark:bg-dark">
-          <ScreenHeader title="Home" />
-          <ScrollView className='mt-4'>
-             <QuickStartAction />
-          </ScrollView>
-    </View>
-  );
+  return <Redirect href="/(tabs)/workout" />;
 }
