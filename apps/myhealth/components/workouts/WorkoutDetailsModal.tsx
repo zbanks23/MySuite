@@ -60,11 +60,11 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                         </View>
                     ) : error ? (
                         <View className="p-6 items-center justify-center">
-                            <Text className="text-red-500 text-center">{error}</Text>
+                            <Text className="text-danger text-center">{error}</Text>
                         </View>
                     ) : details.length === 0 ? (
                         <View className="p-6 items-center justify-center">
-                            <Text className="text-gray-500 text-center">No details available for this workout.</Text>
+                            <Text className="text-light-muted dark:text-dark-muted text-center">No details available for this workout.</Text>
                         </View>
                     ) : (
                         <FlatList
@@ -72,7 +72,7 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                             keyExtractor={(item, index) => item.name + index}
                             contentContainerStyle={{ paddingBottom: 16 }}
                             renderItem={({ item }) => (
-                                <View className="mb-4 bg-light-lighter dark:bg-border-dark p-3 rounded-lg">
+                                <View className="mb-4 bg-light-lighter dark:bg-dark-lighter p-3 rounded-lg">
                                     <Text className="text-base font-semibold text-light dark:text-dark mb-2">{item.name}</Text>
                                     {item.sets.map((set: any, idx: number) => {
                                         const parts = [];
@@ -98,10 +98,10 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
 
                                         return (
                                         <View key={idx} className="flex-row justify-between mb-1">
-                                            <Text className="text-sm text-gray-500">
+                                            <Text className="text-sm text-light-muted dark:text-dark-muted">
                                                 Set {set.setNumber || idx + 1}:
                                             </Text>
-                                            <Text className="text-sm text-gray-500">
+                                            <Text className="text-sm text-light-muted dark:text-dark-muted">
                                                 {mainText}
                                             </Text>
                                         </View>
@@ -113,8 +113,8 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                     )}
 
                     <View className="items-center mt-4">
-                        <TouchableOpacity onPress={onClose} className="px-6 py-2.5 bg-light-lighter dark:bg-border-dark rounded-lg">
-                            <Text className="text-light dark:text-dark font-semibold text-base">Close</Text>
+                        <TouchableOpacity onPress={onClose} className="px-6 py-2.5 bg-light-lighter dark:bg-dark-lighter rounded-lg">
+                            <Text className="text-primary dark:text-primary-dark font-semibold text-base">Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
