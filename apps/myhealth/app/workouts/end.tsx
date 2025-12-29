@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { RaisedButton, useUITheme } from '@mysuite/ui';
+import { IconSymbol } from '../../components/ui/icon-symbol';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
@@ -9,6 +11,7 @@ import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 
 export default function EndWorkoutScreen() {
     const router = useRouter();
+    const theme = useUITheme();
     const { 
         workoutName, 
         workoutSeconds, 
@@ -106,9 +109,23 @@ export default function EndWorkoutScreen() {
 
     return (
         <View className="flex-1 bg-light dark:bg-dark">
-            <ScreenHeader title="Workout Summary" leftAction={<BackButton />} />
+            <ScreenHeader 
+                title="Workout Summary" 
+                leftAction={<BackButton />} 
+                rightAction={
+                    <RaisedButton 
+                        onPress={handleSave}
+                        variant="default"
+                        className="w-10 h-10 p-0 rounded-full bg-light dark:bg-dark-lighter"
+                        borderRadius={20}
+                        showGradient={false}
+                    >
+                        <IconSymbol name="checkmark" size={24} color={theme.primary} />
+                    </RaisedButton>
+                }
+            />
             
-            <ScrollView className="flex-1 mt-4 p-4">
+            <ScrollView className="flex-1 mt-36 p-4">
                 <View className="bg-light-lighter dark:bg-border-dark rounded-xl p-6 mb-6 items-center">
                     <Text className="text-2xl font-bold text-light dark:text-dark mb-2">{workoutName}</Text>
                     <Text className="text-4xl font-black text-primary dark:text-primary-dark mb-4">
@@ -152,13 +169,6 @@ export default function EndWorkoutScreen() {
                     ))}
                 </View>
                 <View className="gap-3 pb-40">
-                     <TouchableOpacity 
-                        onPress={handleSave}
-                        className="bg-primary dark:bg-primary-dark py-4 rounded-xl items-center"
-                    >
-                        <Text className="text-white font-bold text-lg">Save Workout</Text>
-                    </TouchableOpacity>
-
                     <TouchableOpacity 
                         onPress={handleDiscard}
                         className="bg-red-500/10 py-4 rounded-xl items-center border border-red-500/20"
