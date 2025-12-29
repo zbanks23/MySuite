@@ -31,7 +31,8 @@ export function ActiveWorkoutExerciseItem({
             latestBodyWeight={latestBodyWeight}
             onCompleteSet={(setIndex, input) => {
                 const parsedInput = {
-                    weight: input?.weight ? parseFloat(input.weight) : undefined,
+                    weight: input?.weight ? parseFloat(input.weight.toString()) : undefined,
+                    bodyweight: input?.bodyweight ? parseFloat(input.bodyweight.toString()) : undefined,
                     reps: input?.reps ? parseFloat(input.reps) : undefined,
                     duration: input?.duration ? parseFloat(input.duration) : undefined,
                     distance: input?.distance ? parseFloat(input.distance) : undefined,

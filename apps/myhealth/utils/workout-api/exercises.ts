@@ -221,3 +221,69 @@ export async function createCustomExerciseInSupabase(
 
     return { data: exerciseData, error: null };
 }
+export async function fetchLastExercisePerformance(
+    user: any,
+    exerciseId: string,
+    exerciseName?: string,
+) {
+    if (!user) return { data: null, error: "User not logged in" };
+
+    let latestLogId = null;
+
+    if (exerciseId && (exerciseId.length > 20 || exerciseId.includes("-"))) {
+        const { data: latestLogById } = await supabase
+            .from("set_logs")
+            .select(`
+                workout_log_id,
+                created_at,
+                workout_logs!inner(user_id)
+            `)
+            .eq("exercise_id", exerciseId)
+            .eq("workout_logs.user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (latestLogById) {
+            latestLogId = latestLogById.workout_log_id;
+        }
+    }
+
+    if (!latestLogId && exerciseName) {
+        const { data: latestLogByName } = await supabase
+            .from("set_logs")
+            .select(`
+                workout_log_id,
+                created_at,
+                workout_logs!inner(user_id)
+            `)
+            .eq("workout_logs.user_id", user.id)
+            .contains("details", { exercise_name: exerciseName })
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (latestLogByName) {
+            latestLogId = latestLogByName.workout_log_id;
+        }
+    }
+
+    if (!latestLogId) {
+        return { data: null, error: "No previous performance found" };
+    }
+
+    const { data: sets, error: setsError } = await supabase
+        .from("set_logs")
+        .select("details, exercise_id")
+        .eq("workout_log_id", latestLogId)
+        .order("created_at", { ascending: true });
+
+    if (setsError) return { data: null, error: setsError };
+
+    const filtered = (sets || []).filter((s) =>
+        (exerciseId && s.exercise_id === exerciseId) ||
+        (exerciseName && s.details?.exercise_name === exerciseName)
+    );
+
+    return { data: filtered.map((s) => s.details), error: null };
+}

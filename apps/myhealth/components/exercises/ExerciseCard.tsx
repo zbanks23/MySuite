@@ -9,7 +9,7 @@ import { SetRow, getExerciseFields } from '../workouts/SetRow';
 interface ExerciseCardProps {
     exercise: Exercise;
     isCurrent: boolean;
-    onCompleteSet: (setIndex: number, input: { weight?: string, reps?: string, duration?: string, distance?: string }) => void;
+    onCompleteSet: (setIndex: number, input: { weight?: string | number, bodyweight?: string | number, reps?: string, duration?: string, distance?: string }) => void;
     onUncompleteSet?: (index: number) => void;
     onUpdateSetTarget?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
     onUpdateLog?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { Exercise, useWorkoutManager } from '../hooks/workouts/useWorkoutManager'; 
+import { Exercise, useWorkoutManager, fetchLastExercisePerformance } from '../hooks/workouts/useWorkoutManager'; 
+import { useAuth } from '@mysuite/auth';
 import { createExercise } from '../utils/workout-logic';
 import { useActiveWorkoutTimers } from '../hooks/workouts/useActiveWorkoutTimers';
 import { useActiveWorkoutPersistence } from '../hooks/workouts/useActiveWorkoutPersistence';
@@ -19,7 +20,7 @@ interface ActiveWorkoutContextType {
     startWorkout: (exercisesToStart?: Exercise[], name?: string, routineId?: string, sourceWorkoutId?: string) => void;
     pauseWorkout: () => void;
     resetWorkout: () => void;
-    completeSet: (index: number, setIndex: number, input?: { weight?: number; reps?: number; duration?: number; distance?: number }) => void;
+    completeSet: (index: number, setIndex: number, input?: { weight?: number; bodyweight?: number; reps?: number; duration?: number; distance?: number }) => void;
     nextExercise: () => void;
     prevExercise: () => void;
     addExercise: (name: string, sets: string, reps: string, properties?: string[]) => void;
@@ -44,6 +45,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 		{id: "2", name: "Squats", sets: 3, reps: 10, completedSets: 0},
 		{id: "3", name: "Plank (sec)", sets: 3, reps: 45, completedSets: 0},
 	]);
+    const { user } = useAuth();
     const [workoutName, setWorkoutName] = useState("Current Workout");
     const [routineId, setRoutineId] = useState<string | null>(null);
     const [sourceWorkoutId, setSourceWorkoutId] = useState<string | null>(null);
@@ -82,6 +84,48 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setRunning,
         setHasActiveSession,
     });
+    
+    // Fetch previous performance logs for exercises
+    const exerciseIdsSerialized = JSON.stringify(exercises.map(ex => ex.id));
+    useEffect(() => {
+        if (!user || !hasActiveSession || exercises.length === 0) return;
+
+        let isMounted = true;
+        const fetchMissingLogs = async () => {
+            let hasChanged = false;
+            const updatedExercises = await Promise.all(exercises.map(async (ex) => {
+                // If it's a real exercise (UUID) and doesn't have previousLog yet
+                if (ex.id && !ex.previousLog && (ex.id.length > 20 || ex.id.includes('-'))) { 
+                    try {
+                        const { data } = await fetchLastExercisePerformance(user, ex.id, ex.name);
+                        if (data && isMounted) {
+                            hasChanged = true;
+                            return { ...ex, previousLog: data };
+                        }
+                    } catch {
+                        console.error("Failed to fetch previous log for", ex.name);
+                    }
+                } else if (!ex.previousLog) {
+                    // Even if it's not a UUID, we can try by name
+                    try {
+                        const { data } = await fetchLastExercisePerformance(user, "", ex.name);
+                        if (data && isMounted) {
+                            hasChanged = true;
+                            return { ...ex, previousLog: data };
+                        }
+                    } catch { /* ignore fallback fail */ }
+                }
+                return ex;
+            }));
+
+            if (hasChanged && isMounted) {
+                setExercises(updatedExercises);
+            }
+        };
+
+        fetchMissingLogs();
+        return () => { isMounted = false; };
+    }, [user, hasActiveSession, exerciseIdsSerialized, exercises]); // Re-run when user changes, session starts, or exercise list changes
 
     // Actions
     const startWorkout = useCallback((exercisesToStart?: Exercise[], name?: string, routineId?: string, sourceWorkoutId?: string) => {
@@ -140,7 +184,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         );
     };
 
-    const handleCompleteSet = (targetIndex: number,  setIndex: number, input?: { weight?: number; reps?: number; duration?: number; distance?: number }) => {
+    const handleCompleteSet = (targetIndex: number,  setIndex: number, input?: { weight?: number; bodyweight?: number; reps?: number; duration?: number; distance?: number }) => {
         const indexToComplete = targetIndex ?? currentIndex;
         
         setExercises(currentExercises => {
@@ -150,6 +194,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
                     
                     // Inputs are already numbers
                     const weight = input?.weight;
+                    const bodyweight = input?.bodyweight;
                     const reps = input?.reps; 
                     // Fallback to target reps if not provided
                     const props = ex.properties?.map((p: string) => p.toLowerCase()) || [];
@@ -160,6 +205,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
                     const newLog: any = {
                         id: uuid.v4(),
                         weight,
+                        bodyweight,
                         reps: finalReps,
                         duration: input?.duration,
                         distance: input?.distance,

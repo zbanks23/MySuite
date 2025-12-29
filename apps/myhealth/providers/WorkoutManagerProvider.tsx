@@ -24,7 +24,7 @@ import { useRoutineManager } from "../hooks/routines/useRoutineManager";
 
 // Re-export types for compatibility
 export type { Exercise, SetLog, WorkoutLog };
-export { fetchExercises, fetchMuscleGroups, fetchExerciseStats } from "../utils/workout-api";
+export { fetchExercises, fetchMuscleGroups, fetchExerciseStats, fetchLastExercisePerformance } from "../utils/workout-api";
 
 
 interface WorkoutManagerContextType {

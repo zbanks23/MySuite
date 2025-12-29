@@ -20,7 +20,7 @@ export const getExerciseFields = (properties?: string[]) => {
 interface SetRowProps {
     index: number;
     exercise: any;
-    onCompleteSet: (input: { weight?: string, reps?: string, duration?: string, distance?: string }) => void;
+    onCompleteSet: (input: { weight?: string | number, bodyweight?: string | number, reps?: string, duration?: string, distance?: string }) => void;
     onUncompleteSet?: (index: number) => void;
     onUpdateSetTarget?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
     onUpdateLog?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
@@ -48,6 +48,41 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
         const val = log?.[field];
         if (val === undefined || val === null) return '';
         return val.toString();
+    };
+
+    const getPreviousDisplay = () => {
+        const prev = exercise.previousLog?.[index];
+        if (!prev) return "-";
+        
+        const parts = [];
+        const formatValue = (val: any) => (val !== undefined && val !== null && val !== '') ? val : "-";
+
+        // Weight/Bodyweight part
+        if (showBodyweight && showWeight) {
+            const bw = prev.bodyweight ?? (showBodyweight ? latestBodyWeight : undefined);
+            const added = prev.weight;
+            if (bw != null && added != null && added > 0) {
+                parts.push(`${bw}+${added}`);
+            } else {
+                parts.push(formatValue(bw ?? added));
+            }
+        } else if (showBodyweight || showWeight) {
+            const val = prev.weight ?? prev.bodyweight ?? (showBodyweight ? latestBodyWeight : undefined);
+            parts.push(formatValue(val));
+        }
+
+        if (showReps) {
+            parts.push(formatValue(prev.reps));
+        }
+        if (showDuration) {
+            parts.push(formatValue(prev.duration));
+        }
+        if (showDistance) {
+            parts.push(formatValue(prev.distance));
+        }
+        
+        const display = parts.join(" x ");
+        return display.length > 0 ? display : "-";
     };
 
     const cardOffset = useSharedValue(0);
@@ -99,7 +134,9 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                      <Text className="text-xs font-bold text-light dark:text-dark">{index + 1}</Text>
                  </View>
 
-                 <Text className="flex-1 text-center text-xs text-light-muted dark:text-dark-muted">-</Text>
+                 <Text className="flex-1 text-center text-xs text-light-muted dark:text-dark-muted">
+                    {getPreviousDisplay()}
+                 </Text>
 
                  {isCompleted ? (
                       <>
@@ -213,7 +250,8 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         <TouchableOpacity 
                             className={`w-7 h-7 rounded-lg items-center justify-center ml-1 border-2 border-primary dark:border-primary-dark`}
                             onPress={() => onCompleteSet({ 
-                                weight: showWeight ? getValue('weight') : undefined,
+                                weight: showWeight ? getValue('weight') : (showBodyweight ? (latestBodyWeight ?? undefined) : undefined),
+                                bodyweight: showBodyweight ? (latestBodyWeight ?? undefined) : undefined,
                                 reps: showReps ? (getValue('reps') || (exercise.reps || 0).toString()) : undefined,
                                 duration: showDuration ? getValue('duration') : undefined,
                                 distance: showDistance ? getValue('distance') : undefined,
