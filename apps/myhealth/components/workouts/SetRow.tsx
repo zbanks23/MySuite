@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { IconSymbol } from '../ui/icon-symbol';
 import { SetSwipeAction } from './SetSwipeAction';
 
@@ -49,6 +50,17 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
         return val.toString();
     };
 
+    const cardOffset = useSharedValue(0);
+    const rowWidth = useSharedValue(0);
+
+    const animatedRowStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: cardOffset.value }]
+        };
+    });
+
+
+
     return (
         <Swipeable
             ref={swipeableRef}
@@ -60,6 +72,8 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         onDeleteSet(index);
                     }}
                     onSetReadyToDelete={(ready) => shouldDelete.current = ready}
+                    cardOffset={cardOffset}
+                    rowWidth={rowWidth}
                 />
             )}
             onSwipeableWillOpen={() => {
@@ -73,7 +87,13 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
             friction={2}
             containerStyle={{ overflow: 'visible' }}
         >
-             <View className={`flex-row items-center mb-2 h-11 px-1 ${isEvenSet ? 'bg-light dark:bg-dark rounded-lg' : ''}`}>
+             <Animated.View 
+                className={`flex-row items-center mb-2 h-11 px-1 ${isEvenSet ? 'bg-light dark:bg-dark rounded-lg' : ''}`}
+                style={animatedRowStyle}
+                onLayout={(e) => {
+                    rowWidth.value = e.nativeEvent.layout.width;
+                }}
+             >
                  {/* Set Number */}
                  <View className="w-[30px] items-center justify-center">
                      <Text className="text-xs font-bold text-light dark:text-dark">{index + 1}</Text>
@@ -205,8 +225,8 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                  )}
                  
                  {/* Padding to balance the right side since delete button is gone */}
-                 <View className="w-[30px]" /> 
-             </View>
+
+             </Animated.View>
         </Swipeable>
     );
 };

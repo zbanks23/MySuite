@@ -7,7 +7,9 @@ import Animated, {
     interpolate, 
     Extrapolation, 
     SharedValue,
-    useSharedValue
+    useSharedValue,
+    withTiming,
+    Easing
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '../ui/icon-symbol';
@@ -16,15 +18,19 @@ import { IconSymbol } from '../ui/icon-symbol';
 export const SetSwipeAction = ({ 
     dragX, 
     onDelete,
-    onSetReadyToDelete
+    onSetReadyToDelete,
+    cardOffset,
+    rowWidth
 }: { 
     dragX: SharedValue<number>; 
     onDelete: () => void;
     onSetReadyToDelete: (ready: boolean) => void;
+    cardOffset: SharedValue<number>;
+    rowWidth: SharedValue<number>;
 }) => {
     const { width } = useWindowDimensions();
     const hasTriggered = useSharedValue(false);
-    const TRIGGER_THRESHOLD = -width * 0.3; // 30% swipe to delete
+    const TRIGGER_THRESHOLD = -width * 0.45; // 45% swipe to delete
     
     // Monitor drag value to trigger haptic feedback
     useAnimatedReaction(
@@ -34,9 +40,11 @@ export const SetSwipeAction = ({
                 hasTriggered.value = true;
                 runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
                 runOnJS(onSetReadyToDelete)(true);
+                cardOffset.value = withTiming(-width, { duration: 200, easing: Easing.linear });
             } else if (currentDrag > TRIGGER_THRESHOLD + 20 && hasTriggered.value) {
                 hasTriggered.value = false;
                 runOnJS(onSetReadyToDelete)(false);
+                cardOffset.value = withTiming(0, { duration: 200, easing: Easing.linear });
             }
         }
     );
@@ -61,10 +69,14 @@ export const SetSwipeAction = ({
                         justifyContent: 'center',
                         alignItems: 'center'
                     }, 
-                    useAnimatedStyle(() => ({
-                         width: -dragX.value,
-                         opacity: interpolate(dragX.value, [-20, 0], [1, 0])
-                    }))
+                    useAnimatedStyle(() => {
+                        const maxW = rowWidth.value > 0 ? rowWidth.value : width;
+                        const targetW = -(dragX.value + cardOffset.value);
+                        return {
+                            width: Math.max(0, Math.min(maxW, targetW)),
+                            opacity: interpolate(dragX.value, [-20, 0], [1, 0])
+                        };
+                    })
                 ]} 
             >
                 <TouchableOpacity onPress={onDelete} className="flex-1 justify-center items-center w-full">

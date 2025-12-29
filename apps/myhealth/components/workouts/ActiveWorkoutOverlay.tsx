@@ -53,7 +53,7 @@ export function ActiveWorkoutOverlay() {
             exiting={SlideOutUp.duration(400)}
         >
             <View className="flex-1">
-                <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }}>
+                <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
                      {(!exercises || exercises.length === 0) ? (
                         <ActiveWorkoutEmptyState />
                      ) : (

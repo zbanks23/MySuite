@@ -39,7 +39,7 @@ export function ActiveWorkoutHeader() {
                 zIndex: 1001,
                 top: 0, // Reset, using marginTop in className
             }}
-            className="absolute left-0 right-0 pt-14 pb-6 px-4 bg-light dark:bg-dark-lighter rounded-b-3xl"
+            className="absolute left-0 right-0 pt-16 pb-6 px-4 bg-light dark:bg-dark-lighter rounded-b-3xl"
         >
             <TouchableOpacity 
                 className="flex-row items-center justify-between"

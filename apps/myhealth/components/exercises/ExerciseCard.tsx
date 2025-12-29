@@ -47,8 +47,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                     {showReps && <Text className="text-[10px] font-bold uppercase text-center text-light-muted dark:text-dark-muted w-[60px] mx-1">REPS</Text>}
                     {showDuration && <Text className="text-[10px] font-bold uppercase text-center text-light-muted dark:text-dark-muted w-[60px] mx-1">TIME</Text>}
                     {showDistance && <Text className="text-[10px] font-bold uppercase text-center text-light-muted dark:text-dark-muted w-[60px] mx-1">DIST</Text>}
-                    <View className="w-[40px] items-center" />
-                    <View className="w-[30px] items-center justify-center" />
+                    <View className="w-[30px] items-center" />
                 </View>
 
                 {/* Render Rows */}
