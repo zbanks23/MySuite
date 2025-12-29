@@ -29,17 +29,37 @@ export default function EndWorkoutScreen() {
 
     const [notes, setNotes] = React.useState("");
 
-    const areWorkoutsDifferent = (current: typeof exercises, original: typeof exercises) => {
-        if (current.length !== original.length) return true;
-        for (let i = 0; i < current.length; i++) {
-            if (current[i].name !== original[i].name) return true;
-            if (current[i].sets !== original[i].sets) return true;
-            if (current[i].reps !== original[i].reps) return true;
-            // Simplified check for properties
-            const p1 = current[i].properties || [];
-            const p2 = original[i].properties || [];
+    const areWorkoutsDifferent = (currentArr: typeof exercises, originalArr: typeof exercises) => {
+        if (currentArr.length !== originalArr.length) return true;
+        
+        for (let i = 0; i < currentArr.length; i++) {
+            const cur = currentArr[i];
+            const orig = originalArr[i];
+            
+            if (cur.name !== orig.name) return true;
+            if (Number(cur.sets) !== Number(orig.sets)) return true;
+            if (Number(cur.reps) !== Number(orig.reps)) return true;
+            
+            // Compare properties
+            const p1 = cur.properties || [];
+            const p2 = orig.properties || [];
             if (p1.length !== p2.length) return true;
             if (p1.some((p, k) => p !== p2[k])) return true;
+
+            // Compare setTargets
+            const t1 = cur.setTargets || [];
+            const t2 = orig.setTargets || [];
+            
+            // If the user has customized targets (defined) and the original didn't (undefined),
+            // we should consider it a potential change if the counts or values differ.
+            if (t1.length !== t2.length) return true;
+            
+            for (let j = 0; j < t1.length; j++) {
+                if (Number(t1[j].reps || 0) !== Number(t2[j].reps || 0)) return true;
+                if (Number(t1[j].weight || 0) !== Number(t2[j].weight || 0)) return true;
+                if (Number(t1[j].duration || 0) !== Number(t2[j].duration || 0)) return true;
+                if (Number(t1[j].distance || 0) !== Number(t2[j].distance || 0)) return true;
+            }
         }
         return false;
     };
@@ -62,18 +82,19 @@ export default function EndWorkoutScreen() {
                         {
                             text: "Yes, Update Template",
                             onPress: () => {
-                                // Update template first
-                                const updatedExercises = exercises.map(ex => ({
-                                    ...ex,
+                                // Update template first - strip logs and set counts to 0
+                                const updatedExercises = exercises.map(({ logs, previousLog, completedSets, ...rest }) => ({
+                                    ...rest,
                                     completedSets: 0,
                                     logs: []
                                 }));
+                                
                                 updateSavedWorkout(
                                     sourceWorkoutId, 
                                     original.name, 
                                     updatedExercises, 
                                     () => {
-                                        // Then finish
+                                        // Then finish history saving
                                         finishWorkout(notes);
                                         router.dismiss();
                                     }
