@@ -39,32 +39,32 @@ export default function ExerciseDetailsScreen() {
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
                 <Text style={{ color: theme.text }} className="text-base leading-6">Exercise not found.</Text>
                 <Pressable onPress={() => router.back()} style={{ marginTop: 20, padding: 10 }}>
-                    <Text className="text-base leading-[30px] text-[#0a7ea4]">Go Back</Text>
+                    <Text className="text-base leading-[30px] text-info">Go Back</Text>
                 </Pressable>
             </View>
         );
     }
 
     const currentColors = {
-        primary: theme.primary || '#FF6F61',
-        background: theme.bgLight || '#FFF5F5',
-        card: theme.bg || '#EAD4D4',
-        text: theme.text || '#2D1F1F',
-        border: theme.border || '#EAD4D4'
+        primary: theme.primary,
+        background: theme.bgLight,
+        card: theme.bg || theme.bgLight,
+        text: theme.text,
+        border: theme.border || theme.bgDark || theme.bgLight
     };
     
     // Derived UI colors
     const cardBackground = currentColors.card;
-    const toggleBackground = theme.bgDark || '#EAD4D4'; 
-    const activeToggleBg = theme.bgLight || '#FFF5F5'; 
-    const activeToggleText = theme.text || '#2D1F1F';
+    const toggleBackground = theme.bgDark || theme.bgLight; 
+    const activeToggleBg = theme.bgLight; 
+    const activeToggleText = theme.text;
 
     return (
         <View style={{ flex: 1, backgroundColor: currentColors.background }}>
              {/* Header */}
              <ScreenHeader title="Details" leftAction={<BackButton />} />
 
-            <ScrollView style={{ flex: 1, padding: 16 }}>
+            <ScrollView style={{ flex: 1, padding: 16, paddingTop: 124 }}>
                 <View style={{ marginBottom: 24 }}>
                     <Text className="text-3xl font-bold leading-8" style={{ marginBottom: 4, color: currentColors.text }}>{exercise.name || 'Exercise'}</Text>
                     <Text style={{ fontSize: 18, color: currentColors.text, opacity: 0.7 }}>
