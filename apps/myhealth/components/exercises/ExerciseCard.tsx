@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
-import { RaisedCard, HollowedButton } from '../../../../packages/ui';
+import { RaisedCard, HollowedButton, RaisedButton } from '../../../../packages/ui';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {
@@ -15,12 +15,13 @@ interface ExerciseCardProps {
     onUpdateLog?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
     onAddSet: () => void;
     onDeleteSet: (index: number) => void;
+    onRemoveExercise?: () => void;
 
     theme: any;
     latestBodyWeight?: number | null;
 }
 
-export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, theme, latestBodyWeight }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, onRemoveExercise, theme, latestBodyWeight }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
@@ -30,11 +31,23 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
     return (
         <RaisedCard>
 
-            <View className="flex-row justify-between items-center mb-0">
-                <View>
-                    <Text className="text-lg font-bold text-light dark:text-dark mb-1">{exercise.name}</Text>
+            <View className="flex-row justify-between items-center">
+                <View className="flex-1">
+                    <Text className="text-lg font-bold text-light dark:text-dark">{exercise.name}</Text>
                 </View>
-                {isFinished && <IconSymbol name="checkmark.circle.fill" size={24} color={theme.primary} />}
+                <View className="flex-row items-center gap-3">
+                    {isFinished && <IconSymbol name="checkmark.circle.fill" size={24} color={theme.primary} />}
+                    {onRemoveExercise && (
+                        <RaisedButton 
+                            onPress={onRemoveExercise}
+                            className="w-9 h-9 bg-light dark:bg-dark-lighter"
+                            variant="custom"
+                            borderRadius={18}
+                        >
+                            <IconSymbol name="trash.fill" size={18} color={theme.danger} />
+                        </RaisedButton>
+                    )}
+                </View>
             </View>
 
             <View className="pt-3">

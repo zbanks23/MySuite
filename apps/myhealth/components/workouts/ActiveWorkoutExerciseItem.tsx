@@ -10,6 +10,7 @@ interface ActiveWorkoutExerciseItemProps {
 
     completeSet: (exerciseIndex: number, setIndex: number, input: any) => void;
     updateExercise: (exerciseIndex: number, updates: any) => void;
+    onRemoveExercise: (index: number) => void;
 }
 
 export function ActiveWorkoutExerciseItem({
@@ -18,6 +19,7 @@ export function ActiveWorkoutExerciseItem({
     isCurrent,
     completeSet,
     updateExercise,
+    onRemoveExercise,
 }: ActiveWorkoutExerciseItemProps) {
     const theme = useUITheme();
     const { latestBodyWeight } = useActiveWorkout();
@@ -26,6 +28,7 @@ export function ActiveWorkoutExerciseItem({
         <ExerciseCard 
             exercise={exercise}
             isCurrent={isCurrent}
+            onRemoveExercise={() => onRemoveExercise(index)}
 
             theme={theme}
             latestBodyWeight={latestBodyWeight}

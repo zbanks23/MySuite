@@ -13,7 +13,6 @@ import { HollowedButton, RaisedButton } from '@mysuite/ui';
 export function ActiveWorkoutOverlay() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    
     const {
         exercises,
 
@@ -23,7 +22,8 @@ export function ActiveWorkoutOverlay() {
         isExpanded,
         setExpanded,
         resetWorkout,
-        cancelWorkout
+        cancelWorkout,
+        removeExercise
 
     } = useActiveWorkout();
 
@@ -69,6 +69,7 @@ export function ActiveWorkoutOverlay() {
 
                                         completeSet={completeSet}
                                         updateExercise={updateExercise}
+                                        onRemoveExercise={removeExercise}
                                     />
                                 </View>
                             ))}

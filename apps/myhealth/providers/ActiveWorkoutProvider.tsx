@@ -25,6 +25,7 @@ interface ActiveWorkoutContextType {
     prevExercise: () => void;
     addExercise: (name: string, sets: string, reps: string, properties?: string[]) => void;
     updateExercise: (index: number, updates: Partial<Exercise>) => void;
+    removeExercise: (index: number) => void;
     isExpanded: boolean;
     toggleExpanded: () => void;
     setExpanded: (expanded: boolean) => void;
@@ -184,6 +185,17 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         );
     };
 
+    const removeExercise = (index: number) => {
+        setExercises(current => current.filter((_, i) => i !== index));
+        // If we removed the current exercise, move current index back if needed
+        setCurrentIndex(prev => {
+            if (index <= prev) {
+                return Math.max(0, prev - 1);
+            }
+            return prev;
+        });
+    };
+
     const handleCompleteSet = (targetIndex: number,  setIndex: number, input?: { weight?: number; bodyweight?: number; reps?: number; duration?: number; distance?: number }) => {
         const indexToComplete = targetIndex ?? currentIndex;
         
@@ -286,6 +298,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         prevExercise,
         addExercise,
         updateExercise,
+        removeExercise,
         finishWorkout: handleFinishWorkout,
         cancelWorkout: handleCancelWorkout,
         isExpanded,
