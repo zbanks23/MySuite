@@ -46,18 +46,18 @@ export default function ExerciseDetailsScreen() {
     }
 
     const currentColors = {
-        primary: theme.primary,
-        background: theme.bgLight,
-        card: theme.bg || theme.bgLight,
-        text: theme.text,
-        border: theme.border || theme.bgDark || theme.bgLight
+        primary: theme.primary || '#FF6F61',
+        background: theme.bg || '#EAD4D4',
+        card: theme.bgDark || theme.bg || '#EAD4D4',
+        text: theme.text || '#2D1F1F',
+        border: theme.border || theme.bgLight || '#EAD4D4'
     };
     
     // Derived UI colors
     const cardBackground = currentColors.card;
-    const toggleBackground = theme.bgDark || theme.bgLight; 
-    const activeToggleBg = theme.bgLight; 
-    const activeToggleText = theme.text;
+    const toggleBackground = theme.bg || theme.bgDark || '#EAD4D4'; 
+    const activeToggleBg = theme.bgLight || '#FFF5F5'; 
+    const activeToggleText = theme.text || '#2D1F1F';
 
     return (
         <View style={{ flex: 1, backgroundColor: currentColors.background }}>

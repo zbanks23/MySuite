@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useColorScheme } from '../../hooks/ui/use-color-scheme';
+import { useUITheme } from '@mysuite/ui';
 
 interface ScreenHeaderProps {
   title: string;
@@ -10,9 +10,11 @@ interface ScreenHeaderProps {
 }
 
 export function ScreenHeader({ title, rightAction, leftAction, className }: ScreenHeaderProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const backgroundColor = isDark ? 'hsla(0, 0%, 10%, 0.70)' : 'hsla(0, 0%, 95%, 0.60)';
+  const theme = useUITheme();
+  
+  // We use the theme's bg color but with transparency for the "glass" header effect
+  // Since theme.bg is 'hsl(H, S, L)', we can convert it to 'hsla(H, S, L, A)'
+  const backgroundColor = theme.bg?.replace(')', ', 0.70)').replace('hsl', 'hsla');
 
   return (
     <View 
