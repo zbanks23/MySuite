@@ -21,7 +21,8 @@ export default function EndWorkoutScreen() {
         sourceWorkoutId 
     } = useActiveWorkout();
     
-    const { savedWorkouts, updateSavedWorkout } = useWorkoutManager();
+    const { savedWorkouts, updateSavedWorkout, saveWorkout } = useWorkoutManager();
+    const [isSaving, setIsSaving] = React.useState(false);
 
     const completedSetsCount = exercises.reduce((acc, ex) => acc + (ex.completedSets || 0), 0);
     const filteredExercises = exercises.filter(ex => (ex.completedSets || 0) > 0);
@@ -64,7 +65,14 @@ export default function EndWorkoutScreen() {
         return false;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        if (isSaving) return;
+
+        const finalize = () => {
+            finishWorkout(notes);
+            router.dismiss();
+        };
+
         if (sourceWorkoutId) {
             const original = savedWorkouts.find(w => w.id === sourceWorkoutId);
             if (original && areWorkoutsDifferent(exercises, original.exercises)) {
@@ -74,31 +82,33 @@ export default function EndWorkoutScreen() {
                     [
                         {
                             text: "No, History Only",
-                            onPress: () => {
-                                finishWorkout(notes);
-                                router.dismiss();
-                            }
+                            onPress: finalize
                         },
                         {
                             text: "Yes, Update Template",
-                            onPress: () => {
-                                // Update template first - strip logs and set counts to 0
-                                const updatedExercises = exercises.map(({ logs, previousLog, completedSets, ...rest }) => ({
-                                    ...rest,
-                                    completedSets: 0,
-                                    logs: []
-                                }));
-                                
-                                updateSavedWorkout(
-                                    sourceWorkoutId, 
-                                    original.name, 
-                                    updatedExercises, 
-                                    () => {
-                                        // Then finish history saving
-                                        finishWorkout(notes);
-                                        router.dismiss();
-                                    }
-                                );
+                            onPress: async () => {
+                                setIsSaving(true);
+                                try {
+                                    // Update template first - strip logs and set counts to 0
+                                    const updatedExercises = exercises.map(({ logs, previousLog, completedSets, ...rest }) => ({
+                                        ...rest,
+                                        completedSets: 0,
+                                        logs: []
+                                    }));
+                                    
+                                    await updateSavedWorkout(
+                                        sourceWorkoutId, 
+                                        original.name, 
+                                        updatedExercises, 
+                                        () => {}
+                                    );
+                                    finalize();
+                                } catch (e) {
+                                    console.error("Failed to update template", e);
+                                    finalize();
+                                } finally {
+                                    setIsSaving(false);
+                                }
                             }
                         },
                         {
@@ -109,10 +119,52 @@ export default function EndWorkoutScreen() {
                 );
                 return;
             }
+        } else if (totalExercises > 0) {
+            // Started from "Empty" or no source template, prompt to save as new template
+            Alert.alert(
+                "Save as Template?",
+                "Would you like to save this workout as a template for future use?",
+                [
+                    {
+                        text: "History Only",
+                        onPress: finalize
+                    },
+                    {
+                        text: "Save as Template",
+                        onPress: async () => {
+                            setIsSaving(true);
+                            try {
+                                // Strip logs and set counts to 0 for template
+                                const templateExercises = exercises.map(({ logs, previousLog, completedSets, ...rest }) => ({
+                                    ...rest,
+                                    completedSets: 0,
+                                    logs: []
+                                }));
+                                
+                                await saveWorkout(
+                                    workoutName || "New Workout",
+                                    templateExercises,
+                                    () => {}
+                                );
+                                finalize();
+                            } catch (e) {
+                                console.error("Failed to save new template", e);
+                                finalize();
+                            } finally {
+                                setIsSaving(false);
+                            }
+                        }
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel"
+                    }
+                ]
+            );
+            return;
         }
 
-        finishWorkout(notes);
-        router.dismiss();
+        finalize();
     };
 
     const handleDiscard = () => {
