@@ -75,7 +75,7 @@ export function ActiveWorkoutHeader() {
                     
                     {/* Center: Title */}
                     <Text 
-                        className="text-2xl font-bold text-light dark:text-dark text-center flex-1 mx-20" 
+                        className="text-xl font-bold text-light dark:text-dark text-center flex-1 mx-20" 
                         numberOfLines={1}
                         pointerEvents="none"
                     >
