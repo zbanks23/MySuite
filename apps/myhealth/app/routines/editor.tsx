@@ -149,17 +149,18 @@ export default function CreateRoutineScreen() {
                     
                     <View className="flex-row justify-between items-center mb-6">
                         <Text className="text-base leading-6 font-semibold text-light dark:text-dark">Schedule</Text>
-                        <TouchableOpacity onPress={() => setIsAddingDay(true)}>
-                            <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontSize: 16 }}>+ Add Day</Text>
-                        </TouchableOpacity>
+                        <RaisedButton 
+                            onPress={() => setIsAddingDay(true)}
+                            title="Add Day"
+                            textClassName="text-sm text-primary font-semibold px-3"
+                            borderRadius={20}
+                            className="h-9"
+                        />
                     </View>
                 </View>
                 {routineSequence.length === 0 ? (
-                    <View className="flex-1 justify-center items-center opacity-50 px-4">
-                        <Text className="leading-6 mb-2 text-lg text-light-muted dark:text-dark-muted">No days added yet</Text>
-                        <TouchableOpacity onPress={() => setIsAddingDay(true)}>
-                            <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontSize: 18 }}>Add Day</Text>
-                        </TouchableOpacity>
+                    <View className="items-center opacity-80 px-4">
+                        <Text className="text-lg text-light-muted dark:text-dark-muted">No days added yet</Text>
                     </View>
                 ) : (
                     <DraggableFlatList
