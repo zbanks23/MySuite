@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUITheme, RaisedButton, RaisedCard, HollowedCard } from '@mysuite/ui';
+import { useUITheme, RaisedButton, RaisedCard, HollowedCard, Skeleton } from '@mysuite/ui';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -14,7 +14,7 @@ export default function SavedWorkoutsScreen() {
   const router = useRouter();
   const theme = useUITheme();
   
-  const { savedWorkouts } = useWorkoutManager();
+  const { savedWorkouts, isLoading } = useWorkoutManager();
   const { hasActiveSession, startWorkout } = useActiveWorkout();
   
   // Hide floating buttons
@@ -55,7 +55,19 @@ export default function SavedWorkoutsScreen() {
         }
       />
       
-      {savedWorkouts.length === 0 ? (
+      {isLoading ? (
+          <View className="mt-28 flex-1 px-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                  <RaisedCard key={i} className="flex-row items-center justify-between p-4 mb-3">
+                      <View className="flex-1">
+                          <Skeleton height={20} width="60%" className="mb-2" />
+                          <Skeleton height={14} width="30%" />
+                      </View>
+                      <View className="w-10 h-10 rounded-full bg-light-darker/10 dark:bg-highlight-dark/10" />
+                  </RaisedCard>
+              ))}
+          </View>
+      ) : savedWorkouts.length === 0 ? (
           <View className="mt-28 flex-1 p-4">
               <HollowedCard className="p-8 w-full">
                   <Text className="text-base text-center leading-6 text-light-muted dark:text-dark-muted">
