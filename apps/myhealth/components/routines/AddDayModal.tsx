@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { useUITheme } from '@mysuite/ui';
+import { useUITheme, RaisedCard, RaisedButton } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
 
 
@@ -38,31 +38,40 @@ export const AddDayModal = ({
                 </View>
                 
                 <ScrollView className="flex-1 p-4">
-                    <Text className="text-base leading-6 font-semibold mb-3">Options</Text>
-                    <TouchableOpacity 
-                        onPress={onAddRestDay} 
-                        className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-6 flex-row items-center"
+                    <RaisedCard
+                        onPress={onAddRestDay}
+                        className="p-4 mb-6"
                     >
-                        <IconSymbol name="moon.zzz.fill" size={24} color={theme.primary} />
-                        <Text className="ml-3 font-semibold text-lg">Rest Day</Text>
-                    </TouchableOpacity>
+                        <View className="flex-row items-center">
+                            <IconSymbol name="moon.zzz.fill" size={24} color={theme.primary} />
+                            <Text className="ml-3 font-semibold text-lg text-light dark:text-dark">Rest Day</Text>
+                        </View>
+                    </RaisedCard>
 
                     <Text className="text-base leading-6 font-semibold mb-3">Saved Workouts</Text>
                     {savedWorkouts.length === 0 ? (
                             <Text className="text-gray-500 dark:text-gray-400 italic">No saved workouts found.</Text>
                     ) : (
                         savedWorkouts.map((workout) => (
-                            <TouchableOpacity 
+                            <RaisedCard
                                 key={workout.id}
                                 onPress={() => onAddWorkout(workout)}
-                                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-3 flex-row items-center justify-between"
+                                className="p-4 mb-3"
                             >
-                                <View>
-                                    <Text className="font-semibold text-lg">{workout.name}</Text>
-                                    <Text className="text-gray-500 dark:text-gray-400 text-sm">{workout.exercises?.length || 0} Exercises</Text>
+                                <View className="flex-row items-center justify-between">
+                                    <View>
+                                        <Text className="font-semibold text-lg text-light dark:text-dark">{workout.name}</Text>
+                                        <Text className="text-light-muted dark:text-dark-muted text-sm">{workout.exercises?.length || 0} Exercises</Text>
+                                    </View>
+                                    <RaisedButton
+                                        onPress={() => onAddWorkout(workout)}
+                                        className="w-10 h-10 p-0 rounded-full"
+                                        borderRadius={20}
+                                    >
+                                        <IconSymbol name="plus" size={20} color={theme.primary} />
+                                    </RaisedButton>
                                 </View>
-                                <IconSymbol name="plus.circle" size={24} color={theme.primary} />
-                            </TouchableOpacity>
+                            </RaisedCard>
                         ))
                     )}
                     <View className="h-20" /> 
