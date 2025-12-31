@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { RaisedButton } from '@mysuite/ui';
 import Animated from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
@@ -24,7 +24,6 @@ export function ActiveWorkoutHeader() {
 
 
     const title = workoutName || "Current Workout";
-    const rightIcon = isExpanded ? "chevron.down" : "chevron.up";
     
     const handlePress = () => {
          toggleExpanded();
@@ -63,13 +62,6 @@ export function ActiveWorkoutHeader() {
                 }}
                 className="absolute bg-light/80 dark:bg-dark/80 rounded-b-3xl"
             >
-                {/* Background Tappable Area for Toggle (Expanded) */}
-                <TouchableOpacity 
-                    className="absolute inset-0 z-0"
-                    onPress={handlePress} 
-                    activeOpacity={1}
-                />
-
                 {/* Content Container (Expanded) */}
                 <View 
                     className="flex-row justify-center items-center relative z-10 min-h-[44px]"
@@ -90,8 +82,17 @@ export function ActiveWorkoutHeader() {
                         {title}
                     </Text>
                     
-                    {/* Right: End Button */}
-                    <View className="absolute right-5 z-10">
+                    {/* Right: Actions */}
+                    <View className="absolute right-5 z-10 flex-row gap-2">
+                        <RaisedButton 
+                            onPress={handlePress}
+                            className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
+                            variant="custom"
+                            borderRadius={16}
+                            showGradient={false}
+                        >
+                            <IconSymbol name="arrow.down.right.and.arrow.up.left" size={18} className="text-primary dark:text-primary-dark" />
+                        </RaisedButton>
                         <RaisedButton 
                             onPress={handleEnd}
                             className="h-8 px-3 py-0 bg-light dark:bg-dark-lighter"
@@ -125,38 +126,6 @@ export function ActiveWorkoutHeader() {
             }}
             className="absolute bg-light/80 dark:bg-dark/80 rounded-full"
         >
-            {/* Main Interactive Entity (entire pill + semi-circle area) */}
-            <TouchableOpacity 
-                activeOpacity={0.7}
-                onPress={handlePress}
-                className="absolute inset-0 z-0"
-                style={{ overflow: 'visible' }}
-            >
-                <View 
-                    style={{
-                        position: 'absolute',
-                        left: '50%',
-                        transform: [{ translateX: -20 }],
-                        top: -20, // Height is 20, sitting exactly on top of pill (offset by padding)
-                        width: 40,
-                        height: 20,
-                        borderTopLeftRadius: 20,
-                        borderTopRightRadius: 20,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                    className="bg-light/80 dark:bg-dark/80"
-                >
-                    <View style={{ marginTop: 4 }}>
-                        <IconSymbol 
-                            name={rightIcon} 
-                            size={14} 
-                            className="text-light dark:text-dark"
-                        />
-                    </View>
-                </View>
-            </TouchableOpacity>
-
             {/* Content Container (Minimized) */}
             <View 
                 className="flex-row justify-center items-center relative z-10 min-h-[40px]"
@@ -177,11 +146,20 @@ export function ActiveWorkoutHeader() {
                     {title}
                  </Text>
                  
-                 {/* Right: End Button Only */}
-                 <View className="absolute right-4 z-10">
+                 {/* Right: Actions */}
+                 <View className="absolute right-4 z-10 flex-row gap-2">
+                     <RaisedButton 
+                        onPress={handlePress}
+                        className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
+                        variant="custom"
+                        borderRadius={16}
+                        showGradient={false}
+                     >
+                         <IconSymbol name="arrow.up.left.and.arrow.down.right" size={14} className="text-primary dark:text-primary-dark" />
+                     </RaisedButton>
                      <RaisedButton 
                         onPress={handleEnd}
-                        className="h-7 px-2.5 py-0 bg-light dark:bg-dark-lighter"
+                        className="h-8 px-3 py-0 bg-light dark:bg-dark-lighter"
                         variant="custom"
                         borderRadius={16}
                         showGradient={false}

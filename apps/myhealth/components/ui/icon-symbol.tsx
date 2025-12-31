@@ -53,6 +53,9 @@ const MAPPING = {
   'moon.fill': 'nightlight',
   'save': 'save',
   'square.and.pencil': 'create',
+  'minus': 'remove',
+  'arrow.down.right.and.arrow.up.left': 'minimize',
+  'arrow.up.left.and.arrow.down.right': 'open-in-full',
 } as const;
 
 

@@ -1,6 +1,7 @@
 import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';
 import { StyleProp, ViewStyle } from 'react-native';
 import { hslToHex } from '../../utils/colors';
+import { cssInterop } from 'nativewind';
 
 export function IconSymbol({
   name,
@@ -8,12 +9,14 @@ export function IconSymbol({
   color,
   style,
   weight = 'regular',
+  className,
 }: {
   name: SymbolViewProps['name'];
   size?: number;
-  color: string;
+  color?: string;
   style?: StyleProp<ViewStyle>;
   weight?: SymbolWeight;
+  className?: string;
 }) {
   const safeColor = (typeof color === 'string' && color.startsWith('hsl')) ? hslToHex(color) : color;
 
@@ -30,7 +33,10 @@ export function IconSymbol({
         },
         style,
       ]}
+      className={className}
     />
   );
 }
+
+cssInterop(IconSymbol, { className: { target: 'style', nativeStyleToProp: { color: true } } });
 
