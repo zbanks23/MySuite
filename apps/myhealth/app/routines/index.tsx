@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUITheme, RaisedButton, RaisedCard } from '@mysuite/ui';
+import { useUITheme, RaisedButton, RaisedCard, HollowedCard } from '@mysuite/ui';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
@@ -66,8 +66,12 @@ export default function RoutinesScreen() {
       />
       
       {routines.length === 0 ? (
-          <View className="flex-1 items-center justify-center p-8">
-              <Text className="text-base leading-6 text-light-muted dark:text-dark-muted">No saved routines found.</Text>
+          <View className="flex-1 p-4 mt-28">
+              <HollowedCard className="p-8 w-full">
+                  <Text className="text-base text-center leading-6 text-light-muted dark:text-dark-muted">
+                      No saved routines found. Create one to organize your workouts!
+                  </Text>
+              </HollowedCard>
           </View>
       ) : (
           <FlatList
