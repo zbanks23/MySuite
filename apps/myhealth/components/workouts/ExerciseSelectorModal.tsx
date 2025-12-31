@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator, ScrollView } from 'react-native';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { useUITheme, RaisedButton, HollowedCard } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
 
 
@@ -115,7 +115,13 @@ export const ExerciseSelectorModal = ({
                                 </TouchableOpacity>
                             )}
                             ListEmptyComponent={
-                                <Text className="text-center text-gray-500 mt-4">No exercises found.</Text>
+                                <View className="py-8">
+                                    <HollowedCard className="p-8">
+                                        <Text className="text-center text-light-muted dark:text-dark-muted">
+                                            No exercises found. Try a different search.
+                                        </Text>
+                                    </HollowedCard>
+                                </View>
                             }
                             showsVerticalScrollIndicator={false}
                         />

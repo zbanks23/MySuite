@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { BodyWeightChart } from './BodyWeightChart';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
-import { RaisedCard } from '../../../../packages/ui/RaisedCard';
+import { RaisedCard, HollowedCard } from '../../../../packages/ui';
 
 // Defined locally to avoid circular dependencies if any
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
@@ -118,7 +118,11 @@ export function BodyWeightCard({
                 />
             </View>
         ) : (
-            <Text className="text-gray-400 text-sm italic">No weight recorded</Text>
+            <HollowedCard className="p-8">
+                <Text className="text-light-muted dark:text-dark-muted text-center italic">
+                    No weight metrics found. Log your first weight to see your progress!
+                </Text>
+            </HollowedCard>
         )}
       </View>
     </RaisedCard>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, ActivityIndicator, TextInput, Alert, Text } from 'react-native'; 
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
-import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { useUITheme, RaisedButton, HollowedCard } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { IconSymbol } from '../../components/ui/icon-symbol';
@@ -125,8 +125,12 @@ export default function ExercisesScreen() {
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 120 }}
         ListEmptyComponent={
-            <View className="p-5 items-center">
-                <Text className="text-base leading-6 text-light-muted dark:text-dark-muted">No exercises found.</Text>
+            <View className="px-4 py-8">
+                <HollowedCard className="p-8">
+                    <Text className="text-base text-center leading-6 text-light-muted dark:text-dark-muted">
+                        No exercises found. Try a different search or create a new exercise!
+                    </Text>
+                </HollowedCard>
             </View>
         }
         showsVerticalScrollIndicator={false}
