@@ -28,7 +28,7 @@ export default function ExercisesScreen() {
           return;
       }
       addExercise(exercise.name, "3", "10", exercise.properties);
-      Alert.alert('Added', `${exercise.name} added to current workout.`);
+      router.back();
   };
 
   useEffect(() => {
