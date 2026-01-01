@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { ActiveRoutineTimelineItem } from './ActiveRoutineTimelineItem';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
-import { RaisedCard, RaisedButton, useUITheme } from '@mysuite/ui';
-import { IconSymbol } from '../ui/icon-symbol';
+import { RaisedCard, RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
 
 type ViewMode = 'next_3' | 'next_7' | 'week';
 

@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { IconSymbol } from '../ui/icon-symbol';
-
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
-import { RaisedCard, HollowedButton, RaisedButton } from '../../../../packages/ui';
+import { RaisedCard, HollowedButton, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {

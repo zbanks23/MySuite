@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useUITheme as useTheme, RaisedButton } from '@mysuite/ui';
+import { useUITheme as useTheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { useWorkoutManager, fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -11,7 +11,6 @@ import { ExerciseSelector } from '../../components/workouts/ExerciseSelector';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 
 export default function CreateWorkoutScreen() {
     const theme = useTheme();

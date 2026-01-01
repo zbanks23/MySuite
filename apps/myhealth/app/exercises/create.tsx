@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, View, Text, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
-import { IconSymbol } from '../../components/ui/icon-symbol';
+import { useUITheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { SelectionModal } from '../../components/ui/SelectionModal';
 import { useWorkoutManager, fetchMuscleGroups } from '../../hooks/workouts/useWorkoutManager';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';

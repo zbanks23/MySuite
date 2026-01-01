@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, RaisedButton, useToast } from '@mysuite/ui';
+import { useUITheme, RaisedButton, useToast, IconSymbol } from '@mysuite/ui';
 import { useRouter } from 'expo-router';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
 import { WeightLogModal } from '../../components/profile/WeightLogModal';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
-import { IconSymbol } from '../ui/icon-symbol';
+import { IconSymbol } from "@mysuite/ui";
 import { SetSwipeAction } from './SetSwipeAction';
 
 export const getExerciseFields = (properties?: string[]) => {

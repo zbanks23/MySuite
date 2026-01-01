@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, Alert } from 'react-native';
-import { RaisedButton } from '@mysuite/ui';
+import { RaisedButton, IconSymbol } from '@mysuite/ui';
 import Animated from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
-import { IconSymbol } from '../ui/icon-symbol';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

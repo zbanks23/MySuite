@@ -42,7 +42,7 @@ jest.mock('@mysuite/ui', () => ({
 
 
 
-jest.mock('../components/ui/icon-symbol', () => ({
+jest.mock("/ui", () => ({
   IconSymbol: 'View',
 }));
 

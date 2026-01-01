@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, RaisedButton, ThemeToggle } from '@mysuite/ui';
+import { useUITheme, RaisedButton, ThemeToggle, IconSymbol } from '@mysuite/ui';
 import { useThemePreference } from '../../providers/AppThemeProvider';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
 import { ProfileEditModal } from '../../components/ui/ProfileEditModal';

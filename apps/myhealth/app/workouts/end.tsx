@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { RaisedButton, useUITheme } from '@mysuite/ui';
-import { IconSymbol } from '../../components/ui/icon-symbol';
+import { RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';

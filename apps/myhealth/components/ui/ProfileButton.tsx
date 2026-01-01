@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { RaisedButton, useUITheme } from '@mysuite/ui';
-import { IconSymbol } from './icon-symbol';
+import { RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
 
 export function ProfileButton() {
     const router = useRouter();

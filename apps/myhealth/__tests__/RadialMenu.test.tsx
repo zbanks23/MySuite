@@ -36,7 +36,7 @@ jest.mock('react-native-gesture-handler', () => {
     };
 });
 
-jest.mock('../components/ui/icon-symbol', () => ({
+jest.mock("/ui", () => ({
     IconSymbol: 'IconSymbol'
 }));
 

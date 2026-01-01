@@ -16,11 +16,10 @@ import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ActiveRoutineCard } from '../../components/routines/ActiveRoutineCard';
 import { SavedWorkoutItem } from '../../components/workouts/SavedWorkoutItem';
 import { useRoutineTimeline } from '../../hooks/routines/useRoutineTimeline';
-import { HollowedCard, RaisedButton, RaisedCard, useUITheme } from '@mysuite/ui';
+import { HollowedCard, RaisedButton, RaisedCard, useUITheme, IconSymbol } from '@mysuite/ui';
 
 import { SavedWorkout } from '../../types';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ProfileButton } from '../../components/ui/ProfileButton';
 
 export default function Workout() {

@@ -9,7 +9,7 @@ jest.mock('../../components/ui/RaisedCard', () => ({
 }));
 
 // Mock IconSymbol
-jest.mock('../../components/ui/icon-symbol', () => ({
+jest.mock("/ui", () => ({
     IconSymbol: () => null
 }));
 

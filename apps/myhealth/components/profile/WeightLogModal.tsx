@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { RaisedButton, useUITheme } from '@mysuite/ui';
-import { IconSymbol } from '../ui/icon-symbol';
+import { RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface WeightLogModalProps {

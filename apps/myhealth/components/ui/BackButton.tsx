@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 import { useRouter, usePathname } from 'expo-router';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
-import { IconSymbol } from './icon-symbol';
+import { useUITheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 
 export function useBackButtonAction() {
     const router = useRouter();
@@ -48,7 +47,7 @@ export function BackButton({ onPress }: { onPress?: () => void }) {
         >
             <IconSymbol
                 name="chevron.left"
-                size={20}
+                size={32}
                 color={theme.primary}
             />
         </RaisedButton>

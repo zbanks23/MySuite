@@ -9,7 +9,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { useUITheme } from '@mysuite/ui';
-import { IconSymbol } from '../icon-symbol';
+import { IconSymbol } from "/ui";
 import * as Haptics from 'expo-haptics';
 import { RadialMenuBackdrop } from './RadialMenuBackdrop';
 import { RadialMenuFan } from './RadialMenuFan';

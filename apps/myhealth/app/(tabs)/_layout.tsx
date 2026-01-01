@@ -5,7 +5,7 @@ import { BottomTabBar } from '@react-navigation/bottom-tabs';
 
 import { HapticTab } from '../../components/ui/HapticTab';
 import { useNavigationSettings } from '../../providers/NavigationSettingsProvider';
-import { IconSymbol } from '../../components/ui/icon-symbol';
+import { IconSymbol } from "@mysuite/ui";
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/ui/use-color-scheme';
 

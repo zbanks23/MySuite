@@ -12,7 +12,7 @@ import Animated, {
     useDerivedValue
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { IconSymbol } from '../../apps/myhealth/components/ui/icon-symbol';
+import { IconSymbol } from './IconSymbol';
 import { RaisedButton } from './RaisedButton';
 
 // Constants

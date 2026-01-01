@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ScrollView } from 'react-native';
-import { useUITheme, RaisedButton, HollowedCard, Skeleton } from '@mysuite/ui';
-import { IconSymbol } from '../ui/icon-symbol';
+import { useUITheme, RaisedButton, HollowedCard, Skeleton, IconSymbol } from '@mysuite/ui';
 import { ScreenHeader } from '../ui/ScreenHeader';
 import { BackButton } from '../ui/BackButton';
 

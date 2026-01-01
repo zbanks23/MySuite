@@ -5,7 +5,7 @@ import Animated, {
     SharedValue
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '../icon-symbol';
+import { IconSymbol } from "/ui";
 
 export type RadialMenuItemType = {
   id: string;

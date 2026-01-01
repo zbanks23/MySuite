@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Modal, FlatList } from 'react-native';
-import { useUITheme as useTheme, RaisedButton } from '@mysuite/ui';
-import { IconSymbol } from '../ui/icon-symbol';
+import { useUITheme as useTheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 
 interface WorkoutPreviewModalProps {
     visible: boolean;

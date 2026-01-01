@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, ScrollView } from 'react-native';
-import { useUITheme, RaisedCard, RaisedButton } from '@mysuite/ui';
-import { IconSymbol } from '../ui/icon-symbol';
+import { useUITheme, RaisedCard, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { ScreenHeader } from '../ui/ScreenHeader';
 import { BackButton } from '../ui/BackButton';
 import { WorkoutPreviewModal } from '../workouts/WorkoutPreviewModal';

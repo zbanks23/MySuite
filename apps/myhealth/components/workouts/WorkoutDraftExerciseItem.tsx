@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '../ui/icon-symbol';
-import { useUITheme } from '@mysuite/ui';
+import { IconSymbol, useUITheme } from "@mysuite/ui";
 
 interface WorkoutDraftExerciseItemProps {
     item: any;

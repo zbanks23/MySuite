@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, TextInput, Alert, Text } from 'react-native'; 
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
-import { useUITheme, RaisedButton, HollowedCard, Skeleton, useToast } from '@mysuite/ui';
+import { useUITheme, RaisedButton, HollowedCard, Skeleton, useToast, IconSymbol } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';

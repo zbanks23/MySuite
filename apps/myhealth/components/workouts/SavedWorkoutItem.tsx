@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { ActionCard } from '../../../../packages/ui/ActionCard';
-import { RaisedButton } from '../../../../packages/ui/RaisedButton';
+import { ActionCard, RaisedButton, IconSymbol, useUITheme } from "@mysuite/ui";
 import { SavedWorkout } from '../../types';
-import { IconSymbol } from '../ui/icon-symbol';
-import { useUITheme } from '../../../../packages/ui/theme';
 
 interface SavedWorkoutItemProps {
     item: SavedWorkout;
@@ -49,7 +46,7 @@ export const SavedWorkoutItem = ({
                     >
                         <IconSymbol 
                             name="play.fill" 
-                            size={15} 
+                            size={24} 
                             color={theme.primary} 
                         />
                     </RaisedButton>

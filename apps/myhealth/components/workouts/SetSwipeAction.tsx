@@ -12,7 +12,7 @@ import Animated, {
     Easing
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { IconSymbol } from '../ui/icon-symbol';
+import { IconSymbol } from "@mysuite/ui";
 
 // Actions component that monitors drag distance (Adapted for Set Rows)
 export const SetSwipeAction = ({ 

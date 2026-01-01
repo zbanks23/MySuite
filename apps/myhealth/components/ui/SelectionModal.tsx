@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Modal, TouchableOpacity, FlatList, Text } from 'react-native';
-import { useUITheme } from '@mysuite/ui';
-import { IconSymbol } from './icon-symbol';
+import { useUITheme, IconSymbol } from '@mysuite/ui';
 interface SelectionModalProps {
     visible: boolean;
     onClose: () => void;
