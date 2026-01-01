@@ -136,17 +136,17 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        <View className="mb-6">
+        <View>
           <RaisedButton 
             title="Sign Out" 
             onPress={handleSignOut} 
-            className="mb-4"
+            className="mb-4 h-12"
           />
           
           <RaisedButton 
             title="Delete Account" 
             onPress={handleDeleteAccount} 
-            className="bg-red-50 dark:bg-red-900/20"
+            className="h-12"
             textClassName="text-red-500 font-bold text-lg"
           />
         </View>
