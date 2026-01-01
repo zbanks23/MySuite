@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUITheme, RaisedButton, RaisedCard, HollowedCard, Skeleton, IconSymbol } from '@mysuite/ui';
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';

@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, A
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useUITheme as useTheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
-import { useWorkoutManager, fetchExercises } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager, fetchExercises } from '../../providers/WorkoutManagerProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import { useWorkoutDraft } from '../../hooks/workouts/useWorkoutDraft';
 import { WorkoutDraftExerciseItem } from '../../components/workouts/WorkoutDraftExerciseItem';

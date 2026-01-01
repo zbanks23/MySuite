@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useUITheme as useTheme } from '@mysuite/ui';
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 
 interface WorkoutDetailsModalProps {
     visible: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RaisedCard, RaisedButton } from '@mysuite/ui';
 

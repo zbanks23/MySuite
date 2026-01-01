@@ -10,12 +10,12 @@ import {
 
 
 import { useRouter } from 'expo-router';
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ActiveRoutineCard } from '../../components/routines/ActiveRoutineCard';
 import { SavedWorkoutItem } from '../../components/workouts/SavedWorkoutItem';
-import { useRoutineTimeline } from '../../hooks/routines/useRoutineTimeline';
+import { useRoutineTimeline } from '../../hooks/routines/useRoutineManager';
 import { HollowedCard, RaisedButton, RaisedCard, useUITheme, IconSymbol } from '@mysuite/ui';
 
 import { SavedWorkout } from '../../types';

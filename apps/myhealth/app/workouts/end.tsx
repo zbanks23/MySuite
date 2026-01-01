@@ -6,7 +6,7 @@ import { RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 import { WorkoutNamePrompt } from '../../components/workouts/WorkoutNamePrompt';
 
 export default function EndWorkoutScreen() {

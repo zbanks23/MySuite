@@ -84,15 +84,6 @@ export function ActiveWorkoutHeader() {
                     {/* Right: Actions */}
                     <View className="absolute right-5 z-10 flex-row gap-2">
                         <RaisedButton 
-                            onPress={handlePress}
-                            className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
-                            variant="custom"
-                            borderRadius={16}
-                            showGradient={false}
-                        >
-                            <IconSymbol name="arrow.down.right.and.arrow.up.left" size={18} className="text-primary dark:text-primary-dark" />
-                        </RaisedButton>
-                        <RaisedButton 
                             onPress={handleEnd}
                             className="h-8 px-3 py-0 bg-light dark:bg-dark-lighter"
                             variant="custom"
@@ -100,6 +91,15 @@ export function ActiveWorkoutHeader() {
                             showGradient={false}
                         >
                             <Text className="text-danger text-xs font-bold">End</Text>
+                        </RaisedButton>
+                        <RaisedButton 
+                            onPress={handlePress}
+                            className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
+                            variant="custom"
+                            borderRadius={16}
+                            showGradient={false}
+                        >
+                            <IconSymbol name="arrow.down.right.and.arrow.up.left" size={18} className="text-primary dark:text-primary-dark" />
                         </RaisedButton>
                     </View>
                 </View>
@@ -148,15 +148,6 @@ export function ActiveWorkoutHeader() {
                  {/* Right: Actions */}
                  <View className="absolute right-4 z-10 flex-row gap-2">
                      <RaisedButton 
-                        onPress={handlePress}
-                        className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
-                        variant="custom"
-                        borderRadius={16}
-                        showGradient={false}
-                     >
-                         <IconSymbol name="arrow.up.left.and.arrow.down.right" size={14} className="text-primary dark:text-primary-dark" />
-                     </RaisedButton>
-                     <RaisedButton 
                         onPress={handleEnd}
                         className="h-8 px-3 py-0 bg-light dark:bg-dark-lighter"
                         variant="custom"
@@ -164,6 +155,15 @@ export function ActiveWorkoutHeader() {
                         showGradient={false}
                      >
                          <Text className="text-danger text-xs font-bold">End</Text>
+                     </RaisedButton>
+                     <RaisedButton 
+                        onPress={handlePress}
+                        className="h-8 w-8 p-0 bg-light dark:bg-dark-lighter"
+                        variant="custom"
+                        borderRadius={16}
+                        showGradient={false}
+                     >
+                         <IconSymbol name="arrow.up.left.and.arrow.down.right" size={18} className="text-primary dark:text-primary-dark" />
                      </RaisedButton>
                  </View>
             </View>

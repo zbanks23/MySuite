@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { Exercise, useWorkoutManager, fetchLastExercisePerformance } from '../hooks/workouts/useWorkoutManager'; 
+import { Exercise, useWorkoutManager, fetchLastExercisePerformance } from './WorkoutManagerProvider'; 
 import { useAuth } from '@mysuite/auth';
 import { createExercise } from '../utils/workout-logic';
 import { useActiveWorkoutTimers } from '../hooks/workouts/useActiveWorkoutTimers';

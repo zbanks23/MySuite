@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, FlatList } from 'react-native';
 import { Stack } from 'expo-router';
 
-import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
 import { WorkoutDetailsModal } from '../../components/workouts/WorkoutDetailsModal';
 import { ActionCard, HollowedCard, Skeleton } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';

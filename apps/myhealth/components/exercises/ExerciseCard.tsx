@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Exercise } from '../../hooks/workouts/useWorkoutManager';
+import { Exercise } from '../../providers/WorkoutManagerProvider';
 import { RaisedCard, HollowedButton, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 

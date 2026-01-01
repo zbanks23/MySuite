@@ -3,7 +3,7 @@ import { TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Vie
 import { useRouter } from 'expo-router';
 import { useUITheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { SelectionModal } from '../../components/ui/SelectionModal';
-import { useWorkoutManager, fetchMuscleGroups } from '../../hooks/workouts/useWorkoutManager';
+import { useWorkoutManager, fetchMuscleGroups } from '../../providers/WorkoutManagerProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
 

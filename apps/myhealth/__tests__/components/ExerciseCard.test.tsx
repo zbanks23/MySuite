@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { ExerciseCard } from '../../components/exercises/ExerciseCard';
-import { Exercise } from '../../hooks/workouts/useWorkoutManager';
+import { Exercise } from '../../providers/WorkoutManagerProvider';
 
 // Mock Card
 jest.mock('../../components/ui/RaisedCard', () => ({
@@ -15,6 +15,9 @@ jest.mock("/ui", () => ({
 
 // Mock SetRow
 jest.mock('../../components/workouts/SetRow', () => {
+    // eslint-disable-next-line
+    const React = require('react');
+    // eslint-disable-next-line
     const { TouchableOpacity } = require('react-native');
     
     // Copy of helper function for mock
@@ -68,7 +71,7 @@ describe('ExerciseCard', () => {
         onUpdateLog: jest.fn(),
         onAddSet: mockOnAddSet,
         onDeleteSet: mockOnDeleteSet,
-        restSeconds: 0,
+        onRemoveExercise: jest.fn(),
         theme: mockTheme,
     };
 
@@ -86,20 +89,9 @@ describe('ExerciseCard', () => {
 
     it('should render Add Set button and call onAddSet', () => {
         const { getByText } = render(<ExerciseCard {...defaultProps} />);
-        const addSetBtn = getByText('Add Set');
+        const addSetBtn = getByText('+ Add Set');
         fireEvent.press(addSetBtn);
         expect(mockOnAddSet).toHaveBeenCalled();
-    });
-
-    it('should show rest timer if isCurrent and restSeconds > 0', () => {
-        const { getByText } = render(<ExerciseCard {...defaultProps} restSeconds={60} />);
-        // 60s -> "01:00"
-        expect(getByText('01:00')).toBeTruthy();
-    });
-
-    it('should NOT show rest timer if not current', () => {
-        const { queryByText } = render(<ExerciseCard {...defaultProps} isCurrent={false} restSeconds={60} />);
-        expect(queryByText('01:00')).toBeNull();
     });
 
     it('should call onCompleteSet with correct set index', () => {

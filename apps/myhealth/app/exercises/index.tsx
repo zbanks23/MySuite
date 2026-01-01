@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 
 import { useUITheme, RaisedButton, HollowedCard, Skeleton, useToast, IconSymbol } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
-import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
+import { fetchExercises } from '../../providers/WorkoutManagerProvider';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
