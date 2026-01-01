@@ -15,7 +15,6 @@ import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ActiveRoutineCard } from '../../components/routines/ActiveRoutineCard';
 import { SavedWorkoutItem } from '../../components/workouts/SavedWorkoutItem';
-import { WorkoutPreviewModal } from '../../components/workouts/WorkoutPreviewModal';
 import { useRoutineTimeline } from '../../hooks/routines/useRoutineTimeline';
 import { HollowedCard, RaisedButton, RaisedCard, useUITheme } from '@mysuite/ui';
 
@@ -65,9 +64,6 @@ export default function Workout() {
             startWorkout([], "Empty Workout");
         }
     };
-
-
-    const [previewWorkout, setPreviewWorkout] = useState<SavedWorkout | null>(null);
     const [routineViewMode, setRoutineViewMode] = useState<'next_3' | 'next_7' | 'week'>('week');
     const [activeSwipedCardId, setActiveSwipedCardId] = useState<string | null>(null);
 
@@ -261,7 +257,6 @@ export default function Workout() {
                                     }}
                                     onMarkComplete={markRoutineDayComplete}
                                     onJumpToDay={setActiveRoutineIndex}
-                                    onWorkoutPress={setPreviewWorkout}
                                     viewMode={routineViewMode}
                                     onViewModeChange={setRoutineViewMode}
                                     onMenuPress={() => router.push('/routines')}
@@ -297,18 +292,8 @@ export default function Workout() {
                                 </RaisedCard>
                             </View>
                         )}
-                    </View>
-
-
-                    
+                    </View>     
 			</ScrollView>
-
-             {/* Workout Preview Modal */}
-             <WorkoutPreviewModal
-                visible={!!previewWorkout}
-                workout={previewWorkout}
-                onClose={() => setPreviewWorkout(null)}
-            />
 		</View>
 	);
 }

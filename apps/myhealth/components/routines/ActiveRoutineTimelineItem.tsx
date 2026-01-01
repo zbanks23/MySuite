@@ -11,7 +11,6 @@ interface ActiveRoutineTimelineItemProps {
   isLastInView: boolean;
   isCollapsed: boolean;
   onJumpToDay: (index: number) => void;
-  onWorkoutPress: (workout: any) => void;
   onStartWorkout: (exercises: any[], name?: string, workoutId?: string) => void;
   onMarkComplete: () => void;
   routineName: string;
@@ -26,7 +25,6 @@ export function ActiveRoutineTimelineItem({
   isLastInView,
   isCollapsed,
   onJumpToDay,
-  onWorkoutPress,
   onStartWorkout,
   onMarkComplete,
   routineName,
@@ -88,15 +86,8 @@ export function ActiveRoutineTimelineItem({
 
       <View className={`flex-1 pl-2 ${isLastInView ? '' : 'pb-6'}`}>
         <View className="flex-row justify-between items-center">
-          <TouchableOpacity
+          <View
             className="flex-1 mr-2"
-            onPress={() => {
-              if (item.workout) {
-                onWorkoutPress(item.workout);
-              } else if (item.type === 'rest') {
-                // Maybe show rest details?
-              }
-            }}
           >
             <Text
               style={{
@@ -110,7 +101,7 @@ export function ActiveRoutineTimelineItem({
                 ? 'Rest Day'
                 : item.name || 'Unknown Workout'}
             </Text>
-          </TouchableOpacity>
+          </View>
 
           <View className="flex-row items-center">
             {!isToday && (
