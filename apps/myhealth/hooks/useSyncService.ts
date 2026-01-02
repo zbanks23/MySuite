@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@mysuite/auth";
 import { DataRepository } from "../providers/DataRepository";
 import {
+    fetchFullWorkoutHistory,
     fetchUserWorkouts,
-    fetchWorkoutHistory,
     persistCompletedWorkoutToSupabase,
     persistWorkoutToSupabase,
 } from "../utils/workout-api";
@@ -19,9 +19,32 @@ export function useSyncService() {
             console.log("Pulling data...");
             // 1. Pull History
             const { data: historyData, error: historyError } =
-                await fetchWorkoutHistory(user);
+                await fetchFullWorkoutHistory(user);
+
             if (!historyError && historyData) {
-                // Logic from before...
+                // Merge strategy: Keep local 'pending' (unsynced) items, replace others with cloud truth
+                const currentHistory = await DataRepository.getHistory();
+                const pendingLocal = currentHistory.filter((h) =>
+                    h.syncStatus === "pending"
+                );
+
+                // Deduplicate: If a pending item somehow got synced but status wasn't updated?
+                // Unlikely in this flow. Just simple concat is safer to avoid data loss.
+                // However, we want to ensure we don't have duplicates if we just pushed them?
+                // If we just pushed them, they are 'synced' now (in pushData).
+                // So pendingLocal should strictly be items that FAILED to push.
+
+                // We also need to handle the case where we just pushed an item, it became 'synced' locally,
+                // and now we pull it back from server.
+                // The server version is the source of truth for synced items.
+
+                // So: New History = (Local Pending) + (Cloud History)
+                const mergedHistory = [
+                    ...pendingLocal,
+                    ...historyData,
+                ] as any[];
+
+                await DataRepository.saveHistory(mergedHistory);
             }
 
             // 2. Pull Saved Workouts
@@ -37,7 +60,17 @@ export function useSyncService() {
                     syncStatus: "synced" as const,
                     updatedAt: new Date(w.created_at).getTime(),
                 }));
-                await DataRepository.saveWorkouts(mapped);
+                // Similar merge for workouts?
+                // For now, let's keep the existing overwrite behavior for workouts or improve it too?
+                // Existing code: await DataRepository.saveWorkouts(mapped);
+                // Let's improve it to be safe for pending workouts too.
+                const currentWorkouts = await DataRepository.getWorkouts();
+                const pendingWorkouts = currentWorkouts.filter((w: any) =>
+                    w.syncStatus === "pending"
+                );
+
+                const mergedWorkouts = [...pendingWorkouts, ...mapped];
+                await DataRepository.saveWorkouts(mergedWorkouts);
             }
         } catch (e) {
             console.error("Pull failed", e);

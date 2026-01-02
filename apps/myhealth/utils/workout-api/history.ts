@@ -306,6 +306,154 @@ export async function fetchWorkoutLogDetails(user: any, logId: string) {
     }
 }
 
+export async function fetchFullWorkoutHistory(user: any) {
+    if (!user) return { data: [], error: null };
+
+    // Fetch logs with their set_logs (performance data)
+    const { data: logs, error } = await supabase
+        .from("workout_logs")
+        .select(`
+            *,
+            set_logs (*)
+        `)
+        .eq("user_id", user.id)
+        .order("workout_time", { ascending: false });
+
+    if (error) {
+        console.error("fetchFullWorkoutHistory failed", error);
+        return { data: [], error };
+    }
+
+    const formatted = logs?.map((log: any) => {
+        // 1. Basic Metadata
+        const userNote = log.note || log.user_note || null;
+        let workoutName = log.workout_name;
+
+        // Fallback name logic
+        if (!workoutName) {
+            try {
+                if (log.notes) {
+                    const parsed = typeof log.notes === "string"
+                        ? JSON.parse(log.notes)
+                        : log.notes;
+                    if (parsed.name) workoutName = parsed.name;
+                }
+            } catch {}
+        }
+        if (!workoutName) workoutName = "Untitled Workout";
+
+        // 2. Reconstruct Exercises from set_logs
+        // We need to group set_logs by exercise to form the 'exercises' array
+        const groupedExercises: Record<string, Exercise> = {};
+
+        // Also try to get order/properties from the plan snapshot in log.exercises (if available)
+        let planExercises: any[] = [];
+        try {
+            if (log.exercises) {
+                const parsed = typeof log.exercises === "string"
+                    ? JSON.parse(log.exercises)
+                    : log.exercises;
+                if (Array.isArray(parsed)) planExercises = parsed;
+                else if (parsed.exercises && Array.isArray(parsed.exercises)) {
+                    planExercises = parsed.exercises; // handle {name, exercises: []} format
+                }
+            }
+        } catch {}
+
+        if (log.set_logs && Array.isArray(log.set_logs)) {
+            // Sort set_logs by creation or id to ensure set order
+            const sortedSets = log.set_logs.sort((a: any, b: any) =>
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            );
+
+            sortedSets.forEach((setRow: any) => {
+                const details = setRow.details || {};
+                const exId = setRow.exercise_id || details.exercise_id ||
+                    "unknown";
+                const exName = details.exercise_name || "Unknown Exercise";
+
+                if (!groupedExercises[exId]) {
+                    // Initialize exercise entry
+                    // Try to find matching plan info for properties
+                    const planEx = planExercises.find((p: any) =>
+                        p.id === exId
+                    ) || {};
+
+                    groupedExercises[exId] = {
+                        id: exId,
+                        name: exName,
+                        sets: 0,
+                        reps: 0,
+                        completedSets: 0,
+                        logs: [],
+                        properties: planEx.properties || [],
+                        setTargets: planEx.setTargets || [],
+                    };
+                }
+
+                // Add log entry
+                groupedExercises[exId].logs?.push({
+                    id: setRow.set_log_id || details.id,
+                    weight: details.weight,
+                    reps: details.reps,
+                    distance: details.distance,
+                    duration: details.duration,
+                    bodyweight: details.bodyweight,
+                });
+
+                if (groupedExercises[exId].completedSets !== undefined) {
+                    groupedExercises[exId].completedSets! += 1;
+                }
+            });
+        }
+
+        // Convert grouped object to array
+        // We should try to respect the order from planExercises if possible
+        let exercisesArray = Object.values(groupedExercises);
+
+        if (planExercises.length > 0) {
+            const ordered: Exercise[] = [];
+            const usedIds = new Set<string>();
+
+            // First add ones that appear in the plan, in order
+            planExercises.forEach((planEx: any) => {
+                const found = exercisesArray.find((e) => e.id === planEx.id);
+                if (found) {
+                    ordered.push(found);
+                    usedIds.add(found.id);
+                }
+            });
+
+            // Then add any leftovers (orphans)
+            exercisesArray.forEach((ex) => {
+                if (!usedIds.has(ex.id)) ordered.push(ex);
+            });
+
+            if (ordered.length > 0) exercisesArray = ordered;
+        }
+
+        return {
+            id: log.workout_log_id,
+            workoutId: log.workout_id,
+            userId: log.user_id,
+            // workoutTime is expected to be a string (ISO date)
+            workoutTime: log.workout_time,
+            exercises: exercisesArray,
+            date: log.workout_time, // LocalWorkoutLog uses 'date'
+            name: workoutName,
+            duration: log.duration || 0,
+            note: userNote,
+            notes: userNote, // Keep both for compatibility
+            createdAt: log.created_at,
+            syncStatus: "synced",
+            updatedAt: new Date(log.created_at).getTime(),
+        };
+    }) || [];
+
+    return { data: formatted, error: null };
+}
+
 export async function deleteWorkoutLogFromSupabase(user: any, logId: string) {
     if (!user) return;
     try {
