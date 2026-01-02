@@ -70,6 +70,15 @@ export default function EndWorkoutScreen() {
     const handleSave = async () => {
         if (isSaving) return;
 
+        if (completedSetsCount === 0) {
+            Alert.alert(
+                "No Sets Completed",
+                "You must complete at least one set to save this workout.",
+                [{ text: "OK" }]
+            );
+            return;
+        }
+
         const finalize = () => {
             finishWorkout(notes);
             router.dismiss();

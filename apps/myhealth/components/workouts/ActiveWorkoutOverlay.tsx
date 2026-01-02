@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, BackHandler, Text, Alert } from 'react-native';
+import { View, ScrollView, BackHandler, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
@@ -55,17 +55,6 @@ export function ActiveWorkoutOverlay() {
         // Stop propagation to prevent toggling expansion
         e?.stopPropagation();
         
-        const completedSetsCount = exercises.reduce((acc, ex) => acc + (ex.completedSets || 0), 0);
-
-        if (completedSetsCount === 0) {
-            Alert.alert(
-                "No Sets Completed",
-                "Please complete at least one set or discard this workout session below.",
-                [{ text: "OK" }]
-            );
-            return;
-        }
-
         // Pause and navigate to end screen
         pauseWorkout();
         router.push('/workouts/end');
