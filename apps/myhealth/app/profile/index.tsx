@@ -5,6 +5,8 @@ import { useUITheme, RaisedButton, IconSymbol } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
 
+import { AuthForm } from '../../components/auth/AuthForm';
+
 export default function ProfileScreen() {
   const { user } = useAuth();
   const theme = useUITheme();
@@ -85,6 +87,20 @@ export default function ProfileScreen() {
       ]
     );
   };
+
+  if (!user) {
+    return (
+      <View className="flex-1 bg-light dark:bg-dark">
+        <ScreenHeader title="Profile" />
+        <View className="flex-1 justify-center px-4 mt-36">
+            <Text className="text-center text-lg font-bold text-light dark:text-dark">
+                Sign in to view your profile
+            </Text>
+            <AuthForm showGuestOption={false} />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-light dark:bg-dark">
