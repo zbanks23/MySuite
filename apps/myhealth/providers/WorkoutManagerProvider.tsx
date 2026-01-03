@@ -206,10 +206,12 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
          setIsSaving(true);
          try {
              await DataRepository.saveLog({
+                 userId: user?.id || 'guest',
                  name,
                  exercises, // These need to contain 'logs'
                  duration,
                  date: new Date().toISOString(),
+                 createdAt: new Date().toISOString(), // Added to satisfy type
                  note: note,
                  id: undefined as any // Repo generates
              });

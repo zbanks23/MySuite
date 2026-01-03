@@ -93,8 +93,9 @@ export function useSyncService() {
                     log.name,
                     log.exercises,
                     log.duration,
-                    log.date,
+                    log.workoutId,
                     log.note,
+                    log.date || log.workoutTime,
                 );
 
                 if (!error) {

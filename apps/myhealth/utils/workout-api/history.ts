@@ -8,84 +8,23 @@ function isUUID(str: string) {
     return regex.test(str);
 }
 
+// Local-First: Always fetch from local DB
 export async function fetchWorkoutHistory(user: any) {
-    if (!user) return { data: [], error: null };
+    // We ignore the 'user' arg for fetching because DataRepository is the source of truth for the active device
+    // But we can filter if needed. For now, assuming single-user local DB or SyncService handles the scope.
 
-    // Try rich query first
-    let { data: logs, error } = await supabase
-        .from("workout_logs")
-        .select(`
-            workout_log_id,
-            workout_id,
-            user_id,
-            workout_time,
-            exercises,
-            created_at,
-            workout_name,
-            note,
-            workouts ( workout_name )
-        `)
-        .eq("user_id", user.id)
-        .order("workout_time", { ascending: false });
-
-    // Fallback to simple query if rich query fails
-    if (error) {
-        console.warn("Rich history fetch failed, trying simple query", error);
-        const { data: simpleLogs, error: simpleError } = await supabase
-            .from("workout_logs")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("workout_time", { ascending: false });
-
-        if (simpleError) {
-            return { data: [], error: simpleError };
-        }
-        logs = simpleLogs;
+    try {
+        const history = await DataRepository.getHistory();
+        // If user is provided, we could filter, but typically SyncService ensures local DB only has relevant data
+        // const filtered = user ? history.filter(h => h.userId === user.id) : history;
+        return { data: history, error: null };
+    } catch (e) {
+        console.error("Local history fetch failed", e);
+        return { data: [], error: e };
     }
-
-    const formatted = logs?.map((log: any) => {
-        let fallbackName = undefined;
-        try {
-            if (log.notes) {
-                const parsed = JSON.parse(log.notes);
-                if (parsed.name) fallbackName = parsed.name;
-            }
-        } catch {}
-
-        // Handle potential missing columns from fallback
-        // Check for 'exercises' if 'notes' is missing (schema change)
-        const notes = log.notes || (log.exercises ? log.exercises : undefined);
-
-        // Try to parse name from exercises/notes JSON if workout_name is missing
-        if (!fallbackName && notes) {
-            try {
-                const parsed = typeof notes === "string"
-                    ? JSON.parse(notes)
-                    : notes;
-                if (parsed.name) fallbackName = parsed.name;
-            } catch {}
-        }
-
-        // Use the explicit user note column if available
-        // If not, don't show the JSON dump in the notes field
-        const userNote = log.note || log.user_note || null;
-
-        return {
-            id: log.workout_log_id,
-            workoutId: log.workout_id,
-            userId: log.user_id,
-            workoutTime: log.workout_time,
-            notes: userNote, // Only show user entered note
-            workoutName: log.workout_name || log.workouts?.workout_name ||
-                fallbackName ||
-                "Untitled Workout",
-            createdAt: log.created_at,
-        };
-    }) || [];
-
-    return { data: formatted, error: null };
 }
 
+// Write Path: Still goes to Supabase directly for now (Phase 2 will move this to SyncService)
 export async function persistCompletedWorkoutToSupabase(
     user: any,
     name: string,
@@ -93,6 +32,7 @@ export async function persistCompletedWorkoutToSupabase(
     duration: number,
     workoutId?: string,
     note?: string,
+    workoutTime?: string, // Added param
 ) {
     if (!user) return { error: "User not logged in" };
 
@@ -125,7 +65,7 @@ export async function persistCompletedWorkoutToSupabase(
         .insert([{
             user_id: user.id,
             // workout_id is removed
-            workout_time: new Date().toISOString(),
+            workout_time: workoutTime || new Date().toISOString(),
             exercises: JSON.stringify(notesObj),
             workout_name: name,
             duration: duration,
@@ -195,19 +135,12 @@ export async function persistCompletedWorkoutToSupabase(
 }
 
 export async function fetchWorkoutLogDetails(user: any, logId: string) {
-    if (!user) {
-        // Guest: Fetch from local DataRepository
+    // Local-First: Always use DataRepository
+    try {
         const history = await DataRepository.getHistory();
         const log = history.find((h) => h.id === logId);
 
         if (!log) return { data: [], error: "Workout log not found locally" };
-
-        // Map local format to UI format
-        // Local: exercises: Exercise[] (with logs)
-        // UI expects groups similar to what the main function constructs
-
-        // The main set_logs logic groups by exercise and creates a structure:
-        // { name, sets: [{ setNumber, details: SetLog, notes }] }
 
         const mappedData = log.exercises.map((ex, index) => ({
             name: ex.name,
@@ -219,118 +152,12 @@ export async function fetchWorkoutLogDetails(user: any, logId: string) {
                     exercise_name: ex.name,
                     exercise_id: ex.id,
                 },
-                notes: null, // Local logs inside exercise don't store per-set notes currently?
+                notes: null, // Local logs inside exercise don't store per-set notes currently
             })) || [],
             properties: ex.properties || [],
         }));
 
         return { data: mappedData, error: null };
-    }
-
-    try {
-        // 1. Fetch workout log to get the snapshot of exercises (with properties)
-        const { data: workoutLog } = await supabase
-            .from("workout_logs")
-            .select("exercises")
-            .eq("workout_log_id", logId)
-            .single();
-
-        // Parse exercises JSON to a map for easy lookup
-        let exercisesSnapshot: any[] = [];
-        try {
-            if (workoutLog?.exercises) {
-                let parsed: any;
-                if (typeof workoutLog.exercises === "string") {
-                    parsed = JSON.parse(workoutLog.exercises);
-                } else {
-                    parsed = workoutLog.exercises;
-                }
-
-                // Handle different structures
-                if (Array.isArray(parsed)) {
-                    exercisesSnapshot = parsed;
-                } else if (parsed && Array.isArray(parsed.exercises)) {
-                    exercisesSnapshot = parsed.exercises;
-                }
-            }
-        } catch {}
-
-        if (!Array.isArray(exercisesSnapshot)) {
-            exercisesSnapshot = [];
-        }
-
-        // Fallback: Reconstruct from set_logs (Legacy behavior)
-        const { data: setLogs, error } = await supabase
-            .from("set_logs")
-            .select(`
-                set_log_id,
-                details,
-                notes,
-                exercise_id,
-                exercise_sets (
-                    set_number,
-                    workout_exercises (
-                        position,
-                        exercises (
-                            exercise_name
-                        )
-                    )
-                )
-            `)
-            .eq("workout_log_id", logId)
-            .order("created_at", { ascending: true }); // Simple ordering
-
-        if (error) return { data: [], error };
-
-        // Group by exercise
-        const grouped: Record<string, any> = {};
-
-        if (setLogs) {
-            setLogs.forEach((log: any) => {
-                const relationalName = log.exercise_sets?.workout_exercises
-                    ?.exercises
-                    ?.exercise_name;
-                const detailsName = log.details?.exercise_name;
-                const exName = relationalName || detailsName ||
-                    "Unknown Exercise";
-
-                // Try to find properties from snapshot
-                const logExId = log.exercise_id || log.details?.exercise_id;
-                let matchedEx = exercisesSnapshot.find((e: any) =>
-                    e.id === logExId
-                );
-                if (!matchedEx) {
-                    matchedEx = exercisesSnapshot.find((e: any) =>
-                        e.name === exName
-                    );
-                }
-                const position =
-                    log.exercise_sets?.workout_exercises?.position || 999;
-                const setNumber = log.exercise_sets?.set_number ||
-                    log.details?.set_number;
-
-                if (!grouped[exName]) {
-                    grouped[exName] = {
-                        name: exName,
-                        position: position,
-                        sets: [],
-                        properties: matchedEx?.properties || [],
-                    };
-                }
-
-                grouped[exName].sets.push({
-                    setNumber: setNumber,
-                    details: log.details,
-                    notes: log.notes,
-                });
-            });
-        }
-
-        const result = Object.values(grouped).sort((a: any, b: any) =>
-            a.position - b.position
-        );
-
-        return { data: result, error: null };
     } catch (err: any) {
         console.warn("fetchWorkoutLogDetails failed", err);
         return { data: [], error: err.message || "Failed to load details" };
@@ -338,151 +165,8 @@ export async function fetchWorkoutLogDetails(user: any, logId: string) {
 }
 
 export async function fetchFullWorkoutHistory(user: any) {
-    if (!user) return { data: [], error: null };
-
-    // Fetch logs with their set_logs (performance data)
-    const { data: logs, error } = await supabase
-        .from("workout_logs")
-        .select(`
-            *,
-            set_logs (*)
-        `)
-        .eq("user_id", user.id)
-        .order("workout_time", { ascending: false });
-
-    if (error) {
-        console.error("fetchFullWorkoutHistory failed", error);
-        return { data: [], error };
-    }
-
-    const formatted = logs?.map((log: any) => {
-        // 1. Basic Metadata
-        const userNote = log.note || log.user_note || null;
-        let workoutName = log.workout_name;
-
-        // Fallback name logic
-        if (!workoutName) {
-            try {
-                if (log.notes) {
-                    const parsed = typeof log.notes === "string"
-                        ? JSON.parse(log.notes)
-                        : log.notes;
-                    if (parsed.name) workoutName = parsed.name;
-                }
-            } catch {}
-        }
-        if (!workoutName) workoutName = "Untitled Workout";
-
-        // 2. Reconstruct Exercises from set_logs
-        // We need to group set_logs by exercise to form the 'exercises' array
-        const groupedExercises: Record<string, Exercise> = {};
-
-        // Also try to get order/properties from the plan snapshot in log.exercises (if available)
-        let planExercises: any[] = [];
-        try {
-            if (log.exercises) {
-                const parsed = typeof log.exercises === "string"
-                    ? JSON.parse(log.exercises)
-                    : log.exercises;
-                if (Array.isArray(parsed)) planExercises = parsed;
-                else if (parsed.exercises && Array.isArray(parsed.exercises)) {
-                    planExercises = parsed.exercises; // handle {name, exercises: []} format
-                }
-            }
-        } catch {}
-
-        if (log.set_logs && Array.isArray(log.set_logs)) {
-            // Sort set_logs by creation or id to ensure set order
-            const sortedSets = log.set_logs.sort((a: any, b: any) =>
-                new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
-            );
-
-            sortedSets.forEach((setRow: any) => {
-                const details = setRow.details || {};
-                const exId = setRow.exercise_id || details.exercise_id ||
-                    "unknown";
-                const exName = details.exercise_name || "Unknown Exercise";
-
-                if (!groupedExercises[exId]) {
-                    // Initialize exercise entry
-                    // Try to find matching plan info for properties
-                    const planEx = planExercises.find((p: any) =>
-                        p.id === exId
-                    ) || {};
-
-                    groupedExercises[exId] = {
-                        id: exId,
-                        name: exName,
-                        sets: 0,
-                        reps: 0,
-                        completedSets: 0,
-                        logs: [],
-                        properties: planEx.properties || [],
-                        setTargets: planEx.setTargets || [],
-                    };
-                }
-
-                // Add log entry
-                groupedExercises[exId].logs?.push({
-                    id: setRow.set_log_id || details.id,
-                    weight: details.weight,
-                    reps: details.reps,
-                    distance: details.distance,
-                    duration: details.duration,
-                    bodyweight: details.bodyweight,
-                });
-
-                if (groupedExercises[exId].completedSets !== undefined) {
-                    groupedExercises[exId].completedSets! += 1;
-                }
-            });
-        }
-
-        // Convert grouped object to array
-        // We should try to respect the order from planExercises if possible
-        let exercisesArray = Object.values(groupedExercises);
-
-        if (planExercises.length > 0) {
-            const ordered: Exercise[] = [];
-            const usedIds = new Set<string>();
-
-            // First add ones that appear in the plan, in order
-            planExercises.forEach((planEx: any) => {
-                const found = exercisesArray.find((e) => e.id === planEx.id);
-                if (found) {
-                    ordered.push(found);
-                    usedIds.add(found.id);
-                }
-            });
-
-            // Then add any leftovers (orphans)
-            exercisesArray.forEach((ex) => {
-                if (!usedIds.has(ex.id)) ordered.push(ex);
-            });
-
-            if (ordered.length > 0) exercisesArray = ordered;
-        }
-
-        return {
-            id: log.workout_log_id,
-            workoutId: log.workout_id,
-            userId: log.user_id,
-            // workoutTime is expected to be a string (ISO date)
-            workoutTime: log.workout_time,
-            exercises: exercisesArray,
-            date: log.workout_time, // LocalWorkoutLog uses 'date'
-            name: workoutName,
-            duration: log.duration || 0,
-            note: userNote,
-            notes: userNote, // Keep both for compatibility
-            createdAt: log.created_at,
-            syncStatus: "synced",
-            updatedAt: new Date(log.created_at).getTime(),
-        };
-    }) || [];
-
-    return { data: formatted, error: null };
+    // Just alias to the main local fetch
+    return fetchWorkoutHistory(user);
 }
 
 export async function deleteWorkoutLogFromSupabase(user: any, logId: string) {

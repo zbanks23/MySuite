@@ -48,4 +48,9 @@ export interface LocalWorkoutLog extends Syncable {
     date: string;
     exercises: Exercise[]; // Contains 'logs' (sets/reps/weight)
     note?: string;
+    // Added for Schema Parity
+    userId: string;
+    createdAt: string;
+    workoutTime?: string;
+    workoutId?: string;
 }
